@@ -58,6 +58,29 @@ button:hover{border-color:var(--amber)}
 #done .s{font-size:3vh;color:var(--tx)}
 .conf{position:fixed;top:-5vh;width:1.2vh;height:2.2vh;animation:fall linear forwards;z-index:10}
 @keyframes fall{to{transform:translateY(112vh) rotate(720deg)}}
+ /* 위장 시 검토 */
+.g .rv{display:none;font-size:2vh;font-weight:800;color:#101218;background:var(--amber);padding:.5vh .8vw;text-align:center;animation:bl 1.2s infinite}
+.g.ask{border-color:var(--amber);cursor:pointer}
+.g.ask .rv{display:block}
+.g.haspoem{cursor:pointer}
+#rq{display:none;background:var(--amber);color:#101218;border-color:var(--amber);font-weight:800;font-size:2.2vh}
+#rq.on{display:block;animation:bl 1.2s infinite}
+#rv{position:fixed;inset:0;background:rgba(10,11,14,.88);display:none;align-items:center;justify-content:center;z-index:15;padding:4vh 4vw}
+#rv.show{display:flex}
+#rv .box{background:var(--card);border:3px solid var(--amber);width:min(100%,120vh);max-height:100%;display:flex;flex-direction:column;gap:2.4vh;padding:3.5vh 3vw;overflow:auto}
+#rv .hd{display:flex;align-items:baseline;gap:1.4vw;font-size:2.4vh;color:var(--mute)}
+#rv .hd b{font-size:4.4vh;color:var(--tx)}
+#rv .hd .sp{flex:1}
+#rv pre{margin:0;font:inherit;font-size:4.6vh;line-height:1.55;white-space:pre-wrap;word-break:keep-all;background:#f1ead8;color:#2a241a;padding:3vh 3vw;border:2px solid #0a0b0e}
+#rv details{font-size:2.4vh;color:var(--mute)}
+#rv summary{cursor:pointer}
+#rv details p{color:var(--tx);font-size:3vh;margin:1.2vh 0 0;white-space:pre-wrap}
+#rv .act{display:flex;gap:1.4vw}
+#rv .act button{font-size:3.2vh;padding:1.6vh 3vw;font-weight:800}
+#rv .act .ok{background:#1f4a30;border-color:var(--ok)}
+#rv .act .no{background:#4a1f22;border-color:var(--bad)}
+#rv .act .sp{flex:1}
+#rv .st{font-size:2.6vh;font-weight:800}
 #setup{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;gap:2vh;z-index:20}
 #setup.show{display:flex}
 #setup input{font:inherit;font-size:5vh;text-align:center;width:20ch;background:var(--card);color:var(--tx);border:3px solid var(--line);padding:1vh}
@@ -68,11 +91,18 @@ button:hover{border-color:var(--amber)}
   <h1>검열국 탈출 · 진행 상황</h1><span id="conn" style="font-size:1.8vh;color:var(--mute)"><i class="dot" id="cd"></i><span id="ct">연결 중…</span></span>
   <span class="sp"></span>
   <div class="code"><div id="qr"></div><div><small>학생 입장 방 번호</small><b id="rc">----</b><small id="lk"></small></div></div>
+  <button id="rq" type="button"></button>
   <div style="display:flex;flex-direction:column;gap:.8vh"><button id="newroom" type="button">새 방 번호</button><button id="clear" type="button">진행 초기화</button></div>
 </header>
 <section class="grid" id="grid"></section>
 <section class="sum"><span class="lt">모은 글자</span><div class="slots" id="slots"></div><span class="fill"></span><span class="lt" id="cnt"></span></section>
 <div id="done"><div class="w" id="dw"></div><div class="s">모든 조각이 모였습니다!</div><button id="dx" type="button">닫기</button></div>
+<div id="rv" role="dialog" aria-modal="true"><div class="box">
+  <div class="hd"><b id="rvg"></b><span>위장한 시</span><span class="sp"></span><span id="rvw"></span></div>
+  <pre id="rvp"></pre>
+  <details id="rvd"><summary>동지만 아는 뜻 보기</summary><p id="rvm"></p></details>
+  <div class="act"><button class="ok" id="rvok" type="button">통과</button><button class="no" id="rvno" type="button">다시 쓰기</button><span class="st" id="rvs"></span><span class="sp"></span><button id="rvx" type="button">닫기</button></div>
+</div></div>
 <div id="setup"><h2>방 번호를 정하세요</h2><input id="si" maxlength="12" placeholder="예: 3반 또는 1234"><button id="sg" type="button">시작</button><button id="sr" type="button">랜덤 4자리로 시작</button></div>
 <script src="story.js"></script>
 <script src="net.js"></script>
@@ -101,29 +131,64 @@ function build(){
     <div class="st" id="st${i+1}">아직 입장 전</div>
     <div class="trk" id="tk${i+1}">${"<i></i>".repeat(STEPS)}</div>
     <div class="sus"><span>의심도</span><div class="bar"><i id="sb${i+1}"></i></div><b id="sn${i+1}">0</b></div>
+    <div class="rv">시 확인 요청 · 눌러서 보기</div>
     <div class="piece"><div class="lb">${i+1}조 탈출 성공!</div><div class="ch" id="pc${i+1}"></div><div class="tt" id="pt${i+1}"></div></div></div>`).join("");
+  for(let i=1;i<=N;i++) $("#g"+i).onclick=()=>{ if((data.poems||{})[i]) openReview(i); };
   const w=CONFIG.finalWord; $("#slots").innerHTML=[...w].map((c,i)=>`<div class="slot" id="sl${i}">${c}<small id="sg${i}"></small></div>`).join("");
 }
 function paint(){
   const G=data.groups||{}, now=Date.now(); const got={}; 
   for(let n=1;n<=CONFIG.groups;n++){
     const g=G[n], el=$("#g"+n); if(!el) continue;
-    if(!g){ el.className="g empty"; $("#st"+n).textContent="아직 입장 전"; $("#tm"+n).textContent="--:--"; $("#sb"+n).style.width="0"; $("#sn"+n).textContent="0";
+    const ask=pending(n), hp=!!(data.poems||{})[n];
+    if(!g){ el.className="g empty"+(ask?" ask":hp?" haspoem":""); $("#st"+n).textContent="아직 입장 전"; $("#tm"+n).textContent="--:--"; $("#sb"+n).style.width="0"; $("#sn"+n).textContent="0";
       [...$("#tk"+n).children].forEach(i=>i.className=""); continue; }
     const idx=stepIdx(g), r=remain(g), sus=Math.min(100,g.sus||0), stale=!g.done&&now-(g.t||0)>40000;
-    el.className="g"+(g.done?" done":"")+(!g.done&&sus>=70?" warn":"");
+    el.className="g"+(g.done?" done":"")+(ask?" ask":(!g.done&&sus>=70?" warn":""))+(hp?" haspoem":"");
     $("#st"+n).textContent=g.done?"탈출 성공":(stale?"신호 끊김 · ":"")+(WHERE[g.where]||STAGE[g.stage|0]||"");
     const tm=$("#tm"+n); tm.textContent=g.done?fmt(Math.max(0,Math.round((g.done-g.start)/1000)+(g.penalty||0)-(g.extra||0))):fmt(r); tm.className="tm"+(!g.done&&r<=120?" low":"");
     [...$("#tk"+n).children].forEach((i,k)=>i.className=k<idx?"f":(k===idx&&!g.done?"c":""));
     $("#sb"+n).style.width=sus+"%"; $("#sb"+n).style.background=sus>=70?"var(--bad)":sus>=40?"var(--amber)":"var(--ok)"; $("#sn"+n).textContent=sus;
     if(g.done){ $("#pc"+n).textContent=g.piece||netPiece(n); $("#pt"+n).textContent="걸린 시간 "+tm.textContent+" · 의심도 "+sus; (got[g.piece||netPiece(n)]=got[g.piece||netPiece(n)]||[]).push(n); }
   }
+  const q=queue(); $("#rq").textContent="시 확인 대기 "+q.length+"개"; $("#rq").classList.toggle("on",q.length>0);
+  if(rvOpen) paintReview();
   const w=[...CONFIG.finalWord]; let all=true, cnt=0;
   w.forEach((c,i)=>{ const on=!!got[c]; $("#sl"+i).classList.toggle("on",on); $("#sg"+i).textContent=on?got[c].join("·")+"조":""; if(on)cnt++; else all=false; });
   $("#cnt").textContent=cnt+" / "+w.length+" 글자";
   if(all&&!celebrated){ celebrated=true; $("#dw").textContent=CONFIG.finalWord; $("#done").classList.add("show"); confetti(); }
   if(!all) celebrated=false;
 }
+// ---- 위장 시 검토: 학생이 낸 시(poems)와 선생님 판정(verdict)
+function pending(n){ const p=(data.poems||{})[n], v=(data.verdict||{})[n], g=(data.groups||{})[n];
+  return !!p&&!(g&&g.done)&&!(v&&v.for===p.t); }
+const queue=()=>Object.keys(data.poems||{}).map(Number).filter(pending).sort((a,b)=>data.poems[a].t-data.poems[b].t);
+let rvOpen=0, rvAt=0;
+function openReview(n){ const p=(data.poems||{})[n]; if(!p) return;
+  rvOpen=n; rvAt=p.t; $("#rvg").textContent=n+"조"; $("#rvp").textContent=p.poem||""; $("#rvm").textContent=p.meaning||"";
+  $("#rvd").open=false; $("#rv").classList.add("show"); paintReview(); }
+function paintReview(){ const n=rvOpen, p=(data.poems||{})[n];
+  if(!p){ return closeReview(); }
+  if(p.t!==rvAt) return openReview(n);   // 학생이 시를 고쳐 다시 냈으면 새 시로
+  const v=(data.verdict||{})[n], judged=v&&v.for===p.t, g=(data.groups||{})[n];
+  $("#rvw").textContent=new Date(p.t).toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"})+" 제출";
+  const open=!judged&&!(g&&g.done);
+  $("#rvok").style.display=$("#rvno").style.display=open?"":"none";
+  $("#rvs").textContent=judged?(v.ok?"통과시켰습니다":"다시 쓰라고 돌려보냈습니다"):(g&&g.done?"이미 탈출했습니다":"");
+  $("#rvs").style.color=judged&&!v.ok?"var(--bad)":"var(--ok)"; }
+function closeReview(){ rvOpen=0; $("#rv").classList.remove("show"); }
+function judge(ok){ const n=rvOpen, p=(data.poems||{})[n]; if(!p) return;
+  $("#rvok").disabled=$("#rvno").disabled=true;
+  netJudge(room,n,ok,p.t).then(done=>{ $("#rvok").disabled=$("#rvno").disabled=false;
+    if(!done){ $("#rvs").style.color="var(--bad)"; $("#rvs").textContent="저장하지 못했습니다. 인터넷이나 Firebase 규칙을 확인하세요."; return; }
+    data.verdict=data.verdict||{}; data.verdict[n]={ok,for:p.t,t:Date.now()}; paint();
+    const nx=queue()[0]; if(nx) openReview(nx); else closeReview(); }); }
+$("#rvok").onclick=()=>judge(true);
+$("#rvno").onclick=()=>judge(false);
+$("#rvx").onclick=closeReview;
+$("#rv").onclick=e=>{ if(e.target.id==="rv") closeReview(); };
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeReview(); });
+$("#rq").onclick=()=>{ const n=queue()[0]; if(n) openReview(n); };
 function confetti(){ const cols=["#e0a93f","#6bb585","#e5484d","#4a90e2","#f1efe8"];
   for(let i=0;i<90;i++){ const e=document.createElement("i"); e.className="conf"; e.style.left=Math.random()*100+"vw"; e.style.background=cols[i%5];
     e.style.animationDuration=(2.5+Math.random()*3)+"s"; e.style.animationDelay=Math.random()*1.5+"s"; document.body.appendChild(e); setTimeout(()=>e.remove(),8000); } }
@@ -133,7 +198,7 @@ function setPath(obj,path,val,merge){ const p=path.split("/").filter(Boolean); i
   let o=obj; for(let i=0;i<p.length-1;i++){ o[p[i]]=o[p[i]]||{}; o=o[p[i]]; }
   const k=p[p.length-1]; if(val===null) delete o[k]; else if(merge&&typeof val==="object"&&o[k]) Object.assign(o[k],val); else o[k]=val; return obj; }
 function connect(){
-  if(es) es.close(); data={}; paint();
+  if(es) es.close(); data={}; closeReview(); paint();
   es=new EventSource(netUrl(room));
   es.onopen=()=>{ $("#cd").className="dot on"; $("#ct").textContent="실시간 연결됨"; };
   es.onerror=()=>{ $("#cd").className="dot"; $("#ct").textContent="연결 안 됨 · 다시 시도 중"; };

@@ -575,7 +575,14 @@ const TEXT={
     gateTitle:"접선책이 시를 확인한다",
     gateNote:"선생님께 위장한 시를 보여 드리고 비밀번호를 받으세요.",
     gateBtn:"통로 열기",
-    gateWrong:"비밀번호가 맞지 않습니다."
+    gateWrong:"비밀번호가 맞지 않습니다.",
+    /* 교실 TV에 연결된 경우: 비밀번호 대신 선생님이 TV에서 시를 보고 통과를 누릅니다 */
+    storyTv:"문 위의 불빛 세 개가 모두 켜졌다. 위장한 시를 끼운 원고 더미를 들고 나가면, 문밖에서 접선책이 기다린다. 접선책(선생님)이 교실 TV에서 우리가 쓴 시를 확인하면 통로가 열린다.",
+    waitTitle:"접선책이 시를 확인하는 중…",
+    waitNote:"우리 시가 교실 TV로 전해졌습니다. 선생님이 ‘통과’를 누르면 저절로 문이 열립니다. 이 화면을 켜 둔 채 기다리세요.",
+    sendFail:"TV로 시를 보내지 못했습니다. 인터넷을 확인하거나, 아래에서 선생님 비밀번호로 여세요.",
+    pinFold:"TV 연결이 안 될 때: 선생님 비밀번호로 열기",
+    rejected:"접선책이 고개를 저었다. “이대로는 위험해. 다시 써 오게.” 시를 고쳐 다시 검열을 받으세요."
   },
 
   /* 결과 화면 (에필로그 뒤) */
@@ -618,7 +625,23 @@ function netPush(force){
   try{ fetch(netUrl(S.room,S.group),{method:"PUT",body:JSON.stringify(d),keepalive:true}).catch(()=>{}); }catch(e){}
 }
 function netClear(room,g){ if(!netRoomOk(room)) return Promise.resolve();
-  try{ return fetch(netUrl(room,g),{method:"DELETE"}).catch(()=>{}); }catch(e){ return Promise.resolve(); } }
+  const del=u=>{ try{ return fetch(u,{method:"DELETE"}).catch(()=>{}); }catch(e){ return Promise.resolve(); } };
+  if(!g) return del(netUrl(room));
+  return Promise.all([del(netUrl(room,g)),del(netKindUrl(room,"poems",g)),del(netKindUrl(room,"verdict",g))]); }
+// 3단계 위장 시: 학생이 censor/방/poems/조 에 올리고, TV가 censor/방/verdict/조 에 통과(ok:true)·다시 쓰기(ok:false)를 적습니다.
+// verdict.for 에는 판정한 시의 t를 적어, 시를 고쳐 다시 내면 예전 판정은 무시됩니다.
+const netKindUrl=(room,kind,g)=>`${NET.db}/${NET.root}/${encodeURIComponent(room)}/${kind}/${g}.json`;
+function netPoem(){
+  if(typeof S==="undefined"||!netRoomOk(S.room)||!S.group||!S.poem) return Promise.resolve(false);
+  const d={poem:S.poem.slice(0,500),meaning:(S.meaning||"").slice(0,300),t:S.poemAt||Date.now()};
+  try{ return fetch(netKindUrl(S.room,"poems",S.group),{method:"PUT",body:JSON.stringify(d)}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
+}
+function netVerdict(room,g){
+  try{ return fetch(netKindUrl(room,"verdict",g),{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null); }catch(e){ return Promise.resolve(null); }
+}
+function netJudge(room,g,ok,forT){
+  try{ return fetch(netKindUrl(room,"verdict",g),{method:"PUT",body:JSON.stringify({ok:!!ok,for:forT,t:Date.now()})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
+}
 setInterval(()=>netPush(false),4000);
 
 </script>
@@ -632,7 +655,7 @@ const $$=s=>ROOT.querySelectorAll(s);
 // story.js의 TEXT 문구에서 {분} {힌트초} {조} 같은 자리를 채움
 const T=(s,o)=>String(s).replace(/\{([^{}]+)\}/g,(m,k)=>{const v=Object.assign({분:CONFIG.minutes,힌트초:CONFIG.hintPenaltySec,조:S.group},o)[k];return v==null?m:v;});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-let S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",wired:false,room:""};
+let S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",poemAt:0,wired:false,room:""};
 try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(S,JSON.parse(r));}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){} if(typeof netPush==="function") netPush();};
 let tick=null, ui={sel:{},per:{},cls:{},stamped:false,quiz:null,hintOn:null,s3ok:false};
@@ -786,7 +809,9 @@ function useObj(o){
   if(o==="door"){ if(S.stage<4) return toast(T(TEXT.room.doorLocked));
     return openPanel("door",doorHTML(),bindDoor); }
 }
-function doorHTML(){return `<h2>${T(TEXT.door.title)}</h2><p class="story">${T(TEXT.door.story)}</p><div id="gate"></div>`;}
+// 교실 TV에 연결돼 있고 시를 냈으면, 비밀번호 대신 TV에서 선생님이 통과를 누름
+const tvGate=()=>CONFIG.requireTeacher&&typeof netRoomOk==="function"&&netRoomOk(S.room)&&!!S.poem;
+function doorHTML(){return `<h2>${T(TEXT.door.title)}</h2><p class="story">${T(tvGate()?TEXT.door.storyTv:TEXT.door.story)}</p><div id="gate"></div>`;}
 function bindDoor(){ if(CONFIG.requireTeacher&&!S.approved) gate(); else finish(); }
 /* ---------- 시작 ---------- */
 function startHTML(){
@@ -1085,7 +1110,7 @@ function bindStage3(){
     if(v.split(/\n/).filter(x=>x.trim()).length<2){m.className="msg bad";m.innerHTML=T(TEXT.s3.oneLine);addSus(5);return;}
     if(!s.symbols.some(w=>v.includes(w))){m.className="msg bad";m.innerHTML=T(TEXT.s3.noSymbol);addSus(5);return;}
     if(why.length<6){m.className="msg bad";m.innerHTML=T(TEXT.s3.meanShort);return;}
-    m.className="msg ok";S.poem=v;S.meaning=why;save();
+    m.className="msg ok";S.poem=v;S.meaning=why;S.poemAt=Date.now();save(); if(typeof netPoem==="function") netPoem();
     m.innerHTML=T(TEXT.s3.ok);
     $("#chk").disabled=true;t1.disabled=true;$("#t2").disabled=true;$("#hn").disabled=true;
     const nx=document.createElement("button");nx.className="btn";nx.type="button";nx.innerHTML=T(TEXT.s3.next);
@@ -1093,11 +1118,39 @@ function bindStage3(){
   };
 }
 function gate(){
-  $("#gate").innerHTML=`<div class="card" style="border-color:var(--amber)"><b>${T(TEXT.door.gateTitle)}</b><p class="note">${T(TEXT.door.gateNote)}</p>
+  const tv=tvGate(), g=$("#gate");
+  const pin=`<div class="card" style="border-color:var(--amber)"><b>${T(TEXT.door.gateTitle)}</b><p class="note">${T(TEXT.door.gateNote)}</p>
   <div class="row"><input type="password" id="pin" inputmode="numeric" autocomplete="off" aria-label="선생님 비밀번호" style="max-width:200px">
   <button class="btn" id="pk" type="button">${T(TEXT.door.gateBtn)}</button></div><div class="msg" id="pm" aria-live="polite"></div></div>`;
-  $("#pk").onclick=()=>{ if($("#pin").value===CONFIG.teacherPin){S.approved=true;finish();}
-    else{$("#pm").className="msg bad";$("#pm").innerHTML=T(TEXT.door.gateWrong);} };
+  g.innerHTML=tv?`<div class="card" style="border-color:var(--amber)"><b>${T(TEXT.door.waitTitle)}</b><p class="note">${T(TEXT.door.waitNote)}</p><div class="msg" id="wm" aria-live="polite"></div></div>
+  <details id="pf" style="margin-top:14px"><summary class="note" style="cursor:pointer">${T(TEXT.door.pinFold)}</summary>${pin}</details>`:pin;
+  const pm=g.querySelector("#pm"), pinEl=g.querySelector("#pin");
+  g.querySelector("#pk").onclick=()=>{ if(pinEl.value===CONFIG.teacherPin){S.approved=true;stopVerdict();finish();}
+    else{pm.className="msg bad";pm.innerHTML=T(TEXT.door.gateWrong);} };
+  if(!tv) return;
+  const wm=g.querySelector("#wm");
+  netPoem().then(ok=>{ if(!ok&&!S.done){ wm.className="msg bad"; wm.innerHTML=T(TEXT.door.sendFail); g.querySelector("#pf").open=true; } });
+  watchVerdict();
+}
+// TV에서 선생님이 누른 판정을 3초마다 확인
+let verdictTimer=null;
+function stopVerdict(){ clearInterval(verdictTimer); verdictTimer=null; }
+function watchVerdict(){
+  stopVerdict(); const room=S.room, gp=S.group, at=S.poemAt;
+  const chk=()=>{
+    if(S.done||S.stage!==4||S.poemAt!==at||S.room!==room||S.group!==gp) return stopVerdict();
+    netVerdict(room,gp).then(v=>{
+      if(!v||v.for!==at||!verdictTimer||S.done||S.stage!==4||S.poemAt!==at) return;
+      stopVerdict();
+      if(v.ok){ S.approved=true; finish(); } else rejected();
+    });
+  };
+  verdictTimer=setInterval(chk,3000); chk();
+}
+// 선생님이 '다시 쓰기'를 누르면 3단계로 돌아가 시를 고쳐 씀
+function rejected(){
+  S.stage=3; S.wired=true; S.poem=""; S.meaning=""; S.poemAt=0; save(); render(); window.scrollTo(0,0);
+  openKey("s3"); const m=$("#msg"); if(m){ m.className="msg bad"; m.innerHTML=T(TEXT.door.rejected); }
 }
 function finish(){S.done=Date.now();save();render();window.scrollTo(0,0);}
 /* ---------- 마무리 ---------- */
@@ -1114,7 +1167,7 @@ function finaleHTML(){
   <div class="foot"><span></span><span><button id="rbtn" type="button">${T(TEXT.common.restart)}</button> <button id="tbtn" type="button">${T(TEXT.common.teacher)}</button></span></div></div>`;
 }
 /* ---------- 교사용 ---------- */
-function resetAll(){ const rm=S.room, gp=S.group; if(typeof netClear==="function"&&gp) netClear(rm,gp); S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",wired:false,room:rm};save();render();window.scrollTo(0,0);}
+function resetAll(){ const rm=S.room, gp=S.group; if(typeof netClear==="function"&&gp) netClear(rm,gp); S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",poemAt:0,wired:false,room:rm};save();render();window.scrollTo(0,0);}
 function bindFoot(){const b=$("#tbtn"); if(b) b.onclick=teacher;
   const r=$("#rbtn"); if(r){ let t=null; r.onclick=()=>{ if(t){clearTimeout(t);resetAll();return;}
     r.textContent=T(TEXT.common.restartAgain); t=setTimeout(()=>{t=null;r.textContent=T(TEXT.common.restart);},4000); }; } }
@@ -1139,6 +1192,7 @@ function jumpTo(i){
   vnStop(); document.querySelectorAll(".overlay").forEach(x=>x.remove());
   S.group=S.group||1; S.done=null; S.epi=false; S.start=S.start||Date.now();
   S.approved=false;   // 문 화면에서 비밀번호 칸이 다시 보이게
+  stopVerdict();
   JUMPS[i][1](); save(); render(); window.scrollTo(0,0);
   if(JUMPS[i][2]) openKey(JUMPS[i][2]);
 }
@@ -1149,7 +1203,7 @@ function teacherNext(){
   if(S.stage===0) return jumpTo(1);
   const order=["s1","m1","s2","m2","boss","m3","s3","door"], room={1:"s1",2:"s2",3:S.wired?"s3":"m3",4:"door"};
   if(!curKey) return openKey(room[S.stage]);
-  if(curKey==="door"){ S.approved=true; closePanel(); return finish(); }
+  if(curKey==="door"){ S.approved=true; stopVerdict(); closePanel(); return finish(); }
   jumpTo(JUMPS.findIndex(j=>j[2]===order[order.indexOf(curKey)+1]));
 }
 function paintTeacher(){

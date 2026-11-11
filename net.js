@@ -19,5 +19,21 @@ function netPush(force){
   try{ fetch(netUrl(S.room,S.group),{method:"PUT",body:JSON.stringify(d),keepalive:true}).catch(()=>{}); }catch(e){}
 }
 function netClear(room,g){ if(!netRoomOk(room)) return Promise.resolve();
-  try{ return fetch(netUrl(room,g),{method:"DELETE"}).catch(()=>{}); }catch(e){ return Promise.resolve(); } }
+  const del=u=>{ try{ return fetch(u,{method:"DELETE"}).catch(()=>{}); }catch(e){ return Promise.resolve(); } };
+  if(!g) return del(netUrl(room));
+  return Promise.all([del(netUrl(room,g)),del(netKindUrl(room,"poems",g)),del(netKindUrl(room,"verdict",g))]); }
+// 3단계 위장 시: 학생이 censor/방/poems/조 에 올리고, TV가 censor/방/verdict/조 에 통과(ok:true)·다시 쓰기(ok:false)를 적습니다.
+// verdict.for 에는 판정한 시의 t를 적어, 시를 고쳐 다시 내면 예전 판정은 무시됩니다.
+const netKindUrl=(room,kind,g)=>`${NET.db}/${NET.root}/${encodeURIComponent(room)}/${kind}/${g}.json`;
+function netPoem(){
+  if(typeof S==="undefined"||!netRoomOk(S.room)||!S.group||!S.poem) return Promise.resolve(false);
+  const d={poem:S.poem.slice(0,500),meaning:(S.meaning||"").slice(0,300),t:S.poemAt||Date.now()};
+  try{ return fetch(netKindUrl(S.room,"poems",S.group),{method:"PUT",body:JSON.stringify(d)}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
+}
+function netVerdict(room,g){
+  try{ return fetch(netKindUrl(room,"verdict",g),{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null); }catch(e){ return Promise.resolve(null); }
+}
+function netJudge(room,g,ok,forT){
+  try{ return fetch(netKindUrl(room,"verdict",g),{method:"PUT",body:JSON.stringify({ok:!!ok,for:forT,t:Date.now()})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
+}
 setInterval(()=>netPush(false),4000);
