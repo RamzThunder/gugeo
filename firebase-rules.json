@@ -48,6 +48,9 @@
             },
             "$other": {
               ".validate": false
+            },
+            "epi": {
+              ".validate": "newData.isNumber()"
             }
           }
         },

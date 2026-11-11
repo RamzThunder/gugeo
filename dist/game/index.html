@@ -633,7 +633,7 @@ let _netSig="", _netAt=0;
 function netPush(force){
   if(typeof S==="undefined"||!netRoomOk(S.room)||!S.group) return;
   const d={stage:S.stage|0, where:(typeof curKey!=="undefined"&&curKey)||"", sus:Math.min(100,S.sus|0), hints:S.hints|0, grilled:S.grilled|0,
-    start:S.start||0, penalty:S.penalty|0, extra:S.extra|0, min:CONFIG.minutes, done:S.done||0, piece:S.done?netPiece(S.group):"", t:Date.now()};
+    start:S.start||0, penalty:S.penalty|0, extra:S.extra|0, min:CONFIG.minutes, done:S.done||0, epi:S.done&&S.epi?1:0, piece:S.done?netPiece(S.group):"", t:Date.now()};
   const sig=JSON.stringify(Object.assign({},d,{t:0})), now=Date.now();
   if(!force&&sig===_netSig&&now-_netAt<10000) return;
   _netSig=sig; _netAt=now;
