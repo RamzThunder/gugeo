@@ -27,7 +27,7 @@ function addSus(n){
   if(S.sus>=100){ S.grilled++; S.penalty+=60; S.sus=40; save(); paintSus(); paintClock();
     const o=document.createElement("div");o.className="overlay";o.setAttribute("role","dialog");
     o.innerHTML='<div class="card" style="border-color:var(--stamp)">'+stageHTML("interro","bossSus")+`<h2>${T(TEXT.grill.title)}</h2><p>${T(TEXT.grill.line)}</p><p class="note">${T(TEXT.grill.note)}</p><button class="btn" id="ox" type="button">${T(TEXT.grill.btn)}</button></div>`;
-    document.body.appendChild(o); $("#ox").onclick=()=>o.remove(); return; }
+    document.body.appendChild(o); o.querySelector("#ox").onclick=()=>o.remove(); return; }
   save(); paintSus();
 }
 function paintClock(){const r=remain(); document.querySelectorAll(".clk").forEach(c=>{c.textContent=fmt(r); c.classList.toggle("over",r<0);});}
@@ -42,7 +42,7 @@ const sprKey=(k,m)=>!k?k:(({guard:{calm:"guardCalm",sus:"guardSus"},boss:{sus:"b
 function stageHTML(bg,spr){
   return `<div class="stage"><img class="bgimg" src="${IMG[bg]}" alt="">${spr?`<span class="sw" style="--h:${SPRH[spr]}"><img class="spr0" src="${IMG[spr]}" alt="">${BLP[spr]?`<img class="pt" style="left:${BLP[spr].l}%;top:${BLP[spr].t}%;width:${BLP[spr].w}%;visibility:hidden" src="${BLP[spr].s}" alt="">`:''}</span>`:''}</div>`;
 }
-let vnTimer=null;
+let vnTimer=null, vnStop=()=>{};
 (function blinkLoop(){
   const rm=matchMedia("(prefers-reduced-motion: reduce)").matches; if(rm) return;
   const once=cb=>{const b=document.querySelector(".stage .pt,.overlay .pt"); if(!b){cb&&cb();return;} b.style.visibility="visible"; setTimeout(()=>{b.style.visibility="hidden"; cb&&cb();},120);};
@@ -55,7 +55,8 @@ function playVN(script,done){
    <div class="pixwrap" id="vstage"></div>
    <div class="vbox" id="vbox" tabindex="0"><div class="vnm" id="vnm"></div><div class="vtx" id="vtx" aria-live="polite"></div><div class="vflash" id="vfl"></div><div class="vch" id="vch"></div><span class="vnx" id="vnx">▼</span></div></div>`;
   let capTimer=null;
-  const end=()=>{clearInterval(vnTimer);clearTimeout(capTimer);done();};
+  vnStop=()=>{clearInterval(vnTimer);clearTimeout(capTimer);};
+  const end=()=>{vnStop();done();};
   $("#vskip").onclick=end;
   const idx=id=>script.findIndex(x=>x.id===id);
   const show=()=>{
@@ -96,18 +97,19 @@ function playVN(script,done){
   $("#vbox").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();next();}};
   show(); $("#vbox").focus({preventScroll:true});
 }
-let panels={}, curPanel=null;
+let panels={}, curPanel=null, curKey=null;
 function openPanel(key,html,binder){
+  curKey=key; setTimeout(paintTeacher);
   let el=panels[key];
   if(!el){ el=document.createElement("div"); el.className="panel"; el.setAttribute("role","dialog");
     el.innerHTML=`<div class="pwrap">${bar()}<div class="pbody">${html}</div><div class="row"><button class="btn ghost pclose" type="button">${T(TEXT.common.close)}</button></div></div>`;
     document.body.appendChild(el); panels[key]=el; ROOT=el; binder(); el.querySelector(".pclose").onclick=closePanel; }
   ROOT=el; el.hidden=false; curPanel=el; document.body.style.overflow="hidden"; paintClock(); paintSus(); el.scrollTop=0;
 }
-function closePanel(){ if(curPanel) curPanel.hidden=true; curPanel=null; ROOT=document; document.body.style.overflow=""; }
-function disposePanels(){ Object.values(panels).forEach(e=>e.remove()); panels={}; curPanel=null; ROOT=document; document.body.style.overflow=""; }
+function closePanel(){ if(curPanel) curPanel.hidden=true; curPanel=null; curKey=null; ROOT=document; document.body.style.overflow=""; }
+function disposePanels(){ Object.values(panels).forEach(e=>e.remove()); panels={}; curPanel=null; curKey=null; ROOT=document; document.body.style.overflow=""; }
 function render(){
-  disposePanels();
+  disposePanels(); setTimeout(paintTeacher);
   const a=$("#app"); document.querySelectorAll(".overlay").forEach(x=>x.remove());
   if(!S.group){ a.innerHTML=startHTML(); bindStart(); return; }
   if(S.done&&!S.epi){ playVN(EPI,()=>{S.epi=true;save();render();window.scrollTo(0,0);}); return; }
@@ -229,7 +231,7 @@ function bindStage1(){
     const m=$("#msg");
     if(all){m.className="msg ok";m.innerHTML=T(TEXT.s1.ok);
       const nx=document.createElement("button");nx.className="btn";nx.type="button";nx.innerHTML=T(TEXT.s1.next);
-      nx.onclick=()=>advance(2,T(TEXT.s1.found)); $("#chk").replaceWith(nx);}
+      nx.onclick=()=>{closePanel();openPanel("m1",m1HTML(),bindM1);}; $("#chk").replaceWith(nx);}
     else{m.className="msg bad";m.innerHTML=T(TEXT.s1.wrong);}
   };
 }
@@ -276,9 +278,74 @@ function showQuiz(){
     if(i===q.ans){b.classList.add("good");document.querySelectorAll(".opt").forEach(x=>x.disabled=true);
       $("#qm").className="msg ok";$("#qm").innerHTML=T(TEXT.s2.quizOk);
       const nx=document.createElement("button");nx.className="btn";nx.type="button";nx.innerHTML=T(TEXT.s2.next);
-      nx.onclick=()=>advance(3,T(TEXT.s2.found)); $("#qm").after(nx);}
+      nx.onclick=()=>{closePanel();openPanel("m2",m2HTML(),bindM2);}; $("#qm").after(nx);}
     else{b.classList.add("no");$("#qm").className="msg bad";$("#qm").innerHTML=T(TEXT.s2.quizWrong);addSus(8);}
   });
+}
+/* ---------- 미니게임 1: 서랍 속 잡동사니 치우고 열쇠 찾기 ---------- */
+function m1HTML(){
+  const M=TEXT.m1, pos=(d,z)=>`left:${d.x}%;top:${d.y}%;width:${d.w}%;height:${d.h}%;z-index:${z};--r:${d.r||0}deg`;
+  const items=M.items.map((it,i)=>{const d=DRAWER.items[it.id]; if(!d) return "";
+    return `<button type="button" class="mitem${d.s?" img":""}" data-i="${i}" style="${pos(d,i+2)}" aria-label="${esc(it.label)} 치우기">${d.s?`<img src="${d.s}" alt="">`:`<span>${esc(it.label)}</span>`}</button>`;}).join("");
+  const k=DRAWER.key;
+  return `<div style="display:flex;flex-direction:column;gap:14px"><h2>${T(M.title)}</h2>
+  <p class="story">${T(M.story)}</p>
+  <div class="mdrawer"${DRAWER.bg?` style="background-image:url(${DRAWER.bg})"`:""}>
+    <button type="button" class="mkey" id="mkey" style="${pos(k,1)}" aria-label="${esc(M.keyLabel)}"><img src="${IMG.key}" alt=""></button>${items}</div>
+  <div class="msg" id="msg" aria-live="polite">${T(M.start)}</div></div>`;
+}
+function bindM1(){
+  const M=TEXT.m1, box=$(".mdrawer"), key=$("#mkey");
+  const kr=()=>key.getBoundingClientRect();
+  // 열쇠 위에 아직 물건이 겹쳐 있는지
+  const covered=()=>[...box.querySelectorAll(".mitem:not(.gone)")].some(b=>{const a=b.getBoundingClientRect(),k=kr();
+    return a.left<k.right-4&&a.right>k.left+4&&a.top<k.bottom-4&&a.bottom>k.top+4;});
+  box.querySelectorAll(".mitem").forEach(b=>b.onclick=()=>{
+    const it=M.items[+b.dataset.i]; b.classList.add("gone"); b.style.setProperty("--dx",(Math.random()<.5?-1:1)*(60+Math.random()*40)+"%");
+    setTimeout(()=>b.hidden=true,400);
+    const m=$("#msg"); m.className="msg"; m.innerHTML=T(it.line);
+    if(!covered()&&!key.classList.contains("seen")){key.classList.add("seen"); m.className="msg ok"; m.innerHTML=T(it.line)+"<br>"+T(M.keySeen);}
+  });
+  key.onclick=()=>{ if(covered()) return; closePanel(); advance(2,T(TEXT.s1.found)); };
+}
+/* ---------- 미니게임 2: 상관 눈 피해 리본 꺼내기 ---------- */
+function m2HTML(){
+  const M=TEXT.m2;
+  return `<div style="display:flex;flex-direction:column;gap:14px"><h2>${T(M.title)}</h2>
+  <p class="story">${T(M.story)}</p>
+  <div class="pixwrap"><div class="stage mboss away" id="mstage"><img class="bgimg" src="${IMG.room}" alt="">
+    <span class="sw" style="--h:88%"><img class="spr0" id="mspr" src="${IMG.bossBack||IMG.boss}" alt="상관"></span>
+    <span class="mbub" id="mbub" aria-hidden="true"></span></div></div>
+  <div class="msg" id="msg" aria-live="polite">${T(M.away)}</div>
+  <div class="mrib"><img class="ico" src="${IMG.ribbon}" alt=""><span>${T(M.progress)}</span><span class="g"><i id="mbar"></i></span></div>
+  <div class="row"><button class="btn" id="mpull" type="button">${T(M.btn)}</button></div></div>`;
+}
+function bindM2(){
+  const M=TEXT.m2, C=CONFIG.m2, el=panels.m2, st=$("#mstage"), spr=$("#mspr"), bub=$("#mbub"), msg=$("#msg"), btn=$("#mpull"), bar=$("#mbar");
+  let n=0, last=0, mode="away", locked=false, timer=null, done=false;
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  const paint=()=>{bar.style.width=Math.min(100,n/C.pulls*100)+"%";};
+  const set=m=>{ mode=m; st.className="stage mboss "+m+(IMG.bossBack?" hasback":"");
+    spr.src=m==="look"?IMG.bossSus:(IMG.bossBack||IMG.boss);
+    bub.textContent=T({away:M.bubAway,warn:M.bubWarn,look:M.bubLook}[m]||"");
+    if(!locked||m==="away"){ msg.className="msg"+(m==="look"?" bad":""); msg.innerHTML=T(M[m]); }
+    if(m==="away"){ locked=false; btn.disabled=false; } };
+  const loop=()=>{
+    if(done||!el.isConnected) return;
+    if(el.hidden){ timer=setTimeout(loop,500); return; }   // 창을 닫아 두면 멈춤
+    if(mode==="away"){ set("warn"); timer=setTimeout(loop,700); }
+    else if(mode==="warn"){ set("look"); timer=setTimeout(loop,rnd(1300,2200)); }
+    else { set("away"); timer=setTimeout(loop,rnd(1600,3400)); }
+  };
+  btn.onclick=()=>{
+    if(done||locked) return;
+    if(mode==="look"){ locked=true; btn.disabled=true; n=Math.max(0,n-C.caughtBack); paint();
+      msg.className="msg bad"; msg.innerHTML=T(M.caught,{의심도:C.caughtSus}); addSus(C.caughtSus); return; }
+    if(Date.now()-last<C.gap) return; last=Date.now(); n++; paint();
+    if(n>=C.pulls){ done=true; clearTimeout(timer); set("away"); msg.className="msg ok"; msg.innerHTML=T(M.done);
+      btn.innerHTML=T(M.take); btn.onclick=()=>{closePanel(); advance(3,T(TEXT.s2.found));}; }
+  };
+  paint(); set("away"); timer=setTimeout(loop,rnd(1800,3000));
 }
 /* ---------- 3단계 ---------- */
 function stage3HTML(){
@@ -341,18 +408,67 @@ function resetAll(){S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,d
 function bindFoot(){const b=$("#tbtn"); if(b) b.onclick=teacher;
   const r=$("#rbtn"); if(r){ let t=null; r.onclick=()=>{ if(t){clearTimeout(t);resetAll();return;}
     r.textContent=T(TEXT.common.restartAgain); t=setTimeout(()=>{t=null;r.textContent=T(TEXT.common.restart);},4000); }; } }
+/* 교사 모드: 비밀번호를 한 번 넣으면 켜지고, 화면 구석 버튼으로 단계를 바로 넘길 수 있음.
+   이 기기에 기억되므로 학생 기기에서는 꼭 끄세요. */
+const TKEY="censor-escape-teacher";
+let teacherMode=false; try{teacherMode=localStorage.getItem(TKEY)==="1";}catch(e){}
+function setTeacherMode(on){ teacherMode=on; try{on?localStorage.setItem(TKEY,"1"):localStorage.removeItem(TKEY);}catch(e){} paintTeacher(); }
+// 바로 가기 목록: [이름, 상태를 맞추고 화면을 여는 함수]
+const JUMPS=[
+  ["프롤로그",()=>{S.stage=0;}],
+  ["1단계",()=>{S.stage=1;},"s1"],["서랍 게임",()=>{S.stage=1;},"m1"],
+  ["2단계",()=>{S.stage=2;},"s2"],["서류함 게임",()=>{S.stage=2;},"m2"],
+  ["3단계",()=>{S.stage=3;},"s3"],["문",()=>{S.stage=4;},"door"],
+  ["에필로그",()=>{S.stage=4;S.done=Date.now();S.epi=false;}],
+  ["결과 화면",()=>{S.stage=4;S.done=S.done||Date.now();S.epi=true;}]
+];
+const PANELS={s1:()=>[stage1HTML(),bindStage1],m1:()=>[m1HTML(),bindM1],s2:()=>[stage2HTML(),bindStage2],m2:()=>[m2HTML(),bindM2],s3:()=>[stage3HTML(),bindStage3],door:()=>[doorHTML(),bindDoor]};
+function openKey(k){ const [h,b]=PANELS[k](); openPanel(k,h,b); }
+function jumpTo(i){
+  vnStop(); document.querySelectorAll(".overlay").forEach(x=>x.remove());
+  S.group=S.group||1; S.done=null; S.epi=false; S.start=S.start||Date.now();
+  S.approved=false;   // 문 화면에서 비밀번호 칸이 다시 보이게
+  JUMPS[i][1](); save(); render(); window.scrollTo(0,0);
+  if(JUMPS[i][2]) openKey(JUMPS[i][2]);
+}
+// 지금 화면 바로 다음으로
+function teacherNext(){
+  if(!S.group) return jumpTo(0);
+  if(S.done) return jumpTo(JUMPS.length-1);
+  if(S.stage===0) return jumpTo(1);
+  const order=["s1","m1","s2","m2","s3","door"], room={1:"s1",2:"s2",3:"s3",4:"door"};
+  if(!curKey) return openKey(room[S.stage]);
+  if(curKey==="door"){ S.approved=true; closePanel(); return finish(); }
+  jumpTo(JUMPS.findIndex(j=>j[2]===order[order.indexOf(curKey)+1]));
+}
+function paintTeacher(){
+  let t=document.querySelector("#tbar");
+  const show=teacherMode&&!(S.done&&S.epi);
+  if(!teacherMode){ if(t) t.remove(); return; }
+  if(!t){ t=document.createElement("div"); t.id="tbar";
+    t.innerHTML=`<span>교사 모드</span><button type="button" id="tmenu">메뉴</button><button type="button" id="tnext">넘기기 ▶</button>`;
+    document.body.appendChild(t); t.querySelector("#tmenu").onclick=teacher; t.querySelector("#tnext").onclick=teacherNext; }
+  t.querySelector("#tnext").hidden=!show;
+}
 function teacher(){
   const o=document.createElement("div");o.className="overlay";o.setAttribute("role","dialog");o.setAttribute("aria-label","교사용");
-  o.innerHTML=`<div class="card"><h2>교사용</h2><div class="row"><input type="password" id="tp" inputmode="numeric" autocomplete="off" aria-label="비밀번호" style="max-width:200px">
-  <button class="btn" id="to" type="button">열기</button><button class="btn ghost" id="tc" type="button">닫기</button></div><div id="tb"></div></div>`;
+  o.innerHTML=`<div class="card"><h2>교사용</h2><div class="row" id="tlogin"><input type="password" id="tp" inputmode="numeric" autocomplete="off" aria-label="비밀번호" style="max-width:200px">
+  <button class="btn" id="to" type="button">열기</button></div><div id="tb"></div><div class="row"><button class="btn ghost" id="tc" type="button">닫기</button></div></div>`;
   document.body.appendChild(o);
-  $("#tc").onclick=()=>o.remove();
-  $("#to").onclick=()=>{ if($("#tp").value!==CONFIG.teacherPin){$("#tb").innerHTML='<p class="msg bad">비밀번호가 맞지 않습니다.</p>';return;}
-    $("#tb").innerHTML=`<div class="row"><button class="btn" id="p5" type="button">+5분</button><button class="btn ghost" id="rs" type="button">이 기기 처음부터</button></div><p class="msg" id="tm"></p>
+  const q=s=>o.querySelector(s);
+  q("#tc").onclick=()=>o.remove();
+  const open=()=>{ q("#tlogin").hidden=true; setTeacherMode(true);
+    q("#tb").innerHTML=`<p class="note">교사 모드가 켜졌습니다. 화면 오른쪽 아래 ‘넘기기 ▶’로 문제를 풀지 않고 다음으로 넘어갈 수 있습니다. 이 기기에 기억되니 학생 기기에서는 꼭 끄세요.</p>
+    <h3>바로 가기</h3><div class="row tjump">${JUMPS.map((j,i)=>`<button class="btn ghost" type="button" data-j="${i}">${j[0]}</button>`).join("")}</div>
+    <div class="row"><button class="btn" id="p5" type="button">+5분</button><button class="btn ghost" id="rs" type="button">이 기기 처음부터</button><button class="btn ghost" id="toff" type="button">교사 모드 끄기</button></div><p class="msg" id="tm"></p>
     <h3>정답</h3><ul class="key"><li>1단계: ${CONFIG.cards.map((c,i)=>`${i+1}번 ${c.answer}`).join(", ")}</li>
     <li>2단계: ${CONFIG.docs.map((d,i)=>`${i+1}번 ${TLABEL[d.type]}`).join(", ")} / 삭제 도장 글의 특징은 ‘${esc(CONFIG.s2quiz.opts[CONFIG.s2quiz.ans])}’</li>
     <li>3단계: 삭제 대상 낱말(${CONFIG.s3.banned.join(", ")})을 쓰지 않고, 상징어를 넣은 두 줄 이상의 시와 숨은 뜻을 확인</li></ul>`;
-    $("#p5").onclick=()=>{S.extra+=300;save();paintClock();$("#tm").textContent="5분을 더했습니다.";};
-    $("#rs").onclick=()=>{o.remove();resetAll();}; };
+    o.querySelectorAll("[data-j]").forEach(b=>b.onclick=()=>{o.remove();jumpTo(+b.dataset.j);});
+    q("#p5").onclick=()=>{S.extra+=300;save();paintClock();q("#tm").textContent="5분을 더했습니다.";};
+    q("#rs").onclick=()=>{o.remove();resetAll();};
+    q("#toff").onclick=()=>{setTeacherMode(false);o.remove();}; };
+  if(teacherMode) return open();
+  q("#to").onclick=()=>{ if(q("#tp").value!==CONFIG.teacherPin){q("#tb").innerHTML='<p class="msg bad">비밀번호가 맞지 않습니다.</p>';return;} open(); };
 }
 render();

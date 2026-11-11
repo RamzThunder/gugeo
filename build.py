@@ -12,7 +12,14 @@ html = read("game.html")
 html = re.sub(r'<script src="([^"]+)"></script>',
               lambda m: "<script>\n" + read(m.group(1)) + "\n</script>", html)
 # 2) "img/....png" 문자열을 data URI 로 바꿉니다.
-html = re.sub(r'"(img/[^"]+\.png)"', lambda m: '"data:image/png;base64,' + b64(m.group(1)) + '"', html)
+#    파일이 없으면 (예: 설명 속 예시 경로) 그대로 두고 알려 줍니다.
+def img_uri(m):
+    p = m.group(1)
+    if not os.path.exists(os.path.join(ROOT, p)):
+        print("  그림 파일이 없어 건너뜀:", p)
+        return m.group(0)
+    return '"data:image/png;base64,' + b64(p) + '"'
+html = re.sub(r'"(img/[^"]+\.png)"', img_uri, html)
 # 3) 글꼴 url(fonts/...) 을 data URI 로 바꿉니다.
 html = re.sub(r'url\((fonts/[^)]+\.woff2)\)', lambda m: "url(data:font/woff2;base64," + b64(m.group(1)) + ")", html)
 os.makedirs(os.path.join(ROOT, "dist"), exist_ok=True)
