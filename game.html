@@ -6,6 +6,7 @@
 <title>검열국 탈출</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
+html{touch-action:manipulation}
 /* 글꼴: 갈무리(Galmuri11), SIL OFL 1.1 */
 @font-face{font-family:"Galmuri11";font-weight:400;src:url(fonts/Galmuri11.woff2) format("woff2")}
 @font-face{font-family:"Galmuri11";font-weight:700;src:url(fonts/Galmuri11-Bold.woff2) format("woff2")}
@@ -110,6 +111,11 @@ p{margin:0}
 .mbub{position:absolute;right:30%;top:8%;font-family:var(--serif);font-weight:700;font-size:clamp(18px,4vw,30px);color:#1b1608;background:#fff6dd;border:3px solid #0a0b0e;padding:2px 12px;line-height:1.3}
 .mbub:empty{display:none}
 .mboss.look .mbub{background:var(--stamp);color:#fff}
+.mhold{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);z-index:6;width:min(78%,440px);min-height:clamp(52px,11cqw,80px);display:flex;align-items:center;justify-content:center;gap:10px;font:700 clamp(16px,3.6cqw,26px)/1.2 var(--serif);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.7);background:linear-gradient(90deg,var(--amber) var(--p,0%),rgba(20,22,28,.9) var(--p,0%));border:3px solid #0a0b0e;box-shadow:0 4px 0 #0a0b0e;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+.mhold .ico{width:1.6em;height:1.6em;object-fit:contain}
+.mhold.on{transform:translateX(-50%) translateY(3px);box-shadow:0 1px 0 #0a0b0e;filter:brightness(1.15)}
+.mhold.lock{opacity:.55}
+.mboss{touch-action:none}
 .mrib{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mute)}
 .mrib .g{flex:1;max-width:320px;height:12px;background:var(--line);display:block;overflow:hidden;border:2px solid #0a0b0e}
 .mrib .g i{display:block;height:100%;width:0;background:var(--amber);transition:width .15s}

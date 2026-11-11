@@ -326,37 +326,60 @@ function m2HTML(){
   <p class="story">${T(M.story)}</p>
   <div class="pixwrap"><div class="stage mboss away" id="mstage"><img class="bgimg" src="${IMG.room}" alt="">
     <span class="sw" style="--h:88%"><img class="spr0" id="mspr" src="${IMG.bossBack||IMG.boss}" alt="상관"></span>
-    <span class="mbub" id="mbub" aria-hidden="true"></span></div></div>
-  <div class="msg" id="msg" aria-live="polite">${T(M.away)}</div>
-  <div class="mrib"><img class="ico" src="${IMG.ribbon}" alt=""><span>${T(M.progress)}</span><span class="g"><i id="mbar"></i></span></div>
-  <div class="row"><button class="btn" id="mpull" type="button">${T(M.btn)}</button></div></div>`;
+    <span class="mbub" id="mbub" aria-hidden="true"></span>
+    <button class="mhold" id="mpull" type="button" style="--p:0%"><img class="ico" src="${IMG.ribbon}" alt=""><span id="mlab">${T(M.btn)}</span></button></div></div>
+  <div class="msg" id="msg" aria-live="polite">${T(M.away)}</div></div>`;
 }
+/* 꾹 누르고 있는 동안 리본이 당겨진다. 상관 패턴은 매번 다르게(랜덤) 움직인다. */
 function bindM2(){
-  const M=TEXT.m2, C=CONFIG.m2, el=panels.m2, st=$("#mstage"), spr=$("#mspr"), bub=$("#mbub"), msg=$("#msg"), btn=$("#mpull"), bar=$("#mbar");
-  let n=0, last=0, mode="away", locked=false, timer=null, done=false;
+  const M=TEXT.m2, C=CONFIG.m2, el=panels.m2, st=$("#mstage"), spr=$("#mspr"), bub=$("#mbub"), msg=$("#msg"), btn=$("#mpull"), lab=$("#mlab");
+  let n=0, mode="away", locked=false, timer=null, done=false, holding=false, lastT=0;
   const rnd=(a,b)=>a+Math.random()*(b-a);
-  const paint=()=>{bar.style.width=Math.min(100,n/C.pulls*100)+"%";};
+  const paint=()=>{btn.style.setProperty("--p",Math.min(100,n/C.holdSec*100)+"%");};
   const set=m=>{ mode=m; st.className="stage mboss "+m+(IMG.bossBack?" hasback":"");
     spr.src=m==="look"?IMG.bossSus:(IMG.bossBack||IMG.boss);
     bub.textContent=T({away:M.bubAway,warn:M.bubWarn,look:M.bubLook}[m]||"");
     if(!locked||m==="away"){ msg.className="msg"+(m==="look"?" bad":""); msg.innerHTML=T(M[m]); }
-    if(m==="away"){ locked=false; btn.disabled=false; } };
+    if(m==="away"){ locked=false; btn.classList.remove("lock"); } };
+  // 상관 패턴: 서류 읽기 → (헛기침 → 돌아봄 | 헛기침만 하고 다시 서류) → ... 길이도 순서도 매번 랜덤
   const loop=()=>{
     if(done||!el.isConnected) return;
     if(el.hidden){ timer=setTimeout(loop,500); return; }   // 창을 닫아 두면 멈춤
-    if(mode==="away"){ set("warn"); timer=setTimeout(loop,700); }
-    else if(mode==="warn"){ set("look"); timer=setTimeout(loop,rnd(1300,2200)); }
-    else { set("away"); timer=setTimeout(loop,rnd(1600,3400)); }
+    if(mode==="away"){
+      set("warn"); timer=setTimeout(loop,rnd(400,1000));
+    } else if(mode==="warn"){
+      if(Math.random()<C.fakeChance){ set("away"); timer=setTimeout(loop,rnd(700,2200)); }   // 헛기침만 하고 안 돌아봄
+      else { set("look"); timer=setTimeout(loop,rnd(900,2600)); }
+    } else {
+      set("away");
+      timer=setTimeout(loop, Math.random()<C.quickChance?rnd(500,1000):rnd(1200,4500));      // 가끔 금방 또 헛기침
+    }
   };
-  btn.onclick=()=>{
-    if(done||locked) return;
-    if(mode==="look"){ locked=true; btn.disabled=true; n=Math.max(0,n-C.caughtBack); paint();
-      msg.className="msg bad"; msg.innerHTML=T(M.caught,{의심도:C.caughtSus}); addSus(C.caughtSus); return; }
-    if(Date.now()-last<C.gap) return; last=Date.now(); n++; paint();
-    if(n>=C.pulls){ done=true; clearTimeout(timer); set("away"); msg.className="msg ok"; msg.innerHTML=T(M.done);
-      btn.innerHTML=T(M.take); btn.onclick=()=>{closePanel(); advance(3,T(TEXT.s2.found));}; }
+  const caught=()=>{ locked=true; holding=false; btn.classList.remove("on"); btn.classList.add("lock");
+    n=Math.max(0,n-C.caughtBackSec); paint();
+    msg.className="msg bad"; msg.innerHTML=T(M.caught,{의심도:C.caughtSus}); addSus(C.caughtSus); };
+  const tick=()=>{
+    const now=performance.now(), dt=Math.min(0.2,(now-lastT)/1000); lastT=now;
+    if(done||!el.isConnected){ return; }
+    if(holding&&!locked){
+      if(mode==="look"){ caught(); }
+      else { n+=dt; paint();
+        if(n>=C.holdSec){ finish(); return; } }
+    }
+    requestAnimationFrame(tick);
   };
-  paint(); set("away"); timer=setTimeout(loop,rnd(1800,3000));
+  const finish=()=>{ done=true; holding=false; clearTimeout(timer); set("away"); btn.classList.remove("on");
+    btn.style.setProperty("--p","100%"); msg.className="msg ok"; msg.innerHTML=T(M.done);
+    lab.innerHTML=T(M.take); btn.onclick=()=>{closePanel(); advance(3,T(TEXT.s2.found));}; };
+  const down=e=>{ if(done||locked) return; e.preventDefault(); holding=true; btn.classList.add("on");
+    try{btn.setPointerCapture(e.pointerId);}catch(_){} };
+  const up=()=>{ holding=false; btn.classList.remove("on"); };
+  btn.addEventListener("pointerdown",down);
+  ["pointerup","pointercancel","lostpointercapture"].forEach(t=>btn.addEventListener(t,up));
+  btn.addEventListener("contextmenu",e=>e.preventDefault());
+  btn.addEventListener("keydown",e=>{ if((e.key===" "||e.key==="Enter")&&!e.repeat){ if(done){btn.click();return;} e.preventDefault(); down({preventDefault(){},pointerId:0}); }});
+  btn.addEventListener("keyup",e=>{ if(e.key===" "||e.key==="Enter") up(); });
+  paint(); set("away"); lastT=performance.now(); requestAnimationFrame(tick); timer=setTimeout(loop,rnd(1500,2800));
 }
 /* ---------- 3단계 ---------- */
 function stage3HTML(){
