@@ -48,15 +48,17 @@ const CUT={
    나중에 적힌 물건이 위에 쌓입니다. 열쇠(key)는 맨 아래에 깔립니다. */
 const DRAWER={
   bg:"",   // 서랍 속 바닥 그림 (예: img/drawer_inside.png 를 따옴표 안에). 비우면 나무 무늬 임시 바닥.
-  key:{x:54,y:47,w:16,h:26,s:"img/key_big.png"},
+  /* 열쇠는 게임을 열 때마다 물건 밑 아무 데나 랜덤으로 놓입니다 (물건 2개 이상에 덮이는 자리만 골라요).
+     w, h는 열쇠 크기(%)입니다. x, y는 코드가 정하므로 적지 않아도 됩니다. */
+  key:{w:16,h:26,s:"img/key_big.png"},
   items:{
-    bundle:{x:46,y:38,w:34,h:44,r:-4,s:"img/drawer_bundle.png"},
-    ledger:{x:52,y:44,w:26,h:40,r:6,s:"img/drawer_ledger.png"},
-    stamp: {x:20,y:56,w:16,h:26,r:-12,s:"img/drawer_stamp.png"},
-    paper: {x:8, y:12,w:34,h:40,r:-8,s:"img/drawer_paper.png"},
-    pen:   {x:30,y:22,w:30,h:12,r:18,s:"img/drawer_pen.png"},
-    lens:  {x:72,y:10,w:18,h:28,r:0,s:"img/drawer_lens.png"},
-    tin:   {x:60,y:60,w:22,h:26,r:-6,s:"img/drawer_tin.png"}
+    paper: {x:3, y:4, w:46,h:53,r:-8,s:"img/drawer_paper.png"},
+    ledger:{x:14,y:42,w:30,h:56,r:6,s:"img/drawer_ledger.png"},
+    bundle:{x:40,y:34,w:44,h:60,r:-4,s:"img/drawer_bundle.png"},
+    stamp: {x:3, y:62,w:20,h:36,r:-12,s:"img/drawer_stamp.png"},
+    tin:   {x:68,y:4, w:24,h:40,r:-6,s:"img/drawer_tin.png"},
+    lens:  {x:73,y:56,w:22,h:36,r:10,s:"img/drawer_lens.png"},
+    pen:   {x:30,y:22,w:40,h:10,r:18,s:"img/drawer_pen.png"}
   }
 };
 /* ===== 서류함 미니게임 그림 자리 =====

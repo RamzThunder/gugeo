@@ -282,12 +282,23 @@ function showQuiz(){
     else{b.classList.add("no");$("#qm").className="msg bad";$("#qm").innerHTML=T(TEXT.s2.quizWrong);addSus(8);}
   });
 }
+/* 열쇠 자리를 랜덤으로: 서랍 안쪽에서, 중심이 물건 2개 이상에 덮이는 곳만 후보로 삼는다 */
+function placeKey(M){
+  const K=DRAWER.key, its=M.items.map(it=>DRAWER.items[it.id]).filter(Boolean), AR=800/480, spots=[];
+  const hit=(d,cx,cy)=>cx>=d.x&&cx<=d.x+d.w&&cy>=d.y&&cy<=d.y+d.h;
+  for(let x=4;x<=96-K.w;x+=3) for(let y=4;y<=96-K.h;y+=3){
+    const cx=x+K.w/2, cy=y+K.h/2;
+    if(its.filter(d=>hit(d,cx,cy)).length>=2) spots.push([x,y]);
+  }
+  const p=spots.length?spots[Math.floor(Math.random()*spots.length)]:[K.x||50,K.y||40];
+  return {...K,x:p[0],y:p[1],r:0};
+}
 /* ---------- 미니게임 1: 서랍 속 잡동사니 치우고 열쇠 찾기 ---------- */
 function m1HTML(){
   const M=TEXT.m1, pos=(d,z)=>`left:${d.x}%;top:${d.y}%;width:${d.w}%;height:${d.h}%;z-index:${z};--r:${d.r||0}deg`;
   const items=M.items.map((it,i)=>{const d=DRAWER.items[it.id]; if(!d) return "";
     return `<button type="button" class="mitem${d.s?" img":""}" data-i="${i}" style="${pos(d,i+2)}" aria-label="${esc(it.label)} 치우기">${d.s?`<img src="${d.s}" alt="">`:`<span>${esc(it.label)}</span>`}</button>`;}).join("");
-  const k=DRAWER.key;
+  const k=placeKey(M);
   return `<div style="display:flex;flex-direction:column;gap:14px"><h2>${T(M.title)}</h2>
   <p class="story">${T(M.story)}</p>
   <div class="mdrawer"${DRAWER.bg?` style="background-image:url(${DRAWER.bg})"`:""}>
