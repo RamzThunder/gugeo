@@ -632,3 +632,11 @@ function applyBonus(sec){
   save(); paintClock(); if(add>0) toast("시간이 "+Math.round(add/60)+"분 늘었다!",true);
 }
 render();
+// 첫 화면을 띄운 뒤, 나머지 그림을 뒤에서 미리 받아 둠 (장면이 바뀔 때 끊기지 않게)
+(function preload(){
+  const urls=new Set(), walk=v=>{ if(typeof v==="string"){ if(/\.png$/.test(v)) urls.add(v); } else if(v&&typeof v==="object") Object.values(v).forEach(walk); };
+  [IMG,BLP,CUT,typeof DRAWER!=="undefined"?DRAWER:null].forEach(walk);
+  const list=[...urls]; let i=0;
+  const next=()=>{ if(i>=list.length) return; const im=new Image(); im.onload=im.onerror=next; im.src=list[i++]; };
+  setTimeout(()=>{ for(let k=0;k<4;k++) next(); },300);   // 4장씩 차례로
+})();

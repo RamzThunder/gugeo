@@ -11,13 +11,14 @@
 | `game.html` | 화면 틀과 디자인(CSS) |
 | `img/` | 배경, 캐릭터, 아이콘, 오브젝트 PNG |
 | `fonts/` | 갈무리11 글꼴 (SIL OFL 1.1) |
-| `build.py` | 위 파일들을 한 장짜리 HTML로 합침 |
-| `dist/escape_room.html` | **수업에 쓰는 단일 파일** (크롬북, 폰 어디서든 실행) |
+| `build.py` | 위 파일들을 합쳐 `dist/`를 만듦 |
+| `dist/game/` | **학생용 게임** (`index.html` + `img/` + `fonts/` 폴더째 있어야 함) |
+| `dist/tv/` | 교실 TV 화면 |
 
 ## 고치는 법
 1. `story.js`의 대사를 고칩니다.
 2. `game.html`을 브라우저로 열어 확인합니다 (VS Code의 Live Server 확장을 쓰면 저장할 때마다 새로고침됩니다).
-3. 수업용 파일이 필요하면 `python3 build.py`를 실행해 `dist/escape_room.html`을 만듭니다.
+3. 수업용 파일이 필요하면 `python3 build.py`를 실행해 `dist/`를 새로 만듭니다. 그림은 HTML에 넣지 않고 `dist/game/img/`로 복사되어, 첫 화면이 바로 뜨고 그림은 뒤따라 받아집니다.
 
 ### 대사 형식
 ```js
