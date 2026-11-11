@@ -79,6 +79,7 @@ button:hover{border-color:var(--amber)}
 #rv .act button{font-size:3.2vh;padding:1.6vh 3vw;font-weight:800}
 #rv .act .ok{background:#1f4a30;border-color:var(--ok)}
 #rv .act .no{background:#4a1f22;border-color:var(--bad)}
+#rv .act .vg{background:#3d3420;border-color:var(--amber)}
 #rv .act .sp{flex:1}
 #rv .st{font-size:2.6vh;font-weight:800}
 #setup{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;gap:2vh;z-index:20}
@@ -101,7 +102,7 @@ button:hover{border-color:var(--amber)}
   <div class="hd"><b id="rvg"></b><span>위장한 시</span><span class="sp"></span><span id="rvw"></span></div>
   <pre id="rvp"></pre>
   <details id="rvd"><summary>동지만 아는 뜻 보기</summary><p id="rvm"></p></details>
-  <div class="act"><button class="ok" id="rvok" type="button">통과</button><button class="no" id="rvno" type="button">다시 쓰기</button><span class="st" id="rvs"></span><span class="sp"></span><button id="rvx" type="button">닫기</button></div>
+  <div class="act"><button class="ok" id="rvok" type="button">통과</button><button class="no" id="rvcz" type="button">검열</button><button class="vg" id="rvvg" type="button">의미 모호</button><span class="st" id="rvs"></span><span class="sp"></span><button id="rvx" type="button">닫기</button></div>
 </div></div>
 <div id="setup"><h2>방 번호를 정하세요</h2><input id="si" maxlength="12" placeholder="예: 3반 또는 1234"><button id="sg" type="button">시작</button><button id="sr" type="button">랜덤 4자리로 시작</button></div>
 <script src="story.js"></script>
@@ -173,18 +174,21 @@ function paintReview(){ const n=rvOpen, p=(data.poems||{})[n];
   const v=(data.verdict||{})[n], judged=v&&v.for===p.t, g=(data.groups||{})[n];
   $("#rvw").textContent=new Date(p.t).toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"})+" 제출";
   const open=!judged&&!(g&&g.done);
-  $("#rvok").style.display=$("#rvno").style.display=open?"":"none";
-  $("#rvs").textContent=judged?(v.ok?"통과시켰습니다":"다시 쓰라고 돌려보냈습니다"):(g&&g.done?"이미 탈출했습니다":"");
-  $("#rvs").style.color=judged&&!v.ok?"var(--bad)":"var(--ok)"; }
+  ["#rvok","#rvcz","#rvvg"].forEach(b=>$(b).style.display=open?"":"none");
+  const k=judged?(v.kind||(v.ok?"pass":"vague")):"";
+  $("#rvs").textContent=judged?{pass:"통과시켰습니다",censor:"검열에 걸렸습니다 · 취조실로",vague:"의미가 모호해 돌려보냈습니다"}[k]:(g&&g.done?"이미 탈출했습니다":"");
+  $("#rvs").style.color=k==="censor"?"var(--bad)":k==="vague"?"var(--amber)":"var(--ok)"; }
 function closeReview(){ rvOpen=0; $("#rv").classList.remove("show"); }
-function judge(ok){ const n=rvOpen, p=(data.poems||{})[n]; if(!p) return;
-  $("#rvok").disabled=$("#rvno").disabled=true;
-  netJudge(room,n,ok,p.t).then(done=>{ $("#rvok").disabled=$("#rvno").disabled=false;
+const RVB=["#rvok","#rvcz","#rvvg"];
+function judge(kind){ const n=rvOpen, p=(data.poems||{})[n]; if(!p) return;
+  RVB.forEach(b=>$(b).disabled=true);
+  netJudge(room,n,kind,p.t).then(done=>{ RVB.forEach(b=>$(b).disabled=false);
     if(!done){ $("#rvs").style.color="var(--bad)"; $("#rvs").textContent="저장하지 못했습니다. 인터넷이나 Firebase 규칙을 확인하세요."; return; }
-    data.verdict=data.verdict||{}; data.verdict[n]={ok,for:p.t,t:Date.now()}; paint();
+    data.verdict=data.verdict||{}; data.verdict[n]={ok:kind==="pass",kind,for:p.t,t:Date.now()}; paint();
     const nx=queue()[0]; if(nx) openReview(nx); else closeReview(); }); }
-$("#rvok").onclick=()=>judge(true);
-$("#rvno").onclick=()=>judge(false);
+$("#rvok").onclick=()=>judge("pass");
+$("#rvcz").onclick=()=>judge("censor");
+$("#rvvg").onclick=()=>judge("vague");
 $("#rvx").onclick=closeReview;
 $("#rv").onclick=e=>{ if(e.target.id==="rv") closeReview(); };
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeReview(); });

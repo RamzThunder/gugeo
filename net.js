@@ -24,7 +24,8 @@ function netClear(room,g){ if(!netRoomOk(room)) return Promise.resolve();
   if(!g){ const d={}; for(let n=1;n<=Math.max(CONFIG.groups,20);n++) ["groups","poems","verdict"].forEach(k=>d[k+"/"+n]=null);
     try{ return fetch(netUrl(room),{method:"PATCH",body:JSON.stringify(d)}).catch(()=>{}); }catch(e){ return Promise.resolve(); } }
   return Promise.all([del(netUrl(room,g)),del(netKindUrl(room,"poems",g)),del(netKindUrl(room,"verdict",g))]); }
-// 3단계 위장 시: 학생이 censor/방/poems/조 에 올리고, TV가 censor/방/verdict/조 에 통과(ok:true)·다시 쓰기(ok:false)를 적습니다.
+// 3단계 위장 시: 학생이 censor/방/poems/조 에 올리고, TV가 censor/방/verdict/조 에 판정을 적습니다.
+// kind: pass(통과) · censor(검열에 걸림: 상관 등장, 취조실) · vague(의미 모호: 접선책이 돌려보냄)
 // verdict.for 에는 판정한 시의 t를 적어, 시를 고쳐 다시 내면 예전 판정은 무시됩니다.
 const netKindUrl=(room,kind,g)=>`${NET.db}/${NET.root}/${encodeURIComponent(room)}/${kind}/${g}.json`;
 function netPoem(){
@@ -35,7 +36,7 @@ function netPoem(){
 function netVerdict(room,g){
   try{ return fetch(netKindUrl(room,"verdict",g),{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null); }catch(e){ return Promise.resolve(null); }
 }
-function netJudge(room,g,ok,forT){
-  try{ return fetch(netKindUrl(room,"verdict",g),{method:"PUT",body:JSON.stringify({ok:!!ok,for:forT,t:Date.now()})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
+function netJudge(room,g,kind,forT){
+  try{ return fetch(netKindUrl(room,"verdict",g),{method:"PUT",body:JSON.stringify({ok:kind==="pass",kind,for:forT,t:Date.now()})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
 }
 setInterval(()=>netPush(false),4000);

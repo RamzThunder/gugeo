@@ -494,25 +494,34 @@ function watchVerdict(){
     netVerdict(room,gp).then(v=>{
       if(!v||v.for!==at||!verdictTimer||S.done||S.stage!==4||S.poemAt!==at) return;
       stopVerdict();
-      if(v.ok){ S.approved=true; finish(); } else rejected();
+      const k=v.kind||(v.ok?"pass":"vague");
+      if(k==="pass"){ S.approved=true; finish(); } else rejected(k);
     });
   };
   verdictTimer=setInterval(chk,3000); chk();
 }
-// 선생님이 '다시 쓰기'를 누르면 접선책 장면을 보여 주고, 3단계로 돌아가 원래 시를 고쳐 씀
-function rejected(){
-  const poem=S.poem, mean=S.meaning;
+// 선생님이 TV에서 '검열'이나 '의미 모호'를 누르면 장면을 보여 주고, 3단계로 돌아가 원래 시를 고쳐 씀
+//  censor: 상관이 시를 붙잡음 → 의심도 가득 → 취조실(심문, 60초 손해)
+//  vague : 접선책이 뜻이 흐리다며 돌려보냄
+function rejected(kind){
+  const poem=S.poem, mean=S.meaning, D=TEXT.door, cz=kind==="censor";
   S.stage=3; S.wired=true; S.poem=""; S.meaning=""; S.poemAt=0; save(); render(); window.scrollTo(0,0);
-  const D=TEXT.door, o=document.createElement("div"); o.className="overlay"; o.setAttribute("role","dialog");
-  o.innerHTML='<div class="card" style="border-color:var(--stamp)">'+stageHTML("street","contactSide")+`<h2>${T(D.rejectTitle)}</h2>
-  <p><b>${T(D.rejectWho)}</b><br>${T(D.rejectLine)}</p>
-  <div class="paper"><span class="no">${T(D.rejectPoemLabel)}</span><div class="txt" style="white-space:pre-wrap">${esc(poem)}</div></div>
-  <p class="note">${T(D.rejectNote)}</p><button class="btn" id="rjx" type="button">${T(D.rejectBtn)}</button></div>`;
-  document.body.appendChild(o);
-  o.querySelector("#rjx").onclick=()=>{ o.remove(); openKey("s3");
+  const back=msg=>{ openKey("s3");
     const t1=$("#t1"), t2=$("#t2"), m=$("#msg");
     if(t1){ t1.value=poem||""; t2.value=mean||""; t1.oninput&&t1.oninput(); }
-    if(m){ m.className="msg bad"; m.innerHTML=T(D.rejected); } };
+    if(m){ m.className="msg bad"; m.innerHTML=T(msg); } };
+  const o=document.createElement("div"); o.className="overlay"; o.setAttribute("role","dialog");
+  o.innerHTML='<div class="card" style="border-color:var(--stamp)">'+(cz?stageHTML("room","bossSus"):stageHTML("street","contactSide"))+`<h2>${T(cz?D.censorTitle:D.rejectTitle)}</h2>
+  <p><b>${T(cz?D.censorWho:D.rejectWho)}</b><br>${T(cz?D.censorLine:D.rejectLine)}</p>
+  <div class="paper"><span class="no">${T(cz?D.censorPoemLabel:D.rejectPoemLabel)}</span><div class="txt" style="white-space:pre-wrap">${esc(poem)}</div></div>
+  ${cz?`<p class="msg bad"><b>${T(D.censorSus)}</b></p>`:`<p class="note">${T(D.rejectNote)}</p>`}
+  <button class="btn" id="rjx" type="button">${T(cz?D.censorBtn:D.rejectBtn)}</button></div>`;
+  document.body.appendChild(o);
+  o.querySelector("#rjx").onclick=()=>{ o.remove();
+    if(!cz) return back(D.rejected);
+    addSus(Math.max(0,100-S.sus));   // 의심도 가득 → 취조실 장면(심문)이 뜸
+    const ox=[...document.querySelectorAll(".overlay #ox")].pop();
+    if(ox) ox.onclick=()=>{ ox.closest(".overlay").remove(); back(D.censorAfter); }; else back(D.censorAfter); };
 }
 function finish(){S.done=Date.now();save();render();window.scrollTo(0,0);}
 /* ---------- 마무리 ---------- */
