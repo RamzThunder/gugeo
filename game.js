@@ -7,7 +7,7 @@ const $$=s=>ROOT.querySelectorAll(s);
 // story.js의 TEXT 문구에서 {분} {힌트초} {조} 같은 자리를 채움
 const T=(s,o)=>String(s).replace(/\{([^{}]+)\}/g,(m,k)=>{const v=Object.assign({분:CONFIG.minutes,힌트초:CONFIG.hintPenaltySec,조:S.group},o)[k];return v==null?m:v;});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-let S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:""};
+let S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",wired:false};
 try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(S,JSON.parse(r));}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 let tick=null, ui={sel:{},per:{},cls:{},stamped:false,quiz:null,hintOn:null,s3ok:false};
@@ -157,7 +157,7 @@ function useObj(o){
   if(o==="cabinet"){ if(S.stage<2) return toast(T(TEXT.room.cabinetLocked));
     if(S.stage===2) return openPanel("s2",stage2HTML(),bindStage2); return toast(T(TEXT.room.cabinetDone)); }
   if(o==="typewriter"){ if(S.stage<3) return toast(T(TEXT.room.typewriterLocked)); 
-    if(S.stage===3) return openPanel("s3",stage3HTML(),bindStage3); return toast(T(TEXT.room.typewriterDone)); }
+    if(S.stage===3) return S.wired?openPanel("s3",stage3HTML(),bindStage3):openPanel("m3",m3HTML(),bindM3); return toast(T(TEXT.room.typewriterDone)); }
   if(o==="door"){ if(S.stage<4) return toast(T(TEXT.room.doorLocked));
     return openPanel("door",doorHTML(),bindDoor); }
 }
@@ -370,7 +370,7 @@ function bindM2(){
   };
   const finish=()=>{ done=true; holding=false; clearTimeout(timer); set("away"); btn.classList.remove("on");
     btn.style.setProperty("--p","100%"); msg.className="msg ok"; msg.innerHTML=T(M.done);
-    lab.innerHTML=T(M.take); btn.onclick=()=>{closePanel(); advance(3,T(TEXT.s2.found));}; };
+    lab.innerHTML=T(M.take); btn.onclick=()=>{closePanel(); S.stage=3; save(); playVN(BOSSOUT,()=>{render(); toast(T(TEXT.s2.found),true); window.scrollTo(0,0);});}; };
   const down=e=>{ if(done||locked) return; e.preventDefault(); holding=true; btn.classList.add("on");
     try{btn.setPointerCapture(e.pointerId);}catch(_){} };
   const up=()=>{ holding=false; btn.classList.remove("on"); };
@@ -380,6 +380,56 @@ function bindM2(){
   btn.addEventListener("keydown",e=>{ if((e.key===" "||e.key==="Enter")&&!e.repeat){ if(done){btn.click();return;} e.preventDefault(); down({preventDefault(){},pointerId:0}); }});
   btn.addEventListener("keyup",e=>{ if(e.key===" "||e.key==="Enter") up(); });
   paint(); set("away"); lastT=performance.now(); requestAnimationFrame(tick); timer=setTimeout(loop,rnd(1500,2800));
+}
+/* ---------- 미니게임 3: 타자기 리본 걸기 (어몽어스 전선 연결처럼 같은 색끼리 이어 주기) ---------- */
+const WCOL=[["#e5484d","●","빨강"],["#3e8ef7","■","파랑"],["#f2c230","▲","노랑"],["#4fc27a","◆","초록"]];
+function m3HTML(){
+  const M=TEXT.m3;
+  return `<div style="display:flex;flex-direction:column;gap:14px"><h2>${T(M.title)}</h2>
+  <p class="story">${T(M.story)}</p>
+  <div class="pixwrap wirewrap"><svg id="wsvg" viewBox="0 0 400 300" role="group" aria-label="${esc(M.title)}"></svg></div>
+  <div class="msg" id="msg" aria-live="polite">${T(M.start)}</div><div class="row" id="m3go"></div></div>`;
+}
+function bindM3(){
+  const M=TEXT.m3, C=CONFIG.m3, svg=$("#wsvg"), msg=$("#msg"), NS="http://www.w3.org/2000/svg";
+  const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+  const L=[0,1,2,3], R=shuf(L), Y=[42,108,174,240], LX=46, RX=354;
+  const mk=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  svg.appendChild(mk("rect",{x:0,y:0,width:400,height:300,fill:"#15171d"}));
+  [LX-30,RX-16].forEach(x=>svg.appendChild(mk("rect",{x,y:14,width:46,height:272,fill:"#2a2d36",stroke:"#0a0b0e","stroke-width":3})));
+  const wires=svg.appendChild(mk("g",{})), nodes=svg.appendChild(mk("g",{}));
+  const node=(x,y,c,side,id)=>{
+    const g=mk("g",{"data-side":side,"data-c":id,style:"cursor:pointer"});
+    g.appendChild(mk("circle",{cx:x,cy:y,r:30,fill:"transparent"}));
+    g.appendChild(mk("circle",{cx:x,cy:y,r:17,fill:WCOL[id][0],stroke:"#0a0b0e","stroke-width":4}));
+    const t=mk("text",{x,y:y+6,"text-anchor":"middle","font-size":17,"font-weight":700,fill:"#0a0b0e","pointer-events":"none"}); t.textContent=WCOL[id][1]; g.appendChild(t);
+    nodes.appendChild(g); return {x,y,id,g,side,done:false};
+  };
+  const LN=L.map((id,i)=>node(LX,Y[i],0,"L",id)), RN=R.map((id,i)=>node(RX,Y[i],0,"R",id));
+  const path=(a,b)=>{const dx=Math.max(60,Math.abs(b.x-a.x)*.5);return `M${a.x} ${a.y} C${a.x+dx} ${a.y} ${b.x-dx} ${b.y} ${b.x} ${b.y}`;};
+  const draw=(a,b,id,solid)=>{const o=mk("path",{d:path(a,b),fill:"none",stroke:"#0a0b0e","stroke-width":16,"stroke-linecap":"round"}),
+    p=mk("path",{d:path(a,b),fill:"none",stroke:WCOL[id][0],"stroke-width":9,"stroke-linecap":"round"}); wires.append(o,p); return [o,p];};
+  const pt=e=>{const m=svg.getScreenCTM().inverse(),p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(m);return {x:q.x,y:q.y};};
+  const near=(p,list)=>list.filter(n=>!n.done).map(n=>[Math.hypot(n.x-p.x,n.y-p.y),n]).filter(d=>d[0]<C.snap).sort((a,b)=>a[0]-b[0])[0];
+  let drag=null, solved=0, tmp=null;
+  svg.style.touchAction="none";
+  svg.addEventListener("pointerdown",e=>{ if(solved>=4) return;
+    const p=pt(e), all=[...LN,...RN], hit=all.filter(n=>!n.done).map(n=>[Math.hypot(n.x-p.x,n.y-p.y),n]).filter(d=>d[0]<C.snap).sort((a,b)=>a[0]-b[0])[0];
+    if(!hit) return; e.preventDefault(); drag=hit[1]; try{svg.setPointerCapture(e.pointerId);}catch(_){} });
+  svg.addEventListener("pointermove",e=>{ if(!drag) return; if(tmp) tmp.forEach(x=>x.remove());
+    const p=pt(e); tmp=draw(drag.side==="L"?drag:{x:p.x,y:p.y},drag.side==="L"?{x:p.x,y:p.y}:drag,drag.id); });
+  const end=e=>{ if(!drag) return; if(tmp){tmp.forEach(x=>x.remove());tmp=null;}
+    const p=pt(e), other=drag.side==="L"?RN:LN, h=near(p,other); const a=drag; drag=null;
+    if(!h) return; const b=h[1];
+    if(a.id===b.id){ a.done=b.done=true; solved++; const [l,r]=a.side==="L"?[a,b]:[b,a]; draw(l,r,a.id);
+      a.g.style.cursor=b.g.style.cursor="default";
+      if(solved<4){ msg.className="msg ok"; msg.innerHTML=T(M.good,{남은:4-solved}); }
+      else{ msg.className="msg ok"; msg.innerHTML=T(M.done);
+        const go=document.createElement("button"); go.className="btn"; go.type="button"; go.textContent=T(M.sit);
+        go.onclick=()=>{ S.wired=true; save(); closePanel(); openPanel("s3",stage3HTML(),bindStage3); }; $("#m3go").appendChild(go); }
+    } else { msg.className="msg bad"; msg.innerHTML=T(M.wrong,{의심도:C.wrongSus}); if(C.wrongSus) addSus(C.wrongSus); }
+  };
+  svg.addEventListener("pointerup",end); svg.addEventListener("pointercancel",e=>{drag=null;if(tmp){tmp.forEach(x=>x.remove());tmp=null;}});
 }
 /* ---------- 3단계 ---------- */
 function stage3HTML(){
@@ -438,7 +488,7 @@ function finaleHTML(){
   <div class="foot"><span></span><span><button id="rbtn" type="button">${T(TEXT.common.restart)}</button> <button id="tbtn" type="button">${T(TEXT.common.teacher)}</button></span></div></div>`;
 }
 /* ---------- 교사용 ---------- */
-function resetAll(){S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:""};save();render();window.scrollTo(0,0);}
+function resetAll(){S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",wired:false};save();render();window.scrollTo(0,0);}
 function bindFoot(){const b=$("#tbtn"); if(b) b.onclick=teacher;
   const r=$("#rbtn"); if(r){ let t=null; r.onclick=()=>{ if(t){clearTimeout(t);resetAll();return;}
     r.textContent=T(TEXT.common.restartAgain); t=setTimeout(()=>{t=null;r.textContent=T(TEXT.common.restart);},4000); }; } }
@@ -452,12 +502,13 @@ const JUMPS=[
   ["프롤로그",()=>{S.stage=0;}],
   ["1단계",()=>{S.stage=1;},"s1"],["서랍 게임",()=>{S.stage=1;},"m1"],
   ["2단계",()=>{S.stage=2;},"s2"],["서류함 게임",()=>{S.stage=2;},"m2"],
-  ["3단계",()=>{S.stage=3;},"s3"],["문",()=>{S.stage=4;},"door"],
+  ["상관 자리 비움",()=>{S.stage=3;},"boss"],["리본 걸기 게임",()=>{S.stage=3;S.wired=false;},"m3"],
+  ["3단계",()=>{S.stage=3;S.wired=true;},"s3"],["문",()=>{S.stage=4;},"door"],
   ["에필로그",()=>{S.stage=4;S.done=Date.now();S.epi=false;}],
   ["결과 화면",()=>{S.stage=4;S.done=S.done||Date.now();S.epi=true;}]
 ];
-const PANELS={s1:()=>[stage1HTML(),bindStage1],m1:()=>[m1HTML(),bindM1],s2:()=>[stage2HTML(),bindStage2],m2:()=>[m2HTML(),bindM2],s3:()=>[stage3HTML(),bindStage3],door:()=>[doorHTML(),bindDoor]};
-function openKey(k){ const [h,b]=PANELS[k](); openPanel(k,h,b); }
+const PANELS={s1:()=>[stage1HTML(),bindStage1],m1:()=>[m1HTML(),bindM1],s2:()=>[stage2HTML(),bindStage2],m2:()=>[m2HTML(),bindM2],m3:()=>[m3HTML(),bindM3],s3:()=>[stage3HTML(),bindStage3],door:()=>[doorHTML(),bindDoor]};
+function openKey(k){ if(k==="boss"){ S.stage=3; save(); return playVN(BOSSOUT,()=>{render();window.scrollTo(0,0);}); } const [h,b]=PANELS[k](); openPanel(k,h,b); }
 function jumpTo(i){
   vnStop(); document.querySelectorAll(".overlay").forEach(x=>x.remove());
   S.group=S.group||1; S.done=null; S.epi=false; S.start=S.start||Date.now();
@@ -470,7 +521,7 @@ function teacherNext(){
   if(!S.group) return jumpTo(0);
   if(S.done) return jumpTo(JUMPS.length-1);
   if(S.stage===0) return jumpTo(1);
-  const order=["s1","m1","s2","m2","s3","door"], room={1:"s1",2:"s2",3:"s3",4:"door"};
+  const order=["s1","m1","s2","m2","boss","m3","s3","door"], room={1:"s1",2:"s2",3:S.wired?"s3":"m3",4:"door"};
   if(!curKey) return openKey(room[S.stage]);
   if(curKey==="door"){ S.approved=true; closePanel(); return finish(); }
   jumpTo(JUMPS.findIndex(j=>j[2]===order[order.indexOf(curKey)+1]));

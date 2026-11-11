@@ -116,6 +116,8 @@ p{margin:0}
 .mhold.on{transform:translateX(-50%) translateY(3px);box-shadow:0 1px 0 #0a0b0e;filter:brightness(1.15)}
 .mhold.lock{opacity:.55}
 .mboss{touch-action:none}
+.wirewrap{max-width:560px;line-height:0}
+.wirewrap svg{width:100%;height:auto;display:block;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 .mrib{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mute)}
 .mrib .g{flex:1;max-width:320px;height:12px;background:var(--line);display:block;overflow:hidden;border:2px solid #0a0b0e}
 .mrib .g i{display:block;height:100%;width:0;background:var(--amber);transition:width .15s}
@@ -341,11 +343,19 @@ const CONFIG={
   s2quiz:{q:"삭제 도장이 찍힌 글은 어떤 특징을 지니고 있는가?",
     opts:["고향과 가족을 그리워하는 내용이다","일제의 지배와 탄압을 직접 비판하고 저항을 외쳤다","자연물에 빗대어 희망을 노래했다","새로운 학문을 배우자고 권했다"],ans:1},
   /* 서류함 미니게임: 리본을 몇 번 당겨야 하는지(pulls), 한 번 당긴 뒤 쉬는 시간(gap, 1000=1초), 들켰을 때 의심도(caughtSus)와 도로 들어가는 횟수(caughtBack) */
+  m3:{wrongSus:3, snap:34},   // wrongSus: 색이 다른 곳에 걸었을 때 의심도, snap: 끝점을 인식하는 거리(클수록 쉬움)
   m2:{holdSec:6, caughtSus:10, caughtBackSec:1.5, fakeChance:0.3, quickChance:0.2},   // holdSec: 꾹 눌러야 하는 누적 시간(초), caughtBackSec: 들켰을 때 되감기는 시간(초), fakeChance: 헛기침만 하고 안 돌아볼 확률, quickChance: 금방 또 헛기침할 확률
   s3:{draft:"오늘 밤 일본 경찰 몰래 독립 격문을 찍는다!",
     banned:["일본","일제","총독부","경찰","격문","독립","만세","물러","왜놈","식민","침략"],
     symbols:["봄","겨울","새벽","별","씨앗","꽃","강","달","해","아침","불씨","바람","나무","그날","님","뿌리","눈","얼음","밤","새"]}
 };
+
+/* ---------- 상관이 자리를 비우는 장면 (서류함 리본을 꺼낸 직후) ---------- */
+const BOSSOUT=[
+ {bg:"room",spr:"boss",mood:"none",who:"상관",text:"음? 총독부 서무과에서 호출이군. 자네는 계속 원고를 분류하고 있게."},
+ {bg:"room",spr:"boss",mood:"sus",who:"상관",text:"곧 돌아오겠네. 내가 없는 동안 한눈팔지 말게."},
+ {bg:"room",who:"",text:"상관이 문을 닫고 나갔다. 발소리가 복도 끝으로 멀어진다. 타자기 앞에 앉을 시간이 생겼다."}
+];
 
 /* ---------- 프롤로그 ---------- */
 const PRO=[
@@ -544,6 +554,17 @@ const TEXT={
     bubLook:"!"
   },
 
+  /* 타자기 리본 걸기 미니게임: 같은 색(모양)끼리 끌어서 이어 주기 */
+  m3:{
+    title:"타자기에 리본 끼우기",
+    story:"타자기 뚜껑을 열자 리본 가닥이 네 갈래로 엉켜 있다. 왼쪽 가닥을 끌어서 오른쪽의 같은 색 걸이에 이어 주세요.",
+    start:"같은 색, 같은 모양끼리 이으면 된다.",
+    good:"찰칵! 한 가닥 걸렸다. 앞으로 {남은}가닥.",
+    wrong:"색이 맞지 않는다. 덜컥 소리가 났다! (의심도 +{의심도})",
+    done:"리본이 모두 걸렸다. 이제 타자기를 칠 수 있다.",
+    sit:"타자기 앞에 앉는다"
+  },
+
   /* 마지막: 문 */
   door:{
     title:"접선 지점으로 가는 문",
@@ -582,7 +603,7 @@ const $$=s=>ROOT.querySelectorAll(s);
 // story.js의 TEXT 문구에서 {분} {힌트초} {조} 같은 자리를 채움
 const T=(s,o)=>String(s).replace(/\{([^{}]+)\}/g,(m,k)=>{const v=Object.assign({분:CONFIG.minutes,힌트초:CONFIG.hintPenaltySec,조:S.group},o)[k];return v==null?m:v;});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-let S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:""};
+let S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",wired:false};
 try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(S,JSON.parse(r));}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 let tick=null, ui={sel:{},per:{},cls:{},stamped:false,quiz:null,hintOn:null,s3ok:false};
@@ -732,7 +753,7 @@ function useObj(o){
   if(o==="cabinet"){ if(S.stage<2) return toast(T(TEXT.room.cabinetLocked));
     if(S.stage===2) return openPanel("s2",stage2HTML(),bindStage2); return toast(T(TEXT.room.cabinetDone)); }
   if(o==="typewriter"){ if(S.stage<3) return toast(T(TEXT.room.typewriterLocked)); 
-    if(S.stage===3) return openPanel("s3",stage3HTML(),bindStage3); return toast(T(TEXT.room.typewriterDone)); }
+    if(S.stage===3) return S.wired?openPanel("s3",stage3HTML(),bindStage3):openPanel("m3",m3HTML(),bindM3); return toast(T(TEXT.room.typewriterDone)); }
   if(o==="door"){ if(S.stage<4) return toast(T(TEXT.room.doorLocked));
     return openPanel("door",doorHTML(),bindDoor); }
 }
@@ -945,7 +966,7 @@ function bindM2(){
   };
   const finish=()=>{ done=true; holding=false; clearTimeout(timer); set("away"); btn.classList.remove("on");
     btn.style.setProperty("--p","100%"); msg.className="msg ok"; msg.innerHTML=T(M.done);
-    lab.innerHTML=T(M.take); btn.onclick=()=>{closePanel(); advance(3,T(TEXT.s2.found));}; };
+    lab.innerHTML=T(M.take); btn.onclick=()=>{closePanel(); S.stage=3; save(); playVN(BOSSOUT,()=>{render(); toast(T(TEXT.s2.found),true); window.scrollTo(0,0);});}; };
   const down=e=>{ if(done||locked) return; e.preventDefault(); holding=true; btn.classList.add("on");
     try{btn.setPointerCapture(e.pointerId);}catch(_){} };
   const up=()=>{ holding=false; btn.classList.remove("on"); };
@@ -955,6 +976,56 @@ function bindM2(){
   btn.addEventListener("keydown",e=>{ if((e.key===" "||e.key==="Enter")&&!e.repeat){ if(done){btn.click();return;} e.preventDefault(); down({preventDefault(){},pointerId:0}); }});
   btn.addEventListener("keyup",e=>{ if(e.key===" "||e.key==="Enter") up(); });
   paint(); set("away"); lastT=performance.now(); requestAnimationFrame(tick); timer=setTimeout(loop,rnd(1500,2800));
+}
+/* ---------- 미니게임 3: 타자기 리본 걸기 (어몽어스 전선 연결처럼 같은 색끼리 이어 주기) ---------- */
+const WCOL=[["#e5484d","●","빨강"],["#3e8ef7","■","파랑"],["#f2c230","▲","노랑"],["#4fc27a","◆","초록"]];
+function m3HTML(){
+  const M=TEXT.m3;
+  return `<div style="display:flex;flex-direction:column;gap:14px"><h2>${T(M.title)}</h2>
+  <p class="story">${T(M.story)}</p>
+  <div class="pixwrap wirewrap"><svg id="wsvg" viewBox="0 0 400 300" role="group" aria-label="${esc(M.title)}"></svg></div>
+  <div class="msg" id="msg" aria-live="polite">${T(M.start)}</div><div class="row" id="m3go"></div></div>`;
+}
+function bindM3(){
+  const M=TEXT.m3, C=CONFIG.m3, svg=$("#wsvg"), msg=$("#msg"), NS="http://www.w3.org/2000/svg";
+  const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+  const L=[0,1,2,3], R=shuf(L), Y=[42,108,174,240], LX=46, RX=354;
+  const mk=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  svg.appendChild(mk("rect",{x:0,y:0,width:400,height:300,fill:"#15171d"}));
+  [LX-30,RX-16].forEach(x=>svg.appendChild(mk("rect",{x,y:14,width:46,height:272,fill:"#2a2d36",stroke:"#0a0b0e","stroke-width":3})));
+  const wires=svg.appendChild(mk("g",{})), nodes=svg.appendChild(mk("g",{}));
+  const node=(x,y,c,side,id)=>{
+    const g=mk("g",{"data-side":side,"data-c":id,style:"cursor:pointer"});
+    g.appendChild(mk("circle",{cx:x,cy:y,r:30,fill:"transparent"}));
+    g.appendChild(mk("circle",{cx:x,cy:y,r:17,fill:WCOL[id][0],stroke:"#0a0b0e","stroke-width":4}));
+    const t=mk("text",{x,y:y+6,"text-anchor":"middle","font-size":17,"font-weight":700,fill:"#0a0b0e","pointer-events":"none"}); t.textContent=WCOL[id][1]; g.appendChild(t);
+    nodes.appendChild(g); return {x,y,id,g,side,done:false};
+  };
+  const LN=L.map((id,i)=>node(LX,Y[i],0,"L",id)), RN=R.map((id,i)=>node(RX,Y[i],0,"R",id));
+  const path=(a,b)=>{const dx=Math.max(60,Math.abs(b.x-a.x)*.5);return `M${a.x} ${a.y} C${a.x+dx} ${a.y} ${b.x-dx} ${b.y} ${b.x} ${b.y}`;};
+  const draw=(a,b,id,solid)=>{const o=mk("path",{d:path(a,b),fill:"none",stroke:"#0a0b0e","stroke-width":16,"stroke-linecap":"round"}),
+    p=mk("path",{d:path(a,b),fill:"none",stroke:WCOL[id][0],"stroke-width":9,"stroke-linecap":"round"}); wires.append(o,p); return [o,p];};
+  const pt=e=>{const m=svg.getScreenCTM().inverse(),p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(m);return {x:q.x,y:q.y};};
+  const near=(p,list)=>list.filter(n=>!n.done).map(n=>[Math.hypot(n.x-p.x,n.y-p.y),n]).filter(d=>d[0]<C.snap).sort((a,b)=>a[0]-b[0])[0];
+  let drag=null, solved=0, tmp=null;
+  svg.style.touchAction="none";
+  svg.addEventListener("pointerdown",e=>{ if(solved>=4) return;
+    const p=pt(e), all=[...LN,...RN], hit=all.filter(n=>!n.done).map(n=>[Math.hypot(n.x-p.x,n.y-p.y),n]).filter(d=>d[0]<C.snap).sort((a,b)=>a[0]-b[0])[0];
+    if(!hit) return; e.preventDefault(); drag=hit[1]; try{svg.setPointerCapture(e.pointerId);}catch(_){} });
+  svg.addEventListener("pointermove",e=>{ if(!drag) return; if(tmp) tmp.forEach(x=>x.remove());
+    const p=pt(e); tmp=draw(drag.side==="L"?drag:{x:p.x,y:p.y},drag.side==="L"?{x:p.x,y:p.y}:drag,drag.id); });
+  const end=e=>{ if(!drag) return; if(tmp){tmp.forEach(x=>x.remove());tmp=null;}
+    const p=pt(e), other=drag.side==="L"?RN:LN, h=near(p,other); const a=drag; drag=null;
+    if(!h) return; const b=h[1];
+    if(a.id===b.id){ a.done=b.done=true; solved++; const [l,r]=a.side==="L"?[a,b]:[b,a]; draw(l,r,a.id);
+      a.g.style.cursor=b.g.style.cursor="default";
+      if(solved<4){ msg.className="msg ok"; msg.innerHTML=T(M.good,{남은:4-solved}); }
+      else{ msg.className="msg ok"; msg.innerHTML=T(M.done);
+        const go=document.createElement("button"); go.className="btn"; go.type="button"; go.textContent=T(M.sit);
+        go.onclick=()=>{ S.wired=true; save(); closePanel(); openPanel("s3",stage3HTML(),bindStage3); }; $("#m3go").appendChild(go); }
+    } else { msg.className="msg bad"; msg.innerHTML=T(M.wrong,{의심도:C.wrongSus}); if(C.wrongSus) addSus(C.wrongSus); }
+  };
+  svg.addEventListener("pointerup",end); svg.addEventListener("pointercancel",e=>{drag=null;if(tmp){tmp.forEach(x=>x.remove());tmp=null;}});
 }
 /* ---------- 3단계 ---------- */
 function stage3HTML(){
@@ -1013,7 +1084,7 @@ function finaleHTML(){
   <div class="foot"><span></span><span><button id="rbtn" type="button">${T(TEXT.common.restart)}</button> <button id="tbtn" type="button">${T(TEXT.common.teacher)}</button></span></div></div>`;
 }
 /* ---------- 교사용 ---------- */
-function resetAll(){S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:""};save();render();window.scrollTo(0,0);}
+function resetAll(){S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",wired:false};save();render();window.scrollTo(0,0);}
 function bindFoot(){const b=$("#tbtn"); if(b) b.onclick=teacher;
   const r=$("#rbtn"); if(r){ let t=null; r.onclick=()=>{ if(t){clearTimeout(t);resetAll();return;}
     r.textContent=T(TEXT.common.restartAgain); t=setTimeout(()=>{t=null;r.textContent=T(TEXT.common.restart);},4000); }; } }
@@ -1027,12 +1098,13 @@ const JUMPS=[
   ["프롤로그",()=>{S.stage=0;}],
   ["1단계",()=>{S.stage=1;},"s1"],["서랍 게임",()=>{S.stage=1;},"m1"],
   ["2단계",()=>{S.stage=2;},"s2"],["서류함 게임",()=>{S.stage=2;},"m2"],
-  ["3단계",()=>{S.stage=3;},"s3"],["문",()=>{S.stage=4;},"door"],
+  ["상관 자리 비움",()=>{S.stage=3;},"boss"],["리본 걸기 게임",()=>{S.stage=3;S.wired=false;},"m3"],
+  ["3단계",()=>{S.stage=3;S.wired=true;},"s3"],["문",()=>{S.stage=4;},"door"],
   ["에필로그",()=>{S.stage=4;S.done=Date.now();S.epi=false;}],
   ["결과 화면",()=>{S.stage=4;S.done=S.done||Date.now();S.epi=true;}]
 ];
-const PANELS={s1:()=>[stage1HTML(),bindStage1],m1:()=>[m1HTML(),bindM1],s2:()=>[stage2HTML(),bindStage2],m2:()=>[m2HTML(),bindM2],s3:()=>[stage3HTML(),bindStage3],door:()=>[doorHTML(),bindDoor]};
-function openKey(k){ const [h,b]=PANELS[k](); openPanel(k,h,b); }
+const PANELS={s1:()=>[stage1HTML(),bindStage1],m1:()=>[m1HTML(),bindM1],s2:()=>[stage2HTML(),bindStage2],m2:()=>[m2HTML(),bindM2],m3:()=>[m3HTML(),bindM3],s3:()=>[stage3HTML(),bindStage3],door:()=>[doorHTML(),bindDoor]};
+function openKey(k){ if(k==="boss"){ S.stage=3; save(); return playVN(BOSSOUT,()=>{render();window.scrollTo(0,0);}); } const [h,b]=PANELS[k](); openPanel(k,h,b); }
 function jumpTo(i){
   vnStop(); document.querySelectorAll(".overlay").forEach(x=>x.remove());
   S.group=S.group||1; S.done=null; S.epi=false; S.start=S.start||Date.now();
@@ -1045,7 +1117,7 @@ function teacherNext(){
   if(!S.group) return jumpTo(0);
   if(S.done) return jumpTo(JUMPS.length-1);
   if(S.stage===0) return jumpTo(1);
-  const order=["s1","m1","s2","m2","s3","door"], room={1:"s1",2:"s2",3:"s3",4:"door"};
+  const order=["s1","m1","s2","m2","boss","m3","s3","door"], room={1:"s1",2:"s2",3:S.wired?"s3":"m3",4:"door"};
   if(!curKey) return openKey(room[S.stage]);
   if(curKey==="door"){ S.approved=true; closePanel(); return finish(); }
   jumpTo(JUMPS.findIndex(j=>j[2]===order[order.indexOf(curKey)+1]));
