@@ -13,7 +13,8 @@
    - cards: 1단계 시구 카드(실제 시 발췌). text(줄 배열), clues(근거 낱말: 발췌문에 실제로 있는 말), answer(시기, periods 중 하나), why(설명).
      title은 교사용 메모로 화면에는 나오지 않습니다(학생이 시인 이름으로 시기를 맞히지 않도록).
    - docs: 2단계 압수 문서. type은 '직접' '돌려' '안으로' 중 하나. '직접'에만 삭제 도장이 찍힙니다.
-   - teacherPin: 교사 승인과 교사 패널 비밀번호. 이 파일을 보는 사람은 누구나 알 수 있습니다. */
+   - teacherPin: TV 연결이 안 될 때 문 앞에서 쓰는 비밀번호. 이 파일을 보는 사람은 누구나 알 수 있습니다.
+     (관리 모드와 +5분은 교실 TV에서 조마다 켭니다.) */
 const CONFIG={
   minutes:20, hintPenaltySec:30, teacherPin:"1919", requireTeacher:true,
   finalWord:"그날이오면", groups:8,

@@ -104,6 +104,20 @@
           "$other": {
             ".validate": false
           }
+        },
+        "ctl": {
+          "$n": {
+            ".write": "$n.matches(/^[1-9][0-9]?$/)",
+            "sec": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 7200"
+            },
+            "admin": {
+              ".validate": "newData.isBoolean()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
         }
       }
     }

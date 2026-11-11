@@ -41,7 +41,7 @@ function hint(text,key){
   S.hints++; S.penalty+=CONFIG.hintPenaltySec; save(); paintClock();
   return text;
 }
-function foot(){return `<div class="foot"><span>${T(TEXT.common.hintFoot)}</span><span><button id="rbtn" type="button">${T(TEXT.common.restart)}</button> <button id="tbtn" type="button">${T(TEXT.common.teacher)}</button></span></div>`;}
+function foot(){return `<div class="foot"><span>${T(TEXT.common.hintFoot)}</span><span><button id="rbtn" type="button">${T(TEXT.common.restart)}</button></span></div>`;}
 const SPRH={guard:"84%",guardCalm:"84%",guardSus:"84%",boss:"88%",bossSus:"88%",contact:"86%",contactSide:"86%",contactHappy:"86%"};
 const sprKey=(k,m)=>!k?k:(({guard:{calm:"guardCalm",sus:"guardSus"},boss:{sus:"bossSus"},contact:{side:"contactSide",happy:"contactHappy"}}[k]||{})[m])||k;
 function stageHTML(bg,spr){
@@ -542,7 +542,7 @@ function finaleHTML(){
   <div class="card"><h3>${T(TEXT.finale.wrapTitle)}</h3>
   ${TEXT.finale.wrap.map(p=>`<p>${T(p)}</p>`).join("")}
   <p class="note">${T(TEXT.finale.next)}</p></div>
-  <div class="foot"><span></span><span><button id="rbtn" type="button">${T(TEXT.common.restart)}</button> <button id="tbtn" type="button">${T(TEXT.common.teacher)}</button></span></div></div>`;
+  <div class="foot"><span></span><span><button id="rbtn" type="button">${T(TEXT.common.restart)}</button></span></div></div>`;
 }
 function badHTML(){
   const B=TEXT.badend, el=Math.round((S.caught-S.start)/1000)+S.penalty-S.extra;
@@ -554,18 +554,17 @@ function badHTML(){
   <div class="card"><h3>${T(TEXT.finale.wrapTitle)}</h3>
   ${TEXT.finale.wrap.map(p=>`<p>${T(p)}</p>`).join("")}
   <p class="note">${T(TEXT.finale.next)}</p></div>
-  <div class="foot"><span></span><span><button id="rbtn" type="button">${T(TEXT.common.restart)}</button> <button id="tbtn" type="button">${T(TEXT.common.teacher)}</button></span></div></div>`;
+  <div class="foot"><span></span><span><button id="rbtn" type="button">${T(TEXT.common.restart)}</button></span></div></div>`;
 }
-/* ---------- 교사용 ---------- */
+/* ---------- 관리 모드 ---------- */
 function resetAll(){ const rm=S.room, gp=S.group; if(typeof netClear==="function"&&gp) netClear(rm,gp); S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",poemAt:0,caught:0,badSeen:false,wired:false,room:rm};save();render();window.scrollTo(0,0);}
-function bindFoot(){const b=$("#tbtn"); if(b) b.onclick=teacher;
+function bindFoot(){
   const r=$("#rbtn"); if(r){ let t=null; r.onclick=()=>{ if(t){clearTimeout(t);resetAll();return;}
     r.textContent=T(TEXT.common.restartAgain); t=setTimeout(()=>{t=null;r.textContent=T(TEXT.common.restart);},4000); }; } }
-/* 교사 모드: 비밀번호를 한 번 넣으면 켜지고, 화면 구석 버튼으로 단계를 바로 넘길 수 있음.
-   이 기기에 기억되므로 학생 기기에서는 꼭 끄세요. */
-const TKEY="censor-escape-teacher";
-let teacherMode=false; try{teacherMode=localStorage.getItem(TKEY)==="1";}catch(e){}
-function setTeacherMode(on){ teacherMode=on; try{on?localStorage.setItem(TKEY,"1"):localStorage.removeItem(TKEY);}catch(e){} paintTeacher(); }
+/* 관리 모드: 교실 TV에서 조마다 켜고 끕니다(net.js의 netCtl이 받아 옴). 학생 화면에는 켜는 버튼이 없습니다.
+   켜지면 화면 구석에 ‘메뉴’와 ‘넘기기 ▶’가 생겨 단계를 바로 넘길 수 있습니다. 기기에 기억하지 않습니다. */
+let teacherMode=false; try{localStorage.removeItem("censor-escape-teacher");}catch(e){}   // 예전 버전이 기억해 둔 교사 모드 지우기
+function setTeacherMode(on){ teacherMode=!!on; if(!on) document.querySelectorAll(".overlay.tmenu").forEach(x=>x.remove()); paintTeacher(); }
 // 바로 가기 목록: [이름, 상태를 맞추고 화면을 여는 함수]
 const JUMPS=[
   ["프롤로그",()=>{S.stage=0;}],
@@ -604,30 +603,33 @@ function paintTeacher(){
   const show=teacherMode&&!(S.done&&S.epi)&&!S.caught;
   if(!teacherMode){ if(t) t.remove(); return; }
   if(!t){ t=document.createElement("div"); t.id="tbar";
-    t.innerHTML=`<span>교사 모드</span><button type="button" id="tmenu">메뉴</button><button type="button" id="tnext">넘기기 ▶</button>`;
+    t.innerHTML=`<span>관리 모드</span><button type="button" id="tmenu">메뉴</button><button type="button" id="tnext">넘기기 ▶</button>`;
     document.body.appendChild(t); t.querySelector("#tmenu").onclick=teacher; t.querySelector("#tnext").onclick=teacherNext; }
   t.querySelector("#tnext").hidden=!show;
 }
 function teacher(){
-  const o=document.createElement("div");o.className="overlay";o.setAttribute("role","dialog");o.setAttribute("aria-label","교사용");
-  o.innerHTML=`<div class="card"><h2>교사용</h2><div class="row" id="tlogin"><input type="password" id="tp" inputmode="numeric" autocomplete="off" aria-label="비밀번호" style="max-width:200px">
-  <button class="btn" id="to" type="button">열기</button></div><div id="tb"></div><div class="row"><button class="btn ghost" id="tc" type="button">닫기</button></div></div>`;
+  if(!teacherMode) return;
+  const o=document.createElement("div");o.className="overlay tmenu";o.setAttribute("role","dialog");o.setAttribute("aria-label","관리 모드");
+  o.innerHTML=`<div class="card"><h2>관리 모드</h2>
+    <p class="note">교실 TV에서 켠 관리 모드입니다. 화면 오른쪽 아래 ‘넘기기 ▶’로 문제를 풀지 않고 다음으로 넘어갈 수 있습니다. 끄는 것도 TV에서 합니다. 시간 추가(+5분)도 TV의 이 조 칸에서 합니다.</p>
+    <h3>바로 가기</h3><div class="row tjump">${JUMPS.map((j,i)=>`<button class="btn ghost" type="button" data-j="${i}">${j[0]}</button>`).join("")}</div>
+    <div class="row"><button class="btn ghost" id="rs" type="button">이 기기 처음부터</button></div>
+    <h3>정답</h3><ul class="key"><li>1단계: ${CONFIG.cards.map((c,i)=>`${i+1}번 ${c.answer}`).join(", ")}</li>
+    <li>2단계: ${CONFIG.docs.map((d,i)=>`${i+1}번 ${TLABEL[d.type]}`).join(", ")} / 삭제 도장 글의 특징은 ‘${esc(CONFIG.s2quiz.opts[CONFIG.s2quiz.ans])}’</li>
+    <li>3단계: 삭제 대상 낱말(${CONFIG.s3.banned.join(", ")})을 쓰지 않고, 상징어를 넣은 두 줄 이상의 시와 숨은 뜻을 확인</li></ul>
+    <div class="row"><button class="btn ghost" id="tc" type="button">닫기</button></div></div>`;
   document.body.appendChild(o);
   const q=s=>o.querySelector(s);
   q("#tc").onclick=()=>o.remove();
-  const open=()=>{ q("#tlogin").hidden=true; setTeacherMode(true);
-    q("#tb").innerHTML=`<p class="note">교사 모드가 켜졌습니다. 화면 오른쪽 아래 ‘넘기기 ▶’로 문제를 풀지 않고 다음으로 넘어갈 수 있습니다. 이 기기에 기억되니 학생 기기에서는 꼭 끄세요.</p>
-    <h3>바로 가기</h3><div class="row tjump">${JUMPS.map((j,i)=>`<button class="btn ghost" type="button" data-j="${i}">${j[0]}</button>`).join("")}</div>
-    <div class="row"><button class="btn" id="p5" type="button">+5분</button><button class="btn ghost" id="rs" type="button">이 기기 처음부터</button><button class="btn ghost" id="toff" type="button">교사 모드 끄기</button></div><p class="msg" id="tm"></p>
-    <h3>정답</h3><ul class="key"><li>1단계: ${CONFIG.cards.map((c,i)=>`${i+1}번 ${c.answer}`).join(", ")}</li>
-    <li>2단계: ${CONFIG.docs.map((d,i)=>`${i+1}번 ${TLABEL[d.type]}`).join(", ")} / 삭제 도장 글의 특징은 ‘${esc(CONFIG.s2quiz.opts[CONFIG.s2quiz.ans])}’</li>
-    <li>3단계: 삭제 대상 낱말(${CONFIG.s3.banned.join(", ")})을 쓰지 않고, 상징어를 넣은 두 줄 이상의 시와 숨은 뜻을 확인</li></ul>`;
-    o.querySelectorAll("[data-j]").forEach(b=>b.onclick=()=>{o.remove();jumpTo(+b.dataset.j);});
-    // 붙잡힌 조도 +5분을 누르면 다시 이어서 할 수 있음
-    q("#p5").onclick=()=>{S.extra+=300; if(S.caught){ S.caught=0; S.badSeen=false; save(); o.remove(); render(); window.scrollTo(0,0); return; } save();paintClock();q("#tm").textContent="5분을 더했습니다.";};
-    q("#rs").onclick=()=>{o.remove();resetAll();};
-    q("#toff").onclick=()=>{setTeacherMode(false);o.remove();}; };
-  if(teacherMode) return open();
-  q("#to").onclick=()=>{ if(q("#tp").value!==CONFIG.teacherPin){q("#tb").innerHTML='<p class="msg bad">비밀번호가 맞지 않습니다.</p>';return;} open(); };
+  o.querySelectorAll("[data-j]").forEach(b=>b.onclick=()=>{o.remove();jumpTo(+b.dataset.j);});
+  q("#rs").onclick=()=>{o.remove();resetAll();};
+}
+// TV에서 준 추가 시간(초, 누적)을 반영. 붙잡힌 조는 붙잡힌 순간부터 다시 이어서 함
+function applyBonus(sec){
+  if(!Number.isInteger(sec)||sec<0||sec===S.extra||!S.group) return;
+  const add=sec-S.extra; S.extra=sec;
+  if(S.caught&&!S.done&&add>0){ S.start+=Date.now()-S.caught; S.caught=0; S.badSeen=false; vnStop();
+    document.querySelectorAll(".overlay").forEach(x=>x.remove()); save(); render(); window.scrollTo(0,0); toast("시간이 "+Math.round(add/60)+"분 늘었다. 다시 임무로!",true); return; }
+  save(); paintClock(); if(add>0) toast("시간이 "+Math.round(add/60)+"분 늘었다!",true);
 }
 render();

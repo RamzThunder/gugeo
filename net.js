@@ -21,9 +21,9 @@ function netPush(force){
 function netClear(room,g){ if(!netRoomOk(room)) return Promise.resolve();
   const del=u=>{ try{ return fetch(u,{method:"DELETE"}).catch(()=>{}); }catch(e){ return Promise.resolve(); } };
   // 방 전체는 규칙상 한 번에 못 지우므로, 조마다 groups·poems·verdict 칸을 한 요청으로 비웁니다
-  if(!g){ const d={}; for(let n=1;n<=Math.max(CONFIG.groups,20);n++) ["groups","poems","verdict"].forEach(k=>d[k+"/"+n]=null);
+  if(!g){ const d={}; for(let n=1;n<=Math.max(CONFIG.groups,20);n++) ["groups","poems","verdict","ctl"].forEach(k=>d[k+"/"+n]=null);
     try{ return fetch(netUrl(room),{method:"PATCH",body:JSON.stringify(d)}).catch(()=>{}); }catch(e){ return Promise.resolve(); } }
-  return Promise.all([del(netUrl(room,g)),del(netKindUrl(room,"poems",g)),del(netKindUrl(room,"verdict",g))]); }
+  return Promise.all([del(netUrl(room,g)),del(netKindUrl(room,"poems",g)),del(netKindUrl(room,"verdict",g)),del(netKindUrl(room,"ctl",g))]); }
 // 3단계 위장 시: 학생이 censor/방/poems/조 에 올리고, TV가 censor/방/verdict/조 에 판정을 적습니다.
 // kind: pass(통과) · censor(검열에 걸림: 상관 등장, 취조실) · vague(의미 모호: 접선책이 돌려보냄)
 // verdict.for 에는 판정한 시의 t를 적어, 시를 고쳐 다시 내면 예전 판정은 무시됩니다.
@@ -53,3 +53,16 @@ function netSetMinutes(room,m){
   try{ return fetch(netSetUrl(room),{method:"PUT",body:JSON.stringify({minutes:m})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
 }
 setTimeout(netSettings,300); setInterval(netSettings,8000);
+// 조별 관리: censor/방/ctl/조 = {sec: TV에서 준 추가 시간(초, 누적), admin: 관리 모드}. 5초마다 받아 옴
+function netCtl(){
+  if(typeof S==="undefined") return;
+  if(!netRoomOk(S.room)||!S.group){ if(typeof teacherMode!=="undefined"&&teacherMode) setTeacherMode(false); return; }
+  try{ fetch(netKindUrl(S.room,"ctl",S.group),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
+    j=j||{}; if(typeof applyBonus==="function") applyBonus(Number.isInteger(j.sec)?j.sec:S.extra);
+    if(typeof setTeacherMode==="function"&&!!j.admin!==teacherMode) setTeacherMode(!!j.admin);
+  }).catch(()=>{}); }catch(e){}
+}
+function netSetCtl(room,g,patch){
+  try{ return fetch(netKindUrl(room,"ctl",g),{method:"PATCH",body:JSON.stringify(patch)}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
+}
+setTimeout(netCtl,500); setInterval(netCtl,5000);

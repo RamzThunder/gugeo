@@ -42,6 +42,10 @@ button:hover{border-color:var(--amber)}
 .g.done{border-color:var(--ok);background:#16241c}
 .g.caught{border-color:var(--bad);background:#2a1416}
 .g.caught .st{color:#ff9a8c;font-weight:800}
+.g .ctl{display:flex;gap:.5vw;margin-top:auto}
+.g .ctl button{flex:1;font-size:1.7vh;padding:.6vh .4vw}
+.g .ctl button.on{background:var(--amber);color:#101218;border-color:var(--amber);font-weight:800}
+.g.empty .ctl{display:none}
 .lim{display:flex;align-items:center;gap:.6vw;background:var(--card);border:2px solid var(--line);padding:1vh 1vw}
 .lim small{color:var(--mute);font-size:1.7vh;display:block}
 .lim b{font-size:4.4vh;color:var(--tx);min-width:3.2ch;text-align:center;font-variant-numeric:tabular-nums}
@@ -140,8 +144,11 @@ function build(){
     <div class="trk" id="tk${i+1}">${"<i></i>".repeat(STEPS)}</div>
     <div class="sus"><span>의심도</span><div class="bar"><i id="sb${i+1}"></i></div><b id="sn${i+1}">0</b></div>
     <div class="rv">시 확인 요청 · 눌러서 보기</div>
+    <div class="ctl"><button type="button" id="p5${i+1}" title="이 조에 5분 더 주기 (붙잡힌 조는 다시 이어서 함)">+5분</button><button type="button" id="ad${i+1}" title="이 조 기기에 관리 모드(바로 가기·넘기기)를 켜고 끕니다">관리 모드</button></div>
     <div class="piece"><div class="lb">${i+1}조 탈출 성공!</div><div class="ch" id="pc${i+1}"></div><div class="tt" id="pt${i+1}"></div></div></div>`).join("");
-  for(let i=1;i<=N;i++) $("#g"+i).onclick=()=>{ if((data.poems||{})[i]) openReview(i); };
+  for(let i=1;i<=N;i++){ $("#g"+i).onclick=()=>{ if((data.poems||{})[i]) openReview(i); };
+    $("#p5"+i).onclick=e=>{ e.stopPropagation(); giveTime(i); };
+    $("#ad"+i).onclick=e=>{ e.stopPropagation(); toggleAdmin(i); }; }
   const w=CONFIG.finalWord; $("#slots").innerHTML=[...w].map((c,i)=>`<div class="slot" id="sl${i}">${c}<small id="sg${i}"></small></div>`).join("");
 }
 function paint(){
@@ -150,7 +157,7 @@ function paint(){
     const g=G[n], el=$("#g"+n); if(!el) continue;
     const ask=pending(n), hp=!!(data.poems||{})[n];
     if(!g){ el.className="g empty"+(ask?" ask":hp?" haspoem":""); $("#st"+n).textContent="아직 입장 전"; $("#tm"+n).textContent="--:--"; $("#sb"+n).style.width="0"; $("#sn"+n).textContent="0";
-      [...$("#tk"+n).children].forEach(i=>i.className=""); continue; }
+      [...$("#tk"+n).children].forEach(i=>i.className=""); paintCtl(n); continue; }
     const idx=stepIdx(g), r=remain(g), sus=Math.min(100,g.sus||0), stale=!g.done&&now-(g.t||0)>40000;
     const fin=!!(g.done&&g.epi);   // 에필로그까지 다 본 뒤에 글자 조각을 보여 줌
     const cau=!g.done&&!!g.caught;  // 시간 초과로 붙잡힘(배드엔딩)
@@ -158,6 +165,7 @@ function paint(){
     $("#st"+n).textContent=cau?"시간 초과 · 붙잡힘":fin?"탈출 성공":g.done?"탈출 · 에필로그 보는 중":(stale?"신호 끊김 · ":"")+(WHERE[g.where]||STAGE[g.stage|0]||"");
     const tm=$("#tm"+n); tm.textContent=g.done?fmt(Math.max(0,Math.round((g.done-g.start)/1000)+(g.penalty||0)-(g.extra||0))):fmt(r); tm.className="tm"+(!g.done&&r<=120?" low":""); if(cau) tm.textContent="00:00";
     [...$("#tk"+n).children].forEach((i,k)=>i.className=k<idx?"f":(k===idx&&!g.done&&!cau?"c":""));
+    paintCtl(n);
     $("#sb"+n).style.width=sus+"%"; $("#sb"+n).style.background=sus>=70?"var(--bad)":sus>=40?"var(--amber)":"var(--ok)"; $("#sn"+n).textContent=sus;
     if(fin){ $("#pc"+n).textContent=g.piece||netPiece(n); $("#pt"+n).textContent="걸린 시간 "+tm.textContent+" · 의심도 "+sus; (got[g.piece||netPiece(n)]=got[g.piece||netPiece(n)]||[]).push(n); }
   }
@@ -173,6 +181,17 @@ function paint(){
 // ---- 위장 시 검토: 학생이 낸 시(poems)와 선생님 판정(verdict)
 function pending(n){ const p=(data.poems||{})[n], v=(data.verdict||{})[n], g=(data.groups||{})[n];
   return !!p&&!(g&&g.done)&&!(v&&v.for===p.t); }
+// ---- 조별 관리: +5분, 관리 모드 (censor/방/ctl/조)
+const ctlOf=n=>(data.ctl||{})[n]||{};
+function paintCtl(n){ const c=ctlOf(n), b=$("#ad"+n), p=$("#p5"+n);
+  b.classList.toggle("on",!!c.admin); b.textContent=c.admin?"관리 모드 켜짐":"관리 모드";
+  p.textContent=c.sec?"+5분 (총 +"+Math.round(c.sec/60)+"분)":"+5분"; }
+function setCtl(n,patch){ data.ctl=data.ctl||{}; data.ctl[n]=Object.assign({},ctlOf(n),patch); paintCtl(n);
+  netSetCtl(room,n,patch).then(ok=>{ if(!ok) alert("저장하지 못했습니다. 인터넷을 확인하세요."); }); }
+function giveTime(n){ setCtl(n,{sec:(ctlOf(n).sec||0)+300}); }
+function toggleAdmin(n){ const on=!ctlOf(n).admin;
+  if(on&&!confirm(n+"조 기기에 관리 모드를 켤까요? 그 기기에서 단계를 건너뛸 수 있게 됩니다.")) return;
+  setCtl(n,{admin:on}); }
 // ---- 제한 시간(분): censor/방/settings/minutes. 학생 게임이 8초마다 받아 반영
 const limit=()=>{ const m=data.settings&&data.settings.minutes; return Number.isInteger(m)?m:CONFIG.minutes; };
 function paintLimit(){ $("#mv").textContent=limit(); }
