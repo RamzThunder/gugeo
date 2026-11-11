@@ -79,7 +79,6 @@ function playVN(script,done){
     $("#vch").innerHTML=""; $("#vnx").hidden=true; full=typeof st.text==="function"?st.text():st.text; pos=0;
     if(st.sus){ addSus(st.sus); $("#vfl").textContent="의심도 +"+st.sus; } else $("#vfl").textContent="";
     clearInterval(vnTimer);
-    if(matchMedia("(prefers-reduced-motion: reduce)").matches){tx.textContent=full;finishType();return;}
     typing=true; tx.textContent="";
     vnTimer=setInterval(()=>{pos++; tx.textContent=full.slice(0,pos); if(pos>=full.length){clearInterval(vnTimer);typing=false;finishType();}},28);
   };
