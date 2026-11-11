@@ -638,5 +638,7 @@ render();
   [IMG,BLP,CUT,typeof DRAWER!=="undefined"?DRAWER:null].forEach(walk);
   const list=[...urls]; let i=0;
   const next=()=>{ if(i>=list.length) return; const im=new Image(); im.onload=im.onerror=next; im.src=list[i++]; };
-  setTimeout(()=>{ for(let k=0;k<4;k++) next(); },300);   // 4장씩 차례로
+  // 글꼴을 다 받은 뒤에 그림을 4장씩 차례로 (글꼴이 먼저)
+  const go=()=>{ for(let k=0;k<4;k++) next(); };
+  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(()=>setTimeout(go,200),()=>setTimeout(go,200));
 })();

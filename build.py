@@ -16,7 +16,7 @@ html = re.sub(r'<script src="([^"]+)"></script>',
 #    HTML이 가벼워져 첫 화면이 바로 뜨고, 그림은 뒤따라 받아집니다.
 import shutil
 def copy_assets(dst):
-    used = set(re.findall(r'"(img/[^"]+\.png)"', html)) | set(re.findall(r'url\((fonts/[^)]+\.woff2)\)', html))
+    used = set(re.findall(r'"(img/[^"]+\.png)"', html)) | set(re.findall(r'(fonts/[^)"]+\.woff2)', html))
     for d in ("img", "fonts"):
         shutil.rmtree(os.path.join(dst, d), ignore_errors=True)
     for p in sorted(used):
