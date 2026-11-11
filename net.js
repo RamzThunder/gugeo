@@ -12,7 +12,7 @@ let _netSig="", _netAt=0;
 function netPush(force){
   if(typeof S==="undefined"||!netRoomOk(S.room)||!S.group) return;
   const d={stage:S.stage|0, where:(typeof curKey!=="undefined"&&curKey)||"", sus:Math.min(100,S.sus|0), hints:S.hints|0, grilled:S.grilled|0,
-    start:S.start||0, penalty:S.penalty|0, extra:S.extra|0, min:CONFIG.minutes, done:S.done||0, epi:S.done&&S.epi?1:0, piece:S.done?netPiece(S.group):"", t:Date.now()};
+    start:S.start||0, penalty:S.penalty|0, extra:S.extra|0, min:CONFIG.minutes, done:S.done||0, caught:S.caught||0, epi:S.done&&S.epi?1:0, piece:S.done?netPiece(S.group):"", t:Date.now()};
   const sig=JSON.stringify(Object.assign({},d,{t:0})), now=Date.now();
   if(!force&&sig===_netSig&&now-_netAt<10000) return;
   _netSig=sig; _netAt=now;
@@ -40,3 +40,16 @@ function netJudge(room,g,kind,forT){
   try{ return fetch(netKindUrl(room,"verdict",g),{method:"PUT",body:JSON.stringify({ok:kind==="pass",kind,for:forT,t:Date.now()})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
 }
 setInterval(()=>netPush(false),4000);
+// 제한 시간: TV에서 바꾼 분(censor/방/settings/minutes)을 8초마다 받아 CONFIG.minutes에 반영
+const netSetUrl=room=>`${NET.db}/${NET.root}/${encodeURIComponent(room)}/settings.json`;
+function netSettings(){
+  if(typeof S==="undefined"||!netRoomOk(S.room)) return;
+  try{ fetch(netSetUrl(S.room),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
+    const m=j&&j.minutes; if(!Number.isInteger(m)||m<1||m>120||m===CONFIG.minutes) return;
+    CONFIG.minutes=m; if(typeof paintClock==="function") paintClock(); netPush(true);
+  }).catch(()=>{}); }catch(e){}
+}
+function netSetMinutes(room,m){
+  try{ return fetch(netSetUrl(room),{method:"PUT",body:JSON.stringify({minutes:m})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
+}
+setTimeout(netSettings,300); setInterval(netSettings,8000);

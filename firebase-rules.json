@@ -51,6 +51,9 @@
             },
             "epi": {
               ".validate": "newData.isNumber()"
+            },
+            "caught": {
+              ".validate": "newData.isNumber()"
             }
           }
         },
@@ -91,6 +94,15 @@
             "kind": {
               ".validate": "newData.isString() && newData.val().matches(/^(pass|censor|vague)$/)"
             }
+          }
+        },
+        "settings": {
+          ".write": true,
+          "minutes": {
+            ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 120"
+          },
+          "$other": {
+            ".validate": false
           }
         }
       }

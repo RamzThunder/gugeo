@@ -7,13 +7,13 @@ const $$=s=>ROOT.querySelectorAll(s);
 // story.js의 TEXT 문구에서 {분} {힌트초} {조} 같은 자리를 채움
 const T=(s,o)=>String(s).replace(/\{([^{}]+)\}/g,(m,k)=>{const v=Object.assign({분:CONFIG.minutes,힌트초:CONFIG.hintPenaltySec,조:S.group},o)[k];return v==null?m:v;});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-let S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",poemAt:0,wired:false,room:""};
+let S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",poemAt:0,caught:0,badSeen:false,wired:false,room:""};
 try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(S,JSON.parse(r));}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){} if(typeof netPush==="function") netPush();};
 let tick=null, ui={sel:{},per:{},cls:{},stamped:false,quiz:null,hintOn:null,s3ok:false};
 
 function remain(){ if(!S.start) return CONFIG.minutes*60;
-  const end=S.done||Date.now(); return Math.round(CONFIG.minutes*60+S.extra-(end-S.start)/1000-S.penalty); }
+  const end=S.done||S.caught||Date.now(); return Math.round(CONFIG.minutes*60+S.extra-(end-S.start)/1000-S.penalty); }
 const fmt=t=>{const a=Math.abs(t);return (t<0?"+":"")+String(Math.floor(a/60)).padStart(2,"0")+":"+String(a%60).padStart(2,"0")};
 function bar(){
   const st=[1,2,3].map(n=>`<i class="${S.stage>n?"done":S.stage===n?"on":""}"></i>`).join("");
@@ -30,7 +30,12 @@ function addSus(n){
     document.body.appendChild(o); o.querySelector("#ox").onclick=()=>o.remove(); return; }
   save(); paintSus();
 }
-function paintClock(){const r=remain(); document.querySelectorAll(".clk").forEach(c=>{c.textContent=fmt(r); c.classList.toggle("over",r<0);});}
+function paintClock(){const r=remain(); document.querySelectorAll(".clk").forEach(c=>{c.textContent=fmt(r); c.classList.toggle("over",r<0);});
+  // 시간이 다 되면 배드엔딩. 모든 임무를 끝내고 문 앞(4단계)에 온 조는 잡히지 않음
+  if(S.group&&S.start&&S.stage>=1&&S.stage<4&&!S.done&&!S.caught&&r<=0) timeUp();}
+function timeUp(){
+  S.caught=Date.now(); S.badSeen=false; if(typeof stopVerdict==="function") stopVerdict(); vnStop();
+  document.querySelectorAll(".overlay").forEach(x=>x.remove()); save(); render(); window.scrollTo(0,0); }
 function startTick(){paintSus();clearInterval(tick); tick=setInterval(paintClock,1000);}
 function hint(text,key){
   S.hints++; S.penalty+=CONFIG.hintPenaltySec; save(); paintClock();
@@ -114,6 +119,8 @@ function render(){
   if(!S.group){ a.innerHTML=startHTML(); bindStart(); return; }
   if(S.done&&!S.epi){ playVN(EPI,()=>{S.epi=true;save();render();window.scrollTo(0,0);}); return; }
   if(S.done){ a.innerHTML=finaleHTML(); bindFoot(); return; }
+  if(S.caught){ if(!S.badSeen){ playVN(BADEND,()=>{S.badSeen=true;save();render();window.scrollTo(0,0);}); return; }
+    a.innerHTML=badHTML(); bindFoot(); return; }
   if(S.stage===0){ a.innerHTML=introHTML(); bindFoot(); $("#go").onclick=()=>{playVN(PRO,()=>{S.stage=1;S.start=Date.now();save();render();window.scrollTo(0,0);toast(T(TEXT.room.entered));});}; return;}
   a.innerHTML=bar()+roomHTML()+foot(); bindRoom(); bindFoot(); startTick();
 }
@@ -537,8 +544,20 @@ function finaleHTML(){
   <p class="note">${T(TEXT.finale.next)}</p></div>
   <div class="foot"><span></span><span><button id="rbtn" type="button">${T(TEXT.common.restart)}</button> <button id="tbtn" type="button">${T(TEXT.common.teacher)}</button></span></div></div>`;
 }
+function badHTML(){
+  const B=TEXT.badend, el=Math.round((S.caught-S.start)/1000)+S.penalty-S.extra;
+  return `<div style="display:flex;flex-direction:column;gap:18px;padding-top:24px"><h3>${S.group}조</h3><h1 style="color:var(--stamp)">${T(B.title)}</h1>
+  <p class="story">${T(B.story)}</p>
+  <div class="big" aria-label="글자 조각 없음" style="color:#6a6454;border-color:#6a6454">✕</div>
+  <p style="text-align:center" class="note">${T(B.noPiece)}</p>
+  <div class="stats"><span>버틴 시간 <b>${fmt(Math.max(0,el))}</b></span><span>사용한 힌트 <b>${S.hints}</b></span><span>심문 <b>${S.grilled}</b>회</span><span>의심도 <b>${Math.min(100,S.sus)}%</b></span></div>
+  <div class="card"><h3>${T(TEXT.finale.wrapTitle)}</h3>
+  ${TEXT.finale.wrap.map(p=>`<p>${T(p)}</p>`).join("")}
+  <p class="note">${T(TEXT.finale.next)}</p></div>
+  <div class="foot"><span></span><span><button id="rbtn" type="button">${T(TEXT.common.restart)}</button> <button id="tbtn" type="button">${T(TEXT.common.teacher)}</button></span></div></div>`;
+}
 /* ---------- 교사용 ---------- */
-function resetAll(){ const rm=S.room, gp=S.group; if(typeof netClear==="function"&&gp) netClear(rm,gp); S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",poemAt:0,wired:false,room:rm};save();render();window.scrollTo(0,0);}
+function resetAll(){ const rm=S.room, gp=S.group; if(typeof netClear==="function"&&gp) netClear(rm,gp); S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",poemAt:0,caught:0,badSeen:false,wired:false,room:rm};save();render();window.scrollTo(0,0);}
 function bindFoot(){const b=$("#tbtn"); if(b) b.onclick=teacher;
   const r=$("#rbtn"); if(r){ let t=null; r.onclick=()=>{ if(t){clearTimeout(t);resetAll();return;}
     r.textContent=T(TEXT.common.restartAgain); t=setTimeout(()=>{t=null;r.textContent=T(TEXT.common.restart);},4000); }; } }
@@ -555,7 +574,8 @@ const JUMPS=[
   ["상관 자리 비움",()=>{S.stage=3;},"boss"],["리본 걸기 게임",()=>{S.stage=3;S.wired=false;},"m3"],
   ["3단계",()=>{S.stage=3;S.wired=true;},"s3"],["문",()=>{S.stage=4;},"door"],
   ["에필로그",()=>{S.stage=4;S.done=Date.now();S.epi=false;}],
-  ["결과 화면",()=>{S.stage=4;S.done=S.done||Date.now();S.epi=true;}]
+  ["결과 화면",()=>{S.stage=4;S.done=S.done||Date.now();S.epi=true;}],
+  ["배드엔딩",()=>{S.stage=Math.max(1,Math.min(3,S.stage));S.caught=Date.now();S.badSeen=false;}]
 ];
 const PANELS={s1:()=>[stage1HTML(),bindStage1],m1:()=>[m1HTML(),bindM1],s2:()=>[stage2HTML(),bindStage2],m2:()=>[m2HTML(),bindM2],m3:()=>[m3HTML(),bindM3],s3:()=>[stage3HTML(),bindStage3],door:()=>[doorHTML(),bindDoor]};
 function openKey(k){ if(k==="boss"){ S.stage=3; save(); return playVN(BOSSOUT,()=>{render();window.scrollTo(0,0);}); } const [h,b]=PANELS[k](); openPanel(k,h,b); }
@@ -563,6 +583,7 @@ function jumpTo(i){
   vnStop(); document.querySelectorAll(".overlay").forEach(x=>x.remove());
   S.group=S.group||1; S.done=null; S.epi=false; S.start=S.start||Date.now();
   S.approved=false;   // 문 화면에서 비밀번호 칸이 다시 보이게
+  S.caught=0; S.badSeen=false;
   stopVerdict();
   JUMPS[i][1](); save(); render(); window.scrollTo(0,0);
   if(JUMPS[i][2]) openKey(JUMPS[i][2]);
@@ -570,7 +591,8 @@ function jumpTo(i){
 // 지금 화면 바로 다음으로
 function teacherNext(){
   if(!S.group) return jumpTo(0);
-  if(S.done) return jumpTo(JUMPS.length-1);
+  if(S.caught) return;
+  if(S.done) return jumpTo(JUMPS.findIndex(j=>j[0]==="결과 화면"));
   if(S.stage===0) return jumpTo(1);
   const order=["s1","m1","s2","m2","boss","m3","s3","door"], room={1:"s1",2:"s2",3:S.wired?"s3":"m3",4:"door"};
   if(!curKey) return openKey(room[S.stage]);
@@ -579,7 +601,7 @@ function teacherNext(){
 }
 function paintTeacher(){
   let t=document.querySelector("#tbar");
-  const show=teacherMode&&!(S.done&&S.epi);
+  const show=teacherMode&&!(S.done&&S.epi)&&!S.caught;
   if(!teacherMode){ if(t) t.remove(); return; }
   if(!t){ t=document.createElement("div"); t.id="tbar";
     t.innerHTML=`<span>교사 모드</span><button type="button" id="tmenu">메뉴</button><button type="button" id="tnext">넘기기 ▶</button>`;
@@ -601,7 +623,8 @@ function teacher(){
     <li>2단계: ${CONFIG.docs.map((d,i)=>`${i+1}번 ${TLABEL[d.type]}`).join(", ")} / 삭제 도장 글의 특징은 ‘${esc(CONFIG.s2quiz.opts[CONFIG.s2quiz.ans])}’</li>
     <li>3단계: 삭제 대상 낱말(${CONFIG.s3.banned.join(", ")})을 쓰지 않고, 상징어를 넣은 두 줄 이상의 시와 숨은 뜻을 확인</li></ul>`;
     o.querySelectorAll("[data-j]").forEach(b=>b.onclick=()=>{o.remove();jumpTo(+b.dataset.j);});
-    q("#p5").onclick=()=>{S.extra+=300;save();paintClock();q("#tm").textContent="5분을 더했습니다.";};
+    // 붙잡힌 조도 +5분을 누르면 다시 이어서 할 수 있음
+    q("#p5").onclick=()=>{S.extra+=300; if(S.caught){ S.caught=0; S.badSeen=false; save(); o.remove(); render(); window.scrollTo(0,0); return; } save();paintClock();q("#tm").textContent="5분을 더했습니다.";};
     q("#rs").onclick=()=>{o.remove();resetAll();};
     q("#toff").onclick=()=>{setTeacherMode(false);o.remove();}; };
   if(teacherMode) return open();

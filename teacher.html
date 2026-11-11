@@ -40,6 +40,12 @@ button:hover{border-color:var(--amber)}
 .g.warn{border-color:var(--bad);animation:pl 1.2s infinite}
 @keyframes pl{50%{box-shadow:0 0 0 .6vh rgba(229,72,77,.35)}}
 .g.done{border-color:var(--ok);background:#16241c}
+.g.caught{border-color:var(--bad);background:#2a1416}
+.g.caught .st{color:#ff9a8c;font-weight:800}
+.lim{display:flex;align-items:center;gap:.6vw;background:var(--card);border:2px solid var(--line);padding:1vh 1vw}
+.lim small{color:var(--mute);font-size:1.7vh;display:block}
+.lim b{font-size:4.4vh;color:var(--tx);min-width:3.2ch;text-align:center;font-variant-numeric:tabular-nums}
+.lim button{font-size:3vh;font-weight:800;width:5.5vh;height:5.5vh;padding:0}
 .g .piece{display:none;position:absolute;inset:0;background:#10281c;flex-direction:column;align-items:center;justify-content:center;gap:.6vh}
 .g.done .piece{display:flex}
 .piece .ch{font-size:15vh;line-height:1;font-weight:800;color:#fff;text-shadow:0 .5vh 0 #0a0b0e}
@@ -92,6 +98,7 @@ button:hover{border-color:var(--amber)}
   <h1>검열국 탈출 · 진행 상황</h1><span id="conn" style="font-size:1.8vh;color:var(--mute)"><i class="dot" id="cd"></i><span id="ct">연결 중…</span></span>
   <span class="sp"></span>
   <div class="code"><div id="qr"></div><div><small>학생 입장 방 번호</small><b id="rc">----</b><small id="lk"></small></div></div>
+  <div class="lim"><div><small>제한 시간</small><span id="lm" style="font-size:1.5vh;color:var(--mute)"></span></div><button id="mdn" type="button" aria-label="1분 줄이기">−</button><b id="mv">20</b><span style="font-size:2.4vh">분</span><button id="mup" type="button" aria-label="1분 늘리기">+</button></div>
   <button id="rq" type="button"></button>
   <div style="display:flex;flex-direction:column;gap:.8vh"><button id="newroom" type="button">새 방 번호</button><button id="clear" type="button">진행 초기화</button></div>
 </header>
@@ -124,7 +131,7 @@ function stepIdx(g){ if(g.done) return STEPS;
   if(st===3) return w==="s3"?5:(w==="m3"?4:4);
   return 6; }
 const remain=g=>{ if(!g.start) return (g.min||CONFIG.minutes)*60;
-  const end=g.done||Date.now(); return Math.round((g.min||CONFIG.minutes)*60+(g.extra||0)-(end-g.start)/1000-(g.penalty||0)); };
+  const end=g.done||g.caught||Date.now(); return Math.round((g.min||CONFIG.minutes)*60+(g.extra||0)-(end-g.start)/1000-(g.penalty||0)); };
 const fmt=t=>{const a=Math.abs(t);return (t<0?"+":"")+String(Math.floor(a/60)).padStart(2,"0")+":"+String(a%60).padStart(2,"0");};
 function build(){
   const N=CONFIG.groups; $("#grid").innerHTML=Array.from({length:N},(_,i)=>`<div class="g empty" id="g${i+1}">
@@ -146,13 +153,15 @@ function paint(){
       [...$("#tk"+n).children].forEach(i=>i.className=""); continue; }
     const idx=stepIdx(g), r=remain(g), sus=Math.min(100,g.sus||0), stale=!g.done&&now-(g.t||0)>40000;
     const fin=!!(g.done&&g.epi);   // 에필로그까지 다 본 뒤에 글자 조각을 보여 줌
-    el.className="g"+(fin?" done":"")+(ask?" ask":(!g.done&&sus>=70?" warn":""))+(hp?" haspoem":"");
-    $("#st"+n).textContent=fin?"탈출 성공":g.done?"탈출 · 에필로그 보는 중":(stale?"신호 끊김 · ":"")+(WHERE[g.where]||STAGE[g.stage|0]||"");
-    const tm=$("#tm"+n); tm.textContent=g.done?fmt(Math.max(0,Math.round((g.done-g.start)/1000)+(g.penalty||0)-(g.extra||0))):fmt(r); tm.className="tm"+(!g.done&&r<=120?" low":"");
-    [...$("#tk"+n).children].forEach((i,k)=>i.className=k<idx?"f":(k===idx&&!g.done?"c":""));
+    const cau=!g.done&&!!g.caught;  // 시간 초과로 붙잡힘(배드엔딩)
+    el.className="g"+(fin?" done":"")+(cau?" caught":"")+(ask?" ask":(!g.done&&sus>=70?" warn":""))+(hp?" haspoem":"");
+    $("#st"+n).textContent=cau?"시간 초과 · 붙잡힘":fin?"탈출 성공":g.done?"탈출 · 에필로그 보는 중":(stale?"신호 끊김 · ":"")+(WHERE[g.where]||STAGE[g.stage|0]||"");
+    const tm=$("#tm"+n); tm.textContent=g.done?fmt(Math.max(0,Math.round((g.done-g.start)/1000)+(g.penalty||0)-(g.extra||0))):fmt(r); tm.className="tm"+(!g.done&&r<=120?" low":""); if(cau) tm.textContent="00:00";
+    [...$("#tk"+n).children].forEach((i,k)=>i.className=k<idx?"f":(k===idx&&!g.done&&!cau?"c":""));
     $("#sb"+n).style.width=sus+"%"; $("#sb"+n).style.background=sus>=70?"var(--bad)":sus>=40?"var(--amber)":"var(--ok)"; $("#sn"+n).textContent=sus;
     if(fin){ $("#pc"+n).textContent=g.piece||netPiece(n); $("#pt"+n).textContent="걸린 시간 "+tm.textContent+" · 의심도 "+sus; (got[g.piece||netPiece(n)]=got[g.piece||netPiece(n)]||[]).push(n); }
   }
+  paintLimit();
   const q=queue(); $("#rq").textContent="시 확인 대기 "+q.length+"개"; $("#rq").classList.toggle("on",q.length>0);
   if(rvOpen) paintReview();
   const w=[...CONFIG.finalWord]; let all=true, cnt=0;
@@ -164,6 +173,18 @@ function paint(){
 // ---- 위장 시 검토: 학생이 낸 시(poems)와 선생님 판정(verdict)
 function pending(n){ const p=(data.poems||{})[n], v=(data.verdict||{})[n], g=(data.groups||{})[n];
   return !!p&&!(g&&g.done)&&!(v&&v.for===p.t); }
+// ---- 제한 시간(분): censor/방/settings/minutes. 학생 게임이 8초마다 받아 반영
+const limit=()=>{ const m=data.settings&&data.settings.minutes; return Number.isInteger(m)?m:CONFIG.minutes; };
+function paintLimit(){ $("#mv").textContent=limit(); }
+function setLimit(m){ m=Math.max(1,Math.min(120,m)); if(m===limit()) return;
+  const G=data.groups||{}, now=Date.now();
+  const hit=Object.keys(G).filter(n=>{ const g=G[n]; if(!g||!g.start||g.done||g.caught||(g.stage|0)>=4) return false;
+    return m*60+(g.extra||0)-(now-g.start)/1000-(g.penalty||0)<=0; });
+  if(m<limit()&&hit.length&&!confirm(hit.join(", ")+"조는 남은 시간이 없어 바로 붙잡힙니다(배드엔딩). 줄일까요?")) return;
+  data.settings=Object.assign({},data.settings,{minutes:m}); paintLimit(); $("#lm").textContent="저장 중…";
+  netSetMinutes(room,m).then(ok=>{ $("#lm").textContent=ok?"모든 조에 적용":"저장 실패"; }); }
+$("#mdn").onclick=()=>setLimit(limit()-1);
+$("#mup").onclick=()=>setLimit(limit()+1);
 const queue=()=>Object.keys(data.poems||{}).map(Number).filter(pending).sort((a,b)=>data.poems[a].t-data.poems[b].t);
 let rvOpen=0, rvAt=0;
 function openReview(n){ const p=(data.poems||{})[n]; if(!p) return;
