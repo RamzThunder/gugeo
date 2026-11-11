@@ -31,3 +31,7 @@ t = re.sub(r'<script src="([^"]+)"></script>', lambda m: "<script>\n" + read(m.g
 tout = os.path.join(ROOT, "dist", "teacher.html")
 open(tout, "w", encoding="utf-8").write(t)
 print("만들었습니다:", tout, round(os.path.getsize(tout) / 1024), "KB")
+
+# dist 폴더만 배포하는 호스팅(Cloudflare Workers 등)을 위한 첫 화면: 게임으로 넘겨 줍니다
+open(os.path.join(ROOT, "dist", "index.html"), "w", encoding="utf-8").write('<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>검열국을 탈출하라</title><meta http-equiv="refresh" content="0; url=escape_room.html"></head><body></body></html>')
+print("만들었습니다: dist/index.html")
