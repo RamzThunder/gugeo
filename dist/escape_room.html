@@ -116,6 +116,7 @@ p{margin:0}
 .mhold.on{transform:translateX(-50%) translateY(3px);box-shadow:0 1px 0 #0a0b0e;filter:brightness(1.15)}
 .mhold.lock{opacity:.55}
 .mboss{touch-action:none}
+.roomin{width:100%;font:700 22px var(--serif);padding:12px 14px;background:#0f1116;color:#fff;border:3px solid #0a0b0e;letter-spacing:.1em}
 .wirewrap{max-width:560px;line-height:0}
 .wirewrap svg{width:100%;height:auto;display:block;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 .mrib{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mute)}
@@ -419,6 +420,8 @@ const TEXT={
     sub:"조선총독부 경무국 도서과 · 잠입 임무",
     title:"검열국을 탈출하라",
     story:"1940년 초 경성. 당신은 검열관으로 위장해 도서과에 잠입한 독립운동가다. 검열실에서 중요한 메시지를 ‘시’로 위장해 검열 통과 원고에 섞어 내보내고, 정체가 드러나기 전에 빠져나와야 한다. 제한 시간은 {분}분이다.",
+    roomLabel:"교실 TV에 나온 방 번호",
+    roomHint:"모르면 비워 두세요",
     pick:"우리 모둠 번호를 고르세요",
     enter:"들어가기"
   },
@@ -594,6 +597,32 @@ const TEXT={
 
 </script>
 <script>
+/* 교실 TV(teacher.html)로 진행 상황을 보내는 코드. 학생 게임이 쓰고, teacher.html도 같이 씁니다.
+   Firebase Realtime Database의 REST 주소만 쓰므로 별도 라이브러리는 없습니다.
+   인터넷이 막히거나 방 번호가 없으면 아무 일도 하지 않고 게임은 그대로 돌아갑니다. */
+const NET={
+  db:"https://gugeo-c23ae-default-rtdb.asia-southeast1.firebasedatabase.app",
+  root:"censor"
+};
+const netRoomOk=r=>/^[0-9A-Za-z가-힣-]{2,12}$/.test(r||"");
+const netPiece=g=>{const w=CONFIG.finalWord;return w[(g-1)%w.length];};
+const netUrl=(room,g)=>`${NET.db}/${NET.root}/${encodeURIComponent(room)}${g?"/groups/"+g:""}.json`;
+let _netSig="", _netAt=0;
+function netPush(force){
+  if(typeof S==="undefined"||!netRoomOk(S.room)||!S.group) return;
+  const d={stage:S.stage|0, where:(typeof curKey!=="undefined"&&curKey)||"", sus:Math.min(100,S.sus|0), hints:S.hints|0, grilled:S.grilled|0,
+    start:S.start||0, penalty:S.penalty|0, extra:S.extra|0, min:CONFIG.minutes, done:S.done||0, piece:S.done?netPiece(S.group):"", t:Date.now()};
+  const sig=JSON.stringify(Object.assign({},d,{t:0})), now=Date.now();
+  if(!force&&sig===_netSig&&now-_netAt<10000) return;
+  _netSig=sig; _netAt=now;
+  try{ fetch(netUrl(S.room,S.group),{method:"PUT",body:JSON.stringify(d),keepalive:true}).catch(()=>{}); }catch(e){}
+}
+function netClear(room,g){ if(!netRoomOk(room)) return Promise.resolve();
+  try{ return fetch(netUrl(room,g),{method:"DELETE"}).catch(()=>{}); }catch(e){ return Promise.resolve(); } }
+setInterval(()=>netPush(false),4000);
+
+</script>
+<script>
 /* 게임 동작 코드. 대사는 story.js, 그림 경로는 assets.js에 있습니다. */
 const TYPES=["직접","돌려","안으로"], TLABEL={직접:"직접 말하기",돌려:"돌려 말하기",안으로:"안으로 향하기"};
 const KEY="censor-escape-v1";
@@ -603,9 +632,9 @@ const $$=s=>ROOT.querySelectorAll(s);
 // story.js의 TEXT 문구에서 {분} {힌트초} {조} 같은 자리를 채움
 const T=(s,o)=>String(s).replace(/\{([^{}]+)\}/g,(m,k)=>{const v=Object.assign({분:CONFIG.minutes,힌트초:CONFIG.hintPenaltySec,조:S.group},o)[k];return v==null?m:v;});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-let S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",wired:false};
+let S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",wired:false,room:""};
 try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(S,JSON.parse(r));}catch(e){}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){} if(typeof netPush==="function") netPush();};
 let tick=null, ui={sel:{},per:{},cls:{},stamped:false,quiz:null,hintOn:null,s3ok:false};
 
 function remain(){ if(!S.start) return CONFIG.minutes*60;
@@ -695,14 +724,14 @@ function playVN(script,done){
 }
 let panels={}, curPanel=null, curKey=null;
 function openPanel(key,html,binder){
-  curKey=key; setTimeout(paintTeacher);
+  curKey=key; setTimeout(paintTeacher); if(typeof netPush==="function") netPush();
   let el=panels[key];
   if(!el){ el=document.createElement("div"); el.className="panel"; el.setAttribute("role","dialog");
     el.innerHTML=`<div class="pwrap">${bar()}<div class="pbody">${html}</div><div class="row"><button class="btn ghost pclose" type="button">${T(TEXT.common.close)}</button></div></div>`;
     document.body.appendChild(el); panels[key]=el; ROOT=el; binder(); el.querySelector(".pclose").onclick=closePanel; }
   ROOT=el; el.hidden=false; curPanel=el; document.body.style.overflow="hidden"; paintClock(); paintSus(); el.scrollTop=0;
 }
-function closePanel(){ if(curPanel) curPanel.hidden=true; curPanel=null; curKey=null; ROOT=document; document.body.style.overflow=""; }
+function closePanel(){ if(curPanel) curPanel.hidden=true; curPanel=null; curKey=null; if(typeof netPush==="function") netPush(); ROOT=document; document.body.style.overflow=""; }
 function disposePanels(){ Object.values(panels).forEach(e=>e.remove()); panels={}; curPanel=null; curKey=null; ROOT=document; document.body.style.overflow=""; }
 function render(){
   disposePanels(); setTimeout(paintTeacher);
@@ -766,6 +795,7 @@ function startHTML(){
   <div class="pixwrap">${stageHTML("gate")}</div>
   <h3>${T(TEXT.start.sub)}</h3><h1>${T(TEXT.start.title)}</h1>
   <p class="story">${T(TEXT.start.story)}</p>
+  <div class="card"><h3>${T(TEXT.start.roomLabel)}</h3><input id="room" class="roomin" type="text" inputmode="text" maxlength="12" autocomplete="off" placeholder="${esc(TEXT.start.roomHint)}" value="${esc(S.room||new URLSearchParams(location.search).get("room")||"")}"></div>
   <div class="card"><h3>${T(TEXT.start.pick)}</h3><div class="glist" id="gl">${g}</div>
   <button class="btn" id="ok" type="button" disabled>${T(TEXT.start.enter)}</button></div></div>`;
 }
@@ -773,7 +803,7 @@ function bindStart(){
   let pick=null;
   document.querySelectorAll("#gl button").forEach(b=>b.onclick=()=>{pick=+b.dataset.g;
     document.querySelectorAll("#gl button").forEach(x=>x.classList.toggle("on",x===b)); $("#ok").disabled=false;});
-  $("#ok").onclick=()=>{S.group=pick;S.stage=0;save();render();};
+  $("#ok").onclick=()=>{ const r=($("#room").value||"").trim(); S.room=(typeof netRoomOk==="function"&&netRoomOk(r))?r:""; S.group=pick;S.stage=0;save();render();};
 }
 function introHTML(){
   return `<div class="wrap" style="padding:0"><div style="display:flex;flex-direction:column;gap:16px;padding-top:24px">
@@ -1084,7 +1114,7 @@ function finaleHTML(){
   <div class="foot"><span></span><span><button id="rbtn" type="button">${T(TEXT.common.restart)}</button> <button id="tbtn" type="button">${T(TEXT.common.teacher)}</button></span></div></div>`;
 }
 /* ---------- 교사용 ---------- */
-function resetAll(){S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",wired:false};save();render();window.scrollTo(0,0);}
+function resetAll(){ const rm=S.room, gp=S.group; if(typeof netClear==="function"&&gp) netClear(rm,gp); S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",wired:false,room:rm};save();render();window.scrollTo(0,0);}
 function bindFoot(){const b=$("#tbtn"); if(b) b.onclick=teacher;
   const r=$("#rbtn"); if(r){ let t=null; r.onclick=()=>{ if(t){clearTimeout(t);resetAll();return;}
     r.textContent=T(TEXT.common.restartAgain); t=setTimeout(()=>{t=null;r.textContent=T(TEXT.common.restart);},4000); }; } }

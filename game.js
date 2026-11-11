@@ -7,9 +7,9 @@ const $$=s=>ROOT.querySelectorAll(s);
 // story.js의 TEXT 문구에서 {분} {힌트초} {조} 같은 자리를 채움
 const T=(s,o)=>String(s).replace(/\{([^{}]+)\}/g,(m,k)=>{const v=Object.assign({분:CONFIG.minutes,힌트초:CONFIG.hintPenaltySec,조:S.group},o)[k];return v==null?m:v;});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-let S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",wired:false};
+let S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",wired:false,room:""};
 try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(S,JSON.parse(r));}catch(e){}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){} if(typeof netPush==="function") netPush();};
 let tick=null, ui={sel:{},per:{},cls:{},stamped:false,quiz:null,hintOn:null,s3ok:false};
 
 function remain(){ if(!S.start) return CONFIG.minutes*60;
@@ -99,14 +99,14 @@ function playVN(script,done){
 }
 let panels={}, curPanel=null, curKey=null;
 function openPanel(key,html,binder){
-  curKey=key; setTimeout(paintTeacher);
+  curKey=key; setTimeout(paintTeacher); if(typeof netPush==="function") netPush();
   let el=panels[key];
   if(!el){ el=document.createElement("div"); el.className="panel"; el.setAttribute("role","dialog");
     el.innerHTML=`<div class="pwrap">${bar()}<div class="pbody">${html}</div><div class="row"><button class="btn ghost pclose" type="button">${T(TEXT.common.close)}</button></div></div>`;
     document.body.appendChild(el); panels[key]=el; ROOT=el; binder(); el.querySelector(".pclose").onclick=closePanel; }
   ROOT=el; el.hidden=false; curPanel=el; document.body.style.overflow="hidden"; paintClock(); paintSus(); el.scrollTop=0;
 }
-function closePanel(){ if(curPanel) curPanel.hidden=true; curPanel=null; curKey=null; ROOT=document; document.body.style.overflow=""; }
+function closePanel(){ if(curPanel) curPanel.hidden=true; curPanel=null; curKey=null; if(typeof netPush==="function") netPush(); ROOT=document; document.body.style.overflow=""; }
 function disposePanels(){ Object.values(panels).forEach(e=>e.remove()); panels={}; curPanel=null; curKey=null; ROOT=document; document.body.style.overflow=""; }
 function render(){
   disposePanels(); setTimeout(paintTeacher);
@@ -170,6 +170,7 @@ function startHTML(){
   <div class="pixwrap">${stageHTML("gate")}</div>
   <h3>${T(TEXT.start.sub)}</h3><h1>${T(TEXT.start.title)}</h1>
   <p class="story">${T(TEXT.start.story)}</p>
+  <div class="card"><h3>${T(TEXT.start.roomLabel)}</h3><input id="room" class="roomin" type="text" inputmode="text" maxlength="12" autocomplete="off" placeholder="${esc(TEXT.start.roomHint)}" value="${esc(S.room||new URLSearchParams(location.search).get("room")||"")}"></div>
   <div class="card"><h3>${T(TEXT.start.pick)}</h3><div class="glist" id="gl">${g}</div>
   <button class="btn" id="ok" type="button" disabled>${T(TEXT.start.enter)}</button></div></div>`;
 }
@@ -177,7 +178,7 @@ function bindStart(){
   let pick=null;
   document.querySelectorAll("#gl button").forEach(b=>b.onclick=()=>{pick=+b.dataset.g;
     document.querySelectorAll("#gl button").forEach(x=>x.classList.toggle("on",x===b)); $("#ok").disabled=false;});
-  $("#ok").onclick=()=>{S.group=pick;S.stage=0;save();render();};
+  $("#ok").onclick=()=>{ const r=($("#room").value||"").trim(); S.room=(typeof netRoomOk==="function"&&netRoomOk(r))?r:""; S.group=pick;S.stage=0;save();render();};
 }
 function introHTML(){
   return `<div class="wrap" style="padding:0"><div style="display:flex;flex-direction:column;gap:16px;padding-top:24px">
@@ -488,7 +489,7 @@ function finaleHTML(){
   <div class="foot"><span></span><span><button id="rbtn" type="button">${T(TEXT.common.restart)}</button> <button id="tbtn" type="button">${T(TEXT.common.teacher)}</button></span></div></div>`;
 }
 /* ---------- 교사용 ---------- */
-function resetAll(){S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",wired:false};save();render();window.scrollTo(0,0);}
+function resetAll(){ const rm=S.room, gp=S.group; if(typeof netClear==="function"&&gp) netClear(rm,gp); S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",wired:false,room:rm};save();render();window.scrollTo(0,0);}
 function bindFoot(){const b=$("#tbtn"); if(b) b.onclick=teacher;
   const r=$("#rbtn"); if(r){ let t=null; r.onclick=()=>{ if(t){clearTimeout(t);resetAll();return;}
     r.textContent=T(TEXT.common.restartAgain); t=setTimeout(()=>{t=null;r.textContent=T(TEXT.common.restart);},4000); }; } }

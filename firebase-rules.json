@@ -1,0 +1,31 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "censor": {
+      "$room": {
+        ".validate": "$room.matches(/^[0-9A-Za-z가-힣-]{2,12}$/)",
+        ".read": true,
+        "groups": {
+          "$n": {
+            ".write": "$n.matches(/^[1-9][0-9]?$/)",
+            ".validate": "newData.hasChildren(['stage','sus','t'])",
+            "stage": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 9" },
+            "where": { ".validate": "newData.isString() && newData.val().length <= 12" },
+            "sus": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100" },
+            "hints": { ".validate": "newData.isNumber()" },
+            "grilled": { ".validate": "newData.isNumber()" },
+            "start": { ".validate": "newData.isNumber()" },
+            "penalty": { ".validate": "newData.isNumber()" },
+            "extra": { ".validate": "newData.isNumber()" },
+            "min": { ".validate": "newData.isNumber()" },
+            "done": { ".validate": "newData.isNumber()" },
+            "piece": { ".validate": "newData.isString() && newData.val().length <= 2" },
+            "t": { ".validate": "newData.isNumber()" },
+            "$other": { ".validate": false }
+          }
+        }
+      }
+    }
+  }
+}
