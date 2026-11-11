@@ -49,7 +49,7 @@ function stageHTML(bg,spr){
 }
 let vnTimer=null, vnStop=()=>{};
 (function blinkLoop(){
-  const rm=matchMedia("(prefers-reduced-motion: reduce)").matches; if(rm) return;
+  // 눈 깜빡임은 0.1초짜리 작은 변화라 '동작 줄이기' 설정과 상관없이 보여 줌 (학교 PC는 이 설정이 켜진 경우가 많음)
   const once=cb=>{const b=document.querySelector(".stage .pt,.overlay .pt"); if(!b){cb&&cb();return;} b.style.visibility="visible"; setTimeout(()=>{b.style.visibility="hidden"; cb&&cb();},120);};
   const go=()=>setTimeout(()=>{ once(()=>{ if(Math.random()<.2) setTimeout(()=>once(),160); }); go(); },2500+Math.random()*3000);
   go();
