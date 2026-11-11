@@ -1,0 +1,4 @@
+.DS_Store
+# 받아 둔 원본 글꼴(용량 큼). 화면에서는 fonts/의 woff2만 씀
+fonts/*.ttf
+fonts/*.otf

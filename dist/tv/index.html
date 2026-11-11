@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>검열국 탈출 · 교실 TV</title>
 <style>
+/* TV에서 학생 시를 손글씨(그리운 묘은흘림체)로 보여 줌. 글꼴 파일은 학생 게임 폴더의 것을 같이 씀 */
+@font-face{font-family:"GriunMyoeun";src:url(../game/fonts/Griun_MyoeunHeullim-Rg.woff2) format("woff2");font-display:swap}
 :root{--bg:#101218;--card:#1a1d26;--line:#2d313d;--tx:#f1efe8;--mute:#8d93a3;--amber:#e0a93f;--ok:#6bb585;--bad:#e5484d}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);font-family:"Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif}
@@ -81,7 +83,7 @@ button:hover{border-color:var(--amber)}
 #rv .hd{display:flex;align-items:baseline;gap:1.4vw;font-size:2.4vh;color:var(--mute)}
 #rv .hd b{font-size:4.4vh;color:var(--tx)}
 #rv .hd .sp{flex:1}
-#rv pre{margin:0;font:inherit;font-size:4.6vh;line-height:1.55;white-space:pre-wrap;word-break:keep-all;background:#f1ead8;color:#2a241a;padding:3vh 3vw;border:2px solid #0a0b0e}
+#rv pre{margin:0;font:inherit;font-family:"GriunMyoeun","Noto Sans KR","Malgun Gothic",sans-serif;font-size:5.2vh;line-height:1.55;white-space:pre-wrap;word-break:keep-all;background:#f1ead8;color:#2a241a;padding:3vh 3vw;border:2px solid #0a0b0e}
 #rv details{font-size:2.4vh;color:var(--mute)}
 #rv summary{cursor:pointer}
 #rv details p{color:var(--tx);font-size:3vh;margin:1.2vh 0 0;white-space:pre-wrap}

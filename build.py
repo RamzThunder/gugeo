@@ -34,6 +34,7 @@ open(out, "w", encoding="utf-8").write(html)
 print("만들었습니다:", out, round(os.path.getsize(out) / 1024), "KB")
 # 교실 TV용 교사 화면 (그림 없이 가벼움)
 t = re.sub(r'<script src="([^"]+)"></script>', lambda m: "<script>\n" + read(m.group(1)) + "\n</script>", read("teacher.html"))
+t = t.replace("url(fonts/", "url(../game/fonts/")   # TV는 게임 폴더의 글꼴을 같이 씀
 os.makedirs(os.path.join(ROOT, "dist", "tv"), exist_ok=True)
 tout = os.path.join(ROOT, "dist", "tv", "index.html")
 open(tout, "w", encoding="utf-8").write(t)
