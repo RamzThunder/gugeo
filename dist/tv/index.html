@@ -448,7 +448,9 @@ function netPush(force){
 }
 function netClear(room,g){ if(!netRoomOk(room)) return Promise.resolve();
   const del=u=>{ try{ return fetch(u,{method:"DELETE"}).catch(()=>{}); }catch(e){ return Promise.resolve(); } };
-  if(!g) return del(netUrl(room));
+  // 방 전체는 규칙상 한 번에 못 지우므로, 조마다 groups·poems·verdict 칸을 한 요청으로 비웁니다
+  if(!g){ const d={}; for(let n=1;n<=Math.max(CONFIG.groups,20);n++) ["groups","poems","verdict"].forEach(k=>d[k+"/"+n]=null);
+    try{ return fetch(netUrl(room),{method:"PATCH",body:JSON.stringify(d)}).catch(()=>{}); }catch(e){ return Promise.resolve(); } }
   return Promise.all([del(netUrl(room,g)),del(netKindUrl(room,"poems",g)),del(netKindUrl(room,"verdict",g))]); }
 // 3단계 위장 시: 학생이 censor/방/poems/조 에 올리고, TV가 censor/방/verdict/조 에 통과(ok:true)·다시 쓰기(ok:false)를 적습니다.
 // verdict.for 에는 판정한 시의 t를 적어, 시를 고쳐 다시 내면 예전 판정은 무시됩니다.

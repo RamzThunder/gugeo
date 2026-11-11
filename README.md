@@ -55,6 +55,7 @@
   - ‘동지만 아는 뜻’은 처음엔 접혀 있고, `동지만 아는 뜻 보기`를 누르면 보입니다.
   - 방 번호 없이 하거나 인터넷이 안 되면 예전처럼 선생님 비밀번호로 엽니다 (문 화면 아래 `TV 연결이 안 될 때`).
 - 구조: 학생 게임이 `censor/방번호/groups/조번호`에 상태 한 줄을 4초마다(바뀔 때마다) 보내고(net.js), TV가 그 방을 실시간으로 받습니다. 위장 시와 숨은 뜻은 `censor/방번호/poems/조번호`에, 선생님 판정은 `censor/방번호/verdict/조번호`에 저장됩니다. 학생 이름은 보내지 않습니다.
+- 규칙 올리기: 터미널에서 `npx firebase-tools deploy --only database --project gugeo-c23ae` (firebase.json이 firebase-rules.json을 가리킵니다). 또는 콘솔에 직접 붙여 넣기.
 - 설정: net.js 맨 위 `NET.db`가 Firebase Realtime Database 주소입니다. 보안 규칙은 `firebase-rules.json` 내용을 Firebase 콘솔 → Realtime Database → 규칙에 붙여 넣으세요.
 - 방 번호는 비밀번호 역할도 합니다. 반마다 다른 번호를 쓰세요.
 
