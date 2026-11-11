@@ -582,7 +582,14 @@ const TEXT={
     waitNote:"우리 시가 교실 TV로 전해졌습니다. 선생님이 ‘통과’를 누르면 저절로 문이 열립니다. 이 화면을 켜 둔 채 기다리세요.",
     sendFail:"TV로 시를 보내지 못했습니다. 인터넷을 확인하거나, 아래에서 선생님 비밀번호로 여세요.",
     pinFold:"TV 연결이 안 될 때: 선생님 비밀번호로 열기",
-    rejected:"접선책이 고개를 저었다. “이대로는 위험해. 다시 써 오게.” 시를 고쳐 다시 검열을 받으세요."
+    rejected:"접선책이 돌려보낸 시입니다. 고쳐서 다시 검열을 받으세요.",
+    /* 선생님이 TV에서 '다시 쓰기'를 눌렀을 때 뜨는 장면 */
+    rejectTitle:"원고가 되돌아왔다",
+    rejectWho:"접선책",
+    rejectLine:"“이대로는 동지에게 보낼 수 없네. 뜻이 너무 드러나거나, 반대로 아무도 알아채지 못할 걸세. 다시 써 오게.”",
+    rejectPoemLabel:"되돌아온 우리 시",
+    rejectNote:"생각해 보기: 검열관 눈에는 평범한 시로 보이면서, 동지는 뜻을 알아챌 수 있을까? 상징을 바꾸거나 한 줄 더 보태 보세요.",
+    rejectBtn:"타자기 앞으로 돌아가기"
   },
 
   /* 결과 화면 (에필로그 뒤) */
@@ -1149,10 +1156,20 @@ function watchVerdict(){
   };
   verdictTimer=setInterval(chk,3000); chk();
 }
-// 선생님이 '다시 쓰기'를 누르면 3단계로 돌아가 시를 고쳐 씀
+// 선생님이 '다시 쓰기'를 누르면 접선책 장면을 보여 주고, 3단계로 돌아가 원래 시를 고쳐 씀
 function rejected(){
+  const poem=S.poem, mean=S.meaning;
   S.stage=3; S.wired=true; S.poem=""; S.meaning=""; S.poemAt=0; save(); render(); window.scrollTo(0,0);
-  openKey("s3"); const m=$("#msg"); if(m){ m.className="msg bad"; m.innerHTML=T(TEXT.door.rejected); }
+  const D=TEXT.door, o=document.createElement("div"); o.className="overlay"; o.setAttribute("role","dialog");
+  o.innerHTML='<div class="card" style="border-color:var(--stamp)">'+stageHTML("street","contactSide")+`<h2>${T(D.rejectTitle)}</h2>
+  <p><b>${T(D.rejectWho)}</b><br>${T(D.rejectLine)}</p>
+  <div class="paper"><span class="no">${T(D.rejectPoemLabel)}</span><div class="txt" style="white-space:pre-wrap">${esc(poem)}</div></div>
+  <p class="note">${T(D.rejectNote)}</p><button class="btn" id="rjx" type="button">${T(D.rejectBtn)}</button></div>`;
+  document.body.appendChild(o);
+  o.querySelector("#rjx").onclick=()=>{ o.remove(); openKey("s3");
+    const t1=$("#t1"), t2=$("#t2"), m=$("#msg");
+    if(t1){ t1.value=poem||""; t2.value=mean||""; t1.oninput&&t1.oninput(); }
+    if(m){ m.className="msg bad"; m.innerHTML=T(D.rejected); } };
 }
 function finish(){S.done=Date.now();save();render();window.scrollTo(0,0);}
 /* ---------- 마무리 ---------- */

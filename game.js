@@ -499,10 +499,20 @@ function watchVerdict(){
   };
   verdictTimer=setInterval(chk,3000); chk();
 }
-// 선생님이 '다시 쓰기'를 누르면 3단계로 돌아가 시를 고쳐 씀
+// 선생님이 '다시 쓰기'를 누르면 접선책 장면을 보여 주고, 3단계로 돌아가 원래 시를 고쳐 씀
 function rejected(){
+  const poem=S.poem, mean=S.meaning;
   S.stage=3; S.wired=true; S.poem=""; S.meaning=""; S.poemAt=0; save(); render(); window.scrollTo(0,0);
-  openKey("s3"); const m=$("#msg"); if(m){ m.className="msg bad"; m.innerHTML=T(TEXT.door.rejected); }
+  const D=TEXT.door, o=document.createElement("div"); o.className="overlay"; o.setAttribute("role","dialog");
+  o.innerHTML='<div class="card" style="border-color:var(--stamp)">'+stageHTML("street","contactSide")+`<h2>${T(D.rejectTitle)}</h2>
+  <p><b>${T(D.rejectWho)}</b><br>${T(D.rejectLine)}</p>
+  <div class="paper"><span class="no">${T(D.rejectPoemLabel)}</span><div class="txt" style="white-space:pre-wrap">${esc(poem)}</div></div>
+  <p class="note">${T(D.rejectNote)}</p><button class="btn" id="rjx" type="button">${T(D.rejectBtn)}</button></div>`;
+  document.body.appendChild(o);
+  o.querySelector("#rjx").onclick=()=>{ o.remove(); openKey("s3");
+    const t1=$("#t1"), t2=$("#t2"), m=$("#msg");
+    if(t1){ t1.value=poem||""; t2.value=mean||""; t1.oninput&&t1.oninput(); }
+    if(m){ m.className="msg bad"; m.innerHTML=T(D.rejected); } };
 }
 function finish(){S.done=Date.now();save();render();window.scrollTo(0,0);}
 /* ---------- 마무리 ---------- */
