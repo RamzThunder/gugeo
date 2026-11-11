@@ -480,7 +480,7 @@ function connect(){
 }
 function start(r){ room=r; try{localStorage.setItem("censor-room",room);}catch(e){}
   $("#setup").classList.remove("show"); $("#rc").textContent=room;
-  const link=location.href.split("?")[0].replace(/teacher\.html$/,"escape_room.html")+"?room="+encodeURIComponent(room);
+  const link=location.href.split("?")[0].replace(/teacher\.html$/,"escape_room.html").replace(/\/tv(\/index\.html)?\/?$/,"/game/")+"?room="+encodeURIComponent(room);
   $("#lk").textContent=link.replace(/^https?:\/\//,""); $("#qr").innerHTML="";
   try{ new QRCode($("#qr"),{text:link,width:92,height:92,correctLevel:QRCode.CorrectLevel.M}); }catch(e){ $("#qr").style.display="none"; }
   connect(); }
