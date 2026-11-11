@@ -291,7 +291,7 @@ function m1HTML(){
   return `<div style="display:flex;flex-direction:column;gap:14px"><h2>${T(M.title)}</h2>
   <p class="story">${T(M.story)}</p>
   <div class="mdrawer"${DRAWER.bg?` style="background-image:url(${DRAWER.bg})"`:""}>
-    <button type="button" class="mkey" id="mkey" style="${pos(k,1)}" aria-label="${esc(M.keyLabel)}"><img src="${IMG.key}" alt=""></button>${items}</div>
+    <button type="button" class="mkey" id="mkey" style="${pos(k,1)}" aria-label="${esc(M.keyLabel)}"><img src="${k.s||IMG.key}" alt=""></button>${items}</div>
   <div class="msg" id="msg" aria-live="polite">${T(M.start)}</div></div>`;
 }
 function bindM1(){

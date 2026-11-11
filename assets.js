@@ -48,17 +48,17 @@ const CUT={
    나중에 적힌 물건이 위에 쌓입니다. 열쇠(key)는 맨 아래에 깔립니다. */
 const DRAWER={
   bg:"",   // 서랍 속 바닥 그림 (예: img/drawer_inside.png 를 따옴표 안에). 비우면 나무 무늬 임시 바닥.
-  key:{x:56,y:50,w:11,h:22},
+  key:{x:54,y:47,w:16,h:26,s:"img/key_big.png"},
   items:{
-    bundle:{x:46,y:38,w:34,h:44,r:-4},
-    ledger:{x:52,y:44,w:26,h:40,r:6},
-    stamp: {x:20,y:56,w:16,h:26,r:-12},
-    paper: {x:8, y:12,w:34,h:40,r:-8},
-    pen:   {x:30,y:22,w:30,h:12,r:18},
-    lens:  {x:72,y:10,w:18,h:28,r:0},
-    tin:   {x:60,y:60,w:22,h:26,r:-6}
+    bundle:{x:46,y:38,w:34,h:44,r:-4,s:"img/drawer_bundle.png"},
+    ledger:{x:52,y:44,w:26,h:40,r:6,s:"img/drawer_ledger.png"},
+    stamp: {x:20,y:56,w:16,h:26,r:-12,s:"img/drawer_stamp.png"},
+    paper: {x:8, y:12,w:34,h:40,r:-8,s:"img/drawer_paper.png"},
+    pen:   {x:30,y:22,w:30,h:12,r:18,s:"img/drawer_pen.png"},
+    lens:  {x:72,y:10,w:18,h:28,r:0,s:"img/drawer_lens.png"},
+    tin:   {x:60,y:60,w:22,h:26,r:-6,s:"img/drawer_tin.png"}
   }
 };
 /* ===== 서류함 미니게임 그림 자리 =====
    bossBack: 상관이 등 돌리고 서류 보는 그림. 비우면 boss 그림을 어둡게 해서 대신 씁니다. */
-IMG.bossBack="";
+IMG.bossBack="img/bossBack.png";
