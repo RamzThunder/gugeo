@@ -239,3 +239,5 @@ body{isolation:isolate;background-image:radial-gradient(ellipse at 6% 10%,#b8712
  -webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
 }
 .g .ctl button[id^="ad"].on:after{display:none}
+/* The artwork lives only on ::before; older ID-specific backgrounds must not paint beneath it. */
+#newroom,#clear,.g .ctl button,.g .ctl button[id^="p5"],.g .ctl button[id^="ad"],.g .ctl button[id^="ad"].on{background:none!important}
