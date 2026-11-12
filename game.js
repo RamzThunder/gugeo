@@ -45,7 +45,7 @@ function foot(){return `<div class="foot"><span>${T(TEXT.common.hintFoot)}</span
 const SPRH={guard:"84%",guardCalm:"84%",guardSus:"84%",boss:"88%",bossSus:"88%",contact:"86%",contactSide:"86%",contactHappy:"86%"};
 const sprKey=(k,m)=>!k?k:(({guard:{calm:"guardCalm",sus:"guardSus"},boss:{sus:"bossSus"},contact:{side:"contactSide",happy:"contactHappy"}}[k]||{})[m])||k;
 function stageHTML(bg,spr){
-  return `<div class="stage"><img class="bgimg" src="${IMG[bg]}" alt="">${spr?`<span class="sw" style="--h:${SPRH[spr]}"><img class="spr0" src="${IMG[spr]}" alt="">${BLP[spr]?`<img class="pt" style="left:${BLP[spr].l}%;top:${BLP[spr].t}%;width:${BLP[spr].w}%;visibility:hidden" src="${BLP[spr].s}" alt="">`:''}</span>`:''}</div>`;
+  return `<div class="stage"><img class="bgimg" src="${IMG[bg]}" width="800" height="480" decoding="sync" alt="">${spr?`<span class="sw" style="--h:${SPRH[spr]}"><img class="spr0" src="${IMG[spr]}" alt="">${BLP[spr]?`<img class="pt" style="left:${BLP[spr].l}%;top:${BLP[spr].t}%;width:${BLP[spr].w}%;visibility:hidden" src="${BLP[spr].s}" alt="">`:''}</span>`:''}</div>`;
 }
 let vnTimer=null, vnStop=()=>{};
 (function blinkLoop(){
@@ -64,17 +64,20 @@ function playVN(script,done){
   const end=()=>{vnStop();done();};
   $("#vskip").onclick=end;
   const idx=id=>script.findIndex(x=>x.id===id);
+  let lastStage="";
   const show=()=>{
     const st=script[i]; if(!st){end();return;}
     if(st.bg) bg=st.bg;
     clearTimeout(capTimer);
     if(st.caption){ // 장면 자막: 사람 없이 배경 위에 글만 떴다가 저절로 넘어감
       $("#vbox").style.visibility="hidden";
-      $("#vstage").innerHTML=stageHTML(bg)+`<div class="vcap"><span>${st.caption}</span></div>`;
+      $("#vstage").innerHTML=stageHTML(bg)+`<div class="vcap"><span>${st.caption}</span></div>`; lastStage="";
       $("#vstage").onclick=next; capTimer=setTimeout(next,3400); return;
     }
     $("#vbox").style.visibility=""; $("#vstage").onclick=null;
-    $("#vstage").innerHTML=stageHTML(bg,sprKey(st.spr,st.mood));
+    // 같은 배경·같은 인물이면 다시 그리지 않음 (폰에서 대사 넘길 때마다 그림이 깜빡이며 칸이 흔들리던 문제)
+    const sk=bg+"|"+(sprKey(st.spr,st.mood)||"");
+    if(sk!==lastStage){ $("#vstage").innerHTML=stageHTML(bg,sprKey(st.spr,st.mood)); lastStage=sk; }
     $("#vnm").textContent=st.who||""; const tx=$("#vtx"); tx.className="vtx"+(st.who?"":" nar");
     $("#vch").innerHTML=""; $("#vnx").hidden=true; full=typeof st.text==="function"?st.text():st.text; pos=0;
     if(st.sus){ addSus(st.sus); $("#vfl").textContent="의심도 +"+st.sus; } else $("#vfl").textContent="";
