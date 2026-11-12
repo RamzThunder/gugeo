@@ -11,9 +11,16 @@ header{min-height:14vh;gap:.8vw;align-items:stretch;position:relative}
 header h1{flex:0 1 34%;min-width:0;margin:0;font-size:0;color:transparent;background:url('vintage-assets/title_banner.webp') center/contain no-repeat}
 header .sp{display:none}
 /* 연결 표시: 방 번호 아래, 불 들어오는 램프가 달린 명찰 (빨강=끊김·깜빡임, 초록=실시간 연결) */
-#conn{display:inline-flex;align-items:center;gap:.5vw;margin-top:.7vh;padding:.4vh .8vw .4vh .45vw;background:var(--paper-dark);border:1px solid #2b1709;border-radius:999px;box-shadow:inset 0 1px 0 #ffffff26,inset 0 -1px 0 #0006,0 .2vh .4vh #0007;color:#f6e4c4;font:800 clamp(10px,1.45vh,16px) "Malgun Gothic",sans-serif;letter-spacing:.03em;white-space:nowrap}
-.dot{width:1.4vh;height:1.4vh;min-width:9px;min-height:9px;margin:0;border-radius:50%;border:1px solid #1c0d05;background:radial-gradient(circle at 35% 30%,#ffc2b6,#d0412f 50%,#5e130c);box-shadow:0 0 .7vh #ff5a40aa;animation:lamp 1.4s infinite}
-.dot.on{background:radial-gradient(circle at 35% 30%,#efffd8,#6fbf4c 50%,#24451a);box-shadow:0 0 .9vh #9ae874;animation:none}
+/* 통신 표시: 놋쇠 테두리 유리 전구 + 종이 꼬리표 (손글씨 글꼴은 fonts.js의 TV통신) */
+#conn{display:inline-flex;align-items:center;gap:.55vw;margin-top:.7vh;padding:.35vh .9vw .35vh .5vw;position:relative;
+  background:var(--paper);border:1px solid #8a6443;border-radius:2px;
+  clip-path:polygon(.9vh 0,100% 0,100% 100%,.9vh 100%,0 50%);padding-left:1.4vh;
+  box-shadow:inset 0 0 .8vh #a07a4f77;color:#3a2618;font-size:clamp(11px,1.6vh,18px);font-weight:400;letter-spacing:.02em;white-space:nowrap;transform:rotate(-1.5deg)}
+.dot{width:1.5vh;height:1.5vh;min-width:10px;min-height:10px;margin:0;border-radius:50%;flex:none;
+  border:.22vh solid #b08a4a;outline:1px solid #4a3214;
+  background:radial-gradient(circle at 35% 30%,#f4c9b8,#a8463a 48%,#4a1a14);
+  box-shadow:inset 0 0 .3vh #000a,0 0 .5vh #c0503a88;animation:lamp 1.4s infinite}
+.dot.on{background:radial-gradient(circle at 35% 30%,#eef3cf,#8fae5c 46%,#34481f);box-shadow:inset 0 0 .3vh #0008,0 0 .7vh #b7d48a99;animation:none}
 @keyframes lamp{50%{opacity:.4}}
 .code,.lim{position:relative;background:var(--paper);border:2px solid #8a6443;border-radius:4px;box-shadow:inset 0 0 1.4vh #a07a4f88,0 .45vh 1vh #0008;padding:5vh .8vw .8vh;color:#322419}
 .code:before,.lim:before{content:"";position:absolute;left:50%;top:-.9vh;transform:translateX(-50%);width:min(14vw,92%);height:5.6vh;background:center/contain no-repeat;filter:drop-shadow(0 .2vh .3vh #0006)}
