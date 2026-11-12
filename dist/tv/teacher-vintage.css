@@ -144,7 +144,7 @@ header>div:last-child{justify-content:center}
 @media(max-width:420px){.grid{grid-template-columns:1fr}}
 
 /* Corrected independent PNG assets; interaction code remains unchanged. */
-.g .ctl button[id^="ad"].on{background-image:url('vintage-assets/button_admin_on.png');aspect-ratio:400/156;filter:drop-shadow(0 .2vh .3vh #0007)}
+.g .ctl button[id^="ad"].on{background-image:url('vintage-assets/button_admin_on.png');aspect-ratio:392/152;filter:drop-shadow(0 .2vh .3vh #0007)}
 .g .ctl button[id^="ad"].on:after{display:none}
 .slot{background:url('vintage-assets/letter_slot_empty.png') center/100% 100% no-repeat;border:0}
 .slot.on{background:url('vintage-assets/letter_slot_filled.png') center/100% 100% no-repeat;border:0}
@@ -226,7 +226,7 @@ body{isolation:isolate;background-image:radial-gradient(ellipse at 6% 10%,#b8712
 #clear{--button-art:url('vintage-assets/redrawn-controls/button_reset.webp');aspect-ratio:3.2}
 .g .ctl button[id^="p5"]{--button-art:url('vintage-assets/button_five_minutes.png')}
 .g .ctl button[id^="ad"]{--button-art:url('vintage-assets/button_admin.png')}
-.g .ctl button[id^="ad"].on{--button-art:url('vintage-assets/redrawn-controls/button_admin_on.webp');aspect-ratio:3}
+.g .ctl button[id^="ad"].on{--button-art:url('vintage-assets/button_admin_on.png');aspect-ratio:392/152}
 #newroom,#clear,.g .ctl button,.g .ctl button[id^="p5"],.g .ctl button[id^="ad"],.g .ctl button[id^="ad"].on{
  position:relative;background:none!important;border:0;border-radius:0;box-shadow:none;color:transparent!important;text-shadow:none;
  filter:drop-shadow(0 2px 2px #2b160954);
