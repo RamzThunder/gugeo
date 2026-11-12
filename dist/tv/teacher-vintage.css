@@ -302,6 +302,16 @@ body{isolation:isolate;background-image:linear-gradient(#0d08056b,#0d080533),url
   .room-number{max-height:9vh;width:auto;height:9vh}
   .code #lk{display:none}
   .lim{align-self:center;margin:0}
+  /* 칸 크기는 그림 크기만큼, 칸 사이 간격은 --hg 하나로 통일. 남는 폭은 제목 띠가 가져감 */
+  header{--hg:1.1vw;--hh:min(10.5vh,5.6vw);gap:var(--hg)}
+  header h1{flex:1 1 auto;min-width:0}
+  .code{flex:0 0 auto;gap:var(--hg)}
+  .room-info{flex:0 0 auto}
+  .room-number{height:var(--hh);max-height:none;width:auto;aspect-ratio:585/185}
+  .code #rc{font-size:calc(var(--hh)*.36)}
+  .lim{flex:0 0 auto;height:var(--hh);min-height:0;width:auto;aspect-ratio:1085/225}
+  .lim #mv{font-size:calc(var(--hh)*.42)}
+  header>.hd-right{flex:0 0 auto}
   /* 맨 오른쪽 세로 3칸: 새 검열실 개설 · 기록 초기화 · 통신 꼬리표 */
   header>.hd-right{align-self:center;justify-content:center;align-items:center;gap:.5vh!important}
   #newroom,#clear{height:5.2vh}
