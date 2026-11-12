@@ -241,3 +241,8 @@ body{isolation:isolate;background-image:radial-gradient(ellipse at 6% 10%,#b8712
 .g .ctl button[id^="ad"].on:after{display:none}
 /* The artwork lives only on ::before; older ID-specific backgrounds must not paint beneath it. */
 #newroom,#clear,.g .ctl button,.g .ctl button[id^="p5"],.g .ctl button[id^="ad"],.g .ctl button[id^="ad"].on{background:none!important}
+/* Trim the pale outer bevel without changing the illustrated lettering or paper. */
+#newroom:before,#clear:before{clip-path:inset(4% 1.8% 5.5% 1.8% round 8px)}
+/* Use the same reliable paper artwork in both admin states. */
+.g .ctl button[id^="ad"].on{--button-art:url('vintage-assets/button_admin.png');aspect-ratio:194/76}
+.g .ctl button[id^="ad"].on:after{display:block;background:#852d20;color:#f8e4c4;border-color:#643523;box-shadow:0 1px 2px #0005}
