@@ -170,11 +170,11 @@ function build(){
     <div class="trk" id="tk${i+1}">${"<i></i>".repeat(STEPS)}</div>
     <div class="sus"><span>의심 정도</span><div class="bar"><i id="sb${i+1}"></i></div><b id="sn${i+1}">0</b></div>
     <div class="rv">시 확인 요청 · 눌러서 보기</div>
-    <div class="ctl"><button type="button" id="p5${i+1}" title="이 조에 5분 더 주기 (붙잡힌 조는 다시 이어서 함)">+5분</button><button type="button" id="ad${i+1}" title="이 조 기기에 관리 모드(바로 가기·넘기기)를 켜고 끕니다">관리 모드</button></div>
+    <div class="ctl"><button type="button" id="p5${i+1}" title="이 조에 5분 더 주기 (붙잡힌 조는 다시 이어서 함)">+5분</button><button type="button" id="mode${i+1}" title="이 조 기기에 관리 모드(바로 가기·넘기기)를 켜고 끕니다">관리 모드</button></div>
     <div class="piece"><div class="lb">${i+1}조 탈출 성공!</div><div class="ch" id="pc${i+1}"></div><div class="tt" id="pt${i+1}"></div></div></div>`).join("");
   for(let i=1;i<=N;i++){ $("#g"+i).onclick=()=>{ if((data.poems||{})[i]) openReview(i); };
     $("#p5"+i).onclick=e=>{ e.stopPropagation(); giveTime(i); };
-    $("#ad"+i).onclick=e=>{ e.stopPropagation(); toggleAdmin(i); }; }
+    $("#mode"+i).onclick=e=>{ e.stopPropagation(); toggleAdmin(i); }; }
   const w=CONFIG.finalWord; $("#slots").innerHTML=[...w].map((c,i)=>`<div class="slot" id="sl${i}">${c}<small id="sg${i}"></small></div>`).join("");
 }
 function paint(){
@@ -211,7 +211,7 @@ function pending(n){ const p=(data.poems||{})[n], v=(data.verdict||{})[n], g=(da
   return !!p&&!(g&&g.done)&&!(v&&v.for===p.t); }
 // ---- 조별 관리: +5분, 관리 모드 (censor/방/ctl/조)
 const ctlOf=n=>(data.ctl||{})[n]||{};
-function paintCtl(n){ const c=ctlOf(n), b=$("#ad"+n), p=$("#p5"+n);
+function paintCtl(n){ const c=ctlOf(n), b=$("#mode"+n), p=$("#p5"+n);
   b.classList.toggle("on",!!c.admin); b.textContent="관리 모드"; b.setAttribute("aria-pressed",String(!!c.admin));
   p.textContent="+5분"; p.setAttribute("aria-label",c.sec?"5분 더 주기 (총 +"+Math.round(c.sec/60)+"분)":"5분 더 주기");
   b.dataset.badge=c.admin?"켜짐":""; p.dataset.badge=c.sec?"총 +"+Math.round(c.sec/60)+"분":""; }   // 그림 버튼 위 꼬리표

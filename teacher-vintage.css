@@ -59,7 +59,7 @@ header>div:last-child{justify-content:center}
 .g.empty .ctl{display:flex}   /* 입장 전에도 조별 카드에 +5분·관리 모드가 보이게 */
 .g .ctl button{flex:none;width:auto;aspect-ratio:194/76;min-width:0;height:100%;padding:0;font-size:1px;position:relative;filter:drop-shadow(0 .2vh .3vh #0007)}
 .g .ctl button[id^="p5"]{background-image:url('vintage-assets/button_five_minutes.png')}
-.g .ctl button[id^="ad"]{background-image:url('vintage-assets/button_admin.png')}
+.g .ctl button[id^="mode"]{background-image:url('vintage-assets/button_admin.png')}
 .g .ctl button.on{background-color:transparent;background-size:100% 100%;border:0;filter:drop-shadow(0 0 .5vh #d0402e) drop-shadow(0 0 .2vh #d0402e)}
 /* 그림 버튼 위 작은 꼬리표: '켜짐', '총 +10분' 같은 상태 */
 .g .ctl button[data-badge]:not([data-badge=""]):after{content:attr(data-badge);position:absolute;right:-2%;top:-38%;color:#fff4e0;background:#9a3324;border:1px solid #f0c9a8;border-radius:3px;padding:.1em .4em;font:800 clamp(9px,6cqh,15px) "Malgun Gothic",sans-serif;white-space:nowrap;transform:rotate(3deg)}
@@ -144,8 +144,8 @@ header>div:last-child{justify-content:center}
 @media(max-width:420px){.grid{grid-template-columns:1fr}}
 
 /* Corrected independent PNG assets; interaction code remains unchanged. */
-.g .ctl button[id^="ad"].on{background-image:url('vintage-assets/button_admin_on.png');aspect-ratio:392/152;filter:drop-shadow(0 .2vh .3vh #0007)}
-.g .ctl button[id^="ad"].on:after{display:none}
+.g .ctl button[id^="mode"].on{background-image:url('vintage-assets/button_admin_on.png');aspect-ratio:392/152;filter:drop-shadow(0 .2vh .3vh #0007)}
+.g .ctl button[id^="mode"].on:after{display:none}
 .slot{background:url('vintage-assets/letter_slot_empty.png') center/100% 100% no-repeat;border:0}
 .slot.on{background:url('vintage-assets/letter_slot_filled.png') center/100% 100% no-repeat;border:0}
 .lim button{border:0;box-shadow:none;background:url('vintage-assets/button_timer_minus.png') center/contain no-repeat;color:transparent}
@@ -225,9 +225,9 @@ body{isolation:isolate;background-image:radial-gradient(ellipse at 6% 10%,#b8712
 #newroom{--button-art:url('vintage-assets/redrawn-controls/button_new_room.webp');aspect-ratio:3.2}
 #clear{--button-art:url('vintage-assets/redrawn-controls/button_reset.webp');aspect-ratio:3.2}
 .g .ctl button[id^="p5"]{--button-art:url('vintage-assets/button_five_minutes.png')}
-.g .ctl button[id^="ad"]{--button-art:url('vintage-assets/button_admin.png')}
-.g .ctl button[id^="ad"].on{--button-art:url('vintage-assets/button_admin_on.png');aspect-ratio:392/152}
-#newroom,#clear,.g .ctl button,.g .ctl button[id^="p5"],.g .ctl button[id^="ad"],.g .ctl button[id^="ad"].on{
+.g .ctl button[id^="mode"]{--button-art:url('vintage-assets/button_admin.png')}
+.g .ctl button[id^="mode"].on{--button-art:url('vintage-assets/button_admin_on.png');aspect-ratio:392/152}
+#newroom,#clear,.g .ctl button,.g .ctl button[id^="p5"],.g .ctl button[id^="mode"],.g .ctl button[id^="mode"].on{
  position:relative;background:none!important;border:0;border-radius:0;box-shadow:none;color:transparent!important;text-shadow:none;
  filter:drop-shadow(0 2px 2px #2b160954);
 }
@@ -236,7 +236,7 @@ body{isolation:isolate;background-image:radial-gradient(ellipse at 6% 10%,#b8712
  background:var(--button-art) center/100% 100% no-repeat;
 }
 /* Retain the existing off-state and +5 button artwork's paper tint. */
-.g .ctl button[id^="p5"]:before,.g .ctl button[id^="ad"]:not(.on):before{
+.g .ctl button[id^="p5"]:before,.g .ctl button[id^="mode"]:not(.on):before{
  background-image:var(--button-art),url('vintage-assets/paper_light.webp');
  background-size:100% 100%,180px 180px;background-repeat:no-repeat,repeat;background-blend-mode:multiply;
  -webkit-mask-image:var(--button-art);mask-image:var(--button-art);
@@ -247,7 +247,7 @@ body{isolation:isolate;background-image:radial-gradient(ellipse at 6% 10%,#b8712
  color:#4b2815;border:0;border-radius:0;box-shadow:none;right:-10%;top:-46%;min-width:6em;text-align:center;
  padding:.45em .85em;font:900 clamp(10px,5.8cqh,17px) "GriunMyoeun",serif;line-height:1.1;transform:rotate(-3deg);
 }
-.g .ctl button[id^="ad"].on:after{display:none}
+.g .ctl button[id^="mode"].on:after{display:none}
 
 /* Preserve the original illustration proportions at every viewport size. */
 #newroom:before,#clear:before{background-size:contain}
