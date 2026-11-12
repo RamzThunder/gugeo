@@ -184,7 +184,7 @@ function build(){
     <div class="top"><span class="no">${i+1}조</span><span class="tm" id="tm${i+1}">--:--</span></div>
     <div class="st" id="st${i+1}">아직 입장 전</div>
     <div class="trk" id="tk${i+1}">${"<i></i>".repeat(STEPS)}</div>
-    <div class="sus"><span>의심 정도</span><div class="bar"><i id="sb${i+1}"></i></div><b id="sn${i+1}">0</b></div>
+    <div class="sus"><span>의심도</span><div class="bar"><i id="sb${i+1}"></i></div><b id="sn${i+1}">0</b></div>
     <div class="rv">시 확인 요청 · 눌러서 보기</div>
     <div class="ctl"><button type="button" id="p5${i+1}" title="이 조에 5분 더 주기 (붙잡힌 조는 다시 이어서 함)">+5분</button><button type="button" id="mode${i+1}" title="이 조 기기에 관리 모드(바로 가기·넘기기)를 켜고 끕니다">관리 모드</button></div>
     <div class="piece"><div class="lb">${i+1}조 탈출 성공!</div><div class="ch" id="pc${i+1}"></div><div class="tt" id="pt${i+1}"></div></div></div>`).join("");
@@ -211,7 +211,7 @@ function paint(){
     [...$("#tk"+n).children].forEach((i,k)=>i.className=k<idx?"f":(k===idx&&!g.done&&!cau?"c":""));
     paintCtl(n);
     $("#sb"+n).style.width=sus+"%"; $("#sb"+n).style.background=sus>=70?"var(--bad)":sus>=40?"var(--amber)":"var(--ok)"; $("#sn"+n).textContent=sus;
-    if(fin){ $("#pc"+n).textContent=g.piece||netPiece(n); $("#pt"+n).textContent="걸린 시간 "+tm.textContent+" · 의심 정도 "+sus; (got[g.piece||netPiece(n)]=got[g.piece||netPiece(n)]||[]).push(n); }
+    if(fin){ $("#pc"+n).textContent=g.piece||netPiece(n); $("#pt"+n).textContent="걸린 시간 "+tm.textContent+" · 의심도 "+sus; (got[g.piece||netPiece(n)]=got[g.piece||netPiece(n)]||[]).push(n); }
   }
   paintLimit();
   const q=queue(); $("#rq").textContent="시 확인 대기 "+q.length+"개"; $("#rq").classList.toggle("on",q.length>0);
