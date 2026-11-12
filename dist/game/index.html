@@ -204,6 +204,11 @@ h1{letter-spacing:0}
 textarea{font-size:16.5px}
 .opt{border-width:3px}
 
+/* ===== 2단계 도장: 그림 도장 (교실 TV와 같은 모양). 삭제 = 빨강, 통과 = 초록 ===== */
+.stamp,.stamp.pass{width:clamp(92px,30%,150px);aspect-ratio:600/246;height:auto;padding:0;border:0;font-size:0;color:transparent;
+  background:url("img/stamp_delete.webp") center/contain no-repeat transparent}
+.stamp.pass{aspect-ratio:600/217;background-image:url("img/stamp_pass.webp")}
+
 /* ===== 글꼴별 크기 조정 (글꼴 종류는 fonts.js) ===== */
 .paper .txt{font-size:21px;line-height:1.75}
 textarea{font-size:20px;line-height:1.6}
@@ -265,7 +270,7 @@ const FONT_USE={
   본문:    "델타돋움",          // 대사(장면 대화·선택지)와 안내문(단계 설명, 작은 안내, 맞음·틀림 메시지, 알림 줄, 임무 목록)
   조번호:  "모나10x12",          // 위쪽 상태줄과 대사 화면 왼쪽 위의 "N조"
   제목:    "그리운경찰인권",    // 게임 제목, 단계 제목
-  도장:    "그리운경찰인권",    // 삭제·통과 도장
+  도장:    "그리운경찰인권",    // 삭제·통과 도장 (지금은 그림 도장이라 글꼴이 보이지 않음)
   종이글:  "그리운묘은흘림",    // 시구 카드, 압수 문서, 전할 메시지
   시쓰기:  "조선100년",    // 3단계에서 학생이 위장 시를 쓰는 칸
   자막:    "갈무리장체",    // 장면 자막 ("1940년대 초, 경성, 어느 날 새벽" 등)
@@ -397,6 +402,8 @@ const DRAWER={
 /* ===== 서류함 미니게임 그림 자리 =====
    bossBack: 상관이 등 돌리고 서류 보는 그림. 비우면 boss 그림을 어둡게 해서 대신 씁니다. */
 IMG.bossBack="img/bossBack.png";
+// 2단계 문서에 찍히는 도장 그림 (교실 TV의 도장과 같은 모양). 화면에서는 game.html의 .stamp 가 씀, 여기 적어 두면 미리 받아 둠
+IMG.stampDelete="img/stamp_delete.webp"; IMG.stampPass="img/stamp_pass.webp";
 
 </script>
 <script>
@@ -662,7 +669,7 @@ const TEXT={
     items:[
       {id:"bundle", label:"원고 뭉치",   line:"끈으로 묶은 압수 원고 뭉치다. 생각보다 무겁다."},
       {id:"ledger", label:"압수 장부",   line:"압수한 책과 원고의 제목이 빼곡히 적혀 있다."},
-      {id:"stamp",  label:"검열 도장",   line:"‘削除’ 도장이다. 손끝에 붉은 인주가 묻었다."},
+      {id:"stamp",  label:"검열 도장",   line:"‘삭제’ 도장이다. 손끝에 붉은 인주가 묻었다."},
       {id:"paper",  label:"구겨진 원고지", line:"‘봄’이라는 글자에 붉은 줄이 그어져 있다."},
       {id:"pen",    label:"만년필",     line:"잉크가 말라붙은 만년필이다."},
       {id:"lens",   label:"돋보기",     line:"검열관이 잔글씨를 읽을 때 쓰는 돋보기다."},
@@ -1114,7 +1121,7 @@ function stage2HTML(){
   const docs=CONFIG.docs.map((d,i)=>`<div class="paper" id="d${i}"><span class="no">${T(TEXT.s2.doc)} ${i+1}</span>
     <div class="txt">${markWords(esc(d.text),d.marks).replace(/\n/g,"<br>")}</div>
     <div class="choices" role="group" aria-label="표현 방식">${TYPES.map(t=>`<button type="button" class="ch" data-d="${i}" data-t="${t}">${TLABEL[t]}</button>`).join("")}</div>
-    <span class="stamp ${d.type==="직접"?"":"pass"}" id="st${i}">${d.type==="직접"?"削除":"통과"}</span></div>`).join("");
+    <span class="stamp ${d.type==="직접"?"":"pass"}" id="st${i}">${d.type==="직접"?"삭제":"통과"}</span></div>`).join("");
   return `<div style="display:flex;flex-direction:column;gap:14px"><h2>${T(TEXT.s2.title)}</h2>
   <p class="story">${T(TEXT.s2.story)}</p>
   <div class="grid">${docs}</div>
@@ -1509,7 +1516,7 @@ function applyBonus(sec){
 render();
 // 첫 화면을 띄운 뒤, 나머지 그림을 뒤에서 미리 받아 둠 (장면이 바뀔 때 끊기지 않게)
 (function preload(){
-  const urls=new Set(), walk=v=>{ if(typeof v==="string"){ if(/\.png$/.test(v)) urls.add(v); } else if(v&&typeof v==="object") Object.values(v).forEach(walk); };
+  const urls=new Set(), walk=v=>{ if(typeof v==="string"){ if(/\.(png|webp)$/.test(v)) urls.add(v); } else if(v&&typeof v==="object") Object.values(v).forEach(walk); };
   [IMG,BLP,CUT,typeof DRAWER!=="undefined"?DRAWER:null].forEach(walk);
   const list=[...urls]; let i=0;
   const next=()=>{ if(i>=list.length) return; const im=new Image(); im.onload=im.onerror=next; im.src=list[i++]; };

@@ -260,7 +260,7 @@ const TEXT={
     items:[
       {id:"bundle", label:"원고 뭉치",   line:"끈으로 묶은 압수 원고 뭉치다. 생각보다 무겁다."},
       {id:"ledger", label:"압수 장부",   line:"압수한 책과 원고의 제목이 빼곡히 적혀 있다."},
-      {id:"stamp",  label:"검열 도장",   line:"‘削除’ 도장이다. 손끝에 붉은 인주가 묻었다."},
+      {id:"stamp",  label:"검열 도장",   line:"‘삭제’ 도장이다. 손끝에 붉은 인주가 묻었다."},
       {id:"paper",  label:"구겨진 원고지", line:"‘봄’이라는 글자에 붉은 줄이 그어져 있다."},
       {id:"pen",    label:"만년필",     line:"잉크가 말라붙은 만년필이다."},
       {id:"lens",   label:"돋보기",     line:"검열관이 잔글씨를 읽을 때 쓰는 돋보기다."},

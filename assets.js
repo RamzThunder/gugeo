@@ -64,3 +64,5 @@ const DRAWER={
 /* ===== 서류함 미니게임 그림 자리 =====
    bossBack: 상관이 등 돌리고 서류 보는 그림. 비우면 boss 그림을 어둡게 해서 대신 씁니다. */
 IMG.bossBack="img/bossBack.png";
+// 2단계 문서에 찍히는 도장 그림 (교실 TV의 도장과 같은 모양). 화면에서는 game.html의 .stamp 가 씀, 여기 적어 두면 미리 받아 둠
+IMG.stampDelete="img/stamp_delete.webp"; IMG.stampPass="img/stamp_pass.webp";

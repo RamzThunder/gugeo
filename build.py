@@ -29,7 +29,7 @@ def font_files():
         out |= {"fonts/" + f for f in re.findall(r'(?:file|bold)\s*:\s*"([^"]+)"', m.group(1))}
     return out
 def copy_assets(dst):
-    used = set(re.findall(r'"(img/[^"]+\.png)"', html)) | font_files()
+    used = set(re.findall(r'"(img/[^"]+\.(?:png|webp))"', html)) | font_files()
     for d in ("img", "fonts"):
         shutil.rmtree(os.path.join(dst, d), ignore_errors=True)
     for p in sorted(used):

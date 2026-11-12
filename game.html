@@ -204,6 +204,11 @@ h1{letter-spacing:0}
 textarea{font-size:16.5px}
 .opt{border-width:3px}
 
+/* ===== 2단계 도장: 그림 도장 (교실 TV와 같은 모양). 삭제 = 빨강, 통과 = 초록 ===== */
+.stamp,.stamp.pass{width:clamp(92px,30%,150px);aspect-ratio:600/246;height:auto;padding:0;border:0;font-size:0;color:transparent;
+  background:url("img/stamp_delete.webp") center/contain no-repeat transparent}
+.stamp.pass{aspect-ratio:600/217;background-image:url("img/stamp_pass.webp")}
+
 /* ===== 글꼴별 크기 조정 (글꼴 종류는 fonts.js) ===== */
 .paper .txt{font-size:21px;line-height:1.75}
 textarea{font-size:20px;line-height:1.6}

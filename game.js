@@ -255,7 +255,7 @@ function stage2HTML(){
   const docs=CONFIG.docs.map((d,i)=>`<div class="paper" id="d${i}"><span class="no">${T(TEXT.s2.doc)} ${i+1}</span>
     <div class="txt">${markWords(esc(d.text),d.marks).replace(/\n/g,"<br>")}</div>
     <div class="choices" role="group" aria-label="표현 방식">${TYPES.map(t=>`<button type="button" class="ch" data-d="${i}" data-t="${t}">${TLABEL[t]}</button>`).join("")}</div>
-    <span class="stamp ${d.type==="직접"?"":"pass"}" id="st${i}">${d.type==="직접"?"削除":"통과"}</span></div>`).join("");
+    <span class="stamp ${d.type==="직접"?"":"pass"}" id="st${i}">${d.type==="직접"?"삭제":"통과"}</span></div>`).join("");
   return `<div style="display:flex;flex-direction:column;gap:14px"><h2>${T(TEXT.s2.title)}</h2>
   <p class="story">${T(TEXT.s2.story)}</p>
   <div class="grid">${docs}</div>
@@ -650,7 +650,7 @@ function applyBonus(sec){
 render();
 // 첫 화면을 띄운 뒤, 나머지 그림을 뒤에서 미리 받아 둠 (장면이 바뀔 때 끊기지 않게)
 (function preload(){
-  const urls=new Set(), walk=v=>{ if(typeof v==="string"){ if(/\.png$/.test(v)) urls.add(v); } else if(v&&typeof v==="object") Object.values(v).forEach(walk); };
+  const urls=new Set(), walk=v=>{ if(typeof v==="string"){ if(/\.(png|webp)$/.test(v)) urls.add(v); } else if(v&&typeof v==="object") Object.values(v).forEach(walk); };
   [IMG,BLP,CUT,typeof DRAWER!=="undefined"?DRAWER:null].forEach(walk);
   const list=[...urls]; let i=0;
   const next=()=>{ if(i>=list.length) return; const im=new Image(); im.onload=im.onerror=next; im.src=list[i++]; };
