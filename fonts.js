@@ -7,6 +7,10 @@
    ▶ 복붙용 글꼴 이름 (FONT_LIST 에 있는 것)
        "갈무리"          도트(픽셀) 글씨            0.7MB
        "갈무리장체"       갈무리를 좁게 (굵게 없음)   0.2MB
+       "모나10"          도트 글씨, 갈무리와 비슷    0.7MB  (굵게 포함)
+       "모나10x12"       도트 글씨, 세로로 길쭉(장체 느낌)  0.3MB  (굵게 포함)
+       "모나12"          도트 글씨, 크고 또렷        2.6MB  (굵게 포함)
+       "모나8x12"        도트 글씨, 아주 좁게 (굵게 없음)  0.3MB
        "그리운묘은흘림"   붓으로 흘려 쓴 손글씨       3.3MB
        "그리운경찰인권"   또박또박 관청 손글씨        1.1MB
        "조선100년"        신문 활자 같은 명조        1.2MB
@@ -23,6 +27,10 @@
 const FONT_LIST={
   "갈무리":        {file:"Galmuri11.woff2", bold:"Galmuri11-Bold.woff2", note:"SIL OFL 1.1"},
   "갈무리장체":     {file:"Galmuri11-Condensed.woff2", note:"SIL OFL 1.1"},
+  "모나10":        {file:"Mona10.woff2", bold:"Mona10-Bold.woff2", note:"모나 글꼴, SIL OFL 1.1"},
+  "모나10x12":     {file:"Mona10x12.woff2", bold:"Mona10x12-Bold.woff2", note:"모나 글꼴, SIL OFL 1.1"},
+  "모나12":        {file:"Mona12.woff2", bold:"Mona12-Bold.woff2", note:"모나 글꼴, SIL OFL 1.1"},
+  "모나8x12":      {file:"Mona8x12.woff2", note:"모나 글꼴, SIL OFL 1.1"},
   "그리운묘은흘림":  {file:"Griun_MyoeunHeullim-Rg.woff2", note:"무료, 수정·판매 금지 (눈누 배포 원본)"},
   "그리운경찰인권":  {file:"Griun_PolHumanrights-Rg.woff2", note:"무료, 수정·판매 금지 (눈누 배포 원본)"},
   "조선100년":      {file:"ChosunCentennial.woff2", note:"무료, 배포된 형태 그대로 (눈누 배포 원본)"},
