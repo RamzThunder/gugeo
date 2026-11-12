@@ -214,7 +214,7 @@ function paint(){
     if(fin){ $("#pc"+n).textContent=g.piece||netPiece(n); $("#pt"+n).textContent="걸린 시간 "+tm.textContent+" · 의심도 "+sus; (got[g.piece||netPiece(n)]=got[g.piece||netPiece(n)]||[]).push(n); }
   }
   paintLimit();
-  const q=queue(); $("#rq").textContent="시 확인 대기 "+q.length+"개"; $("#rq").classList.toggle("on",q.length>0);
+  const q=queue(); $("#rq").innerHTML=`<span class="rqn">시 확인 대기 ${q.length}개</span>`; $("#rq").classList.toggle("on",q.length>0);
   if(rvOpen) paintReview();
   const w=[...CONFIG.finalWord]; let all=true, cnt=0;
   w.forEach((c,i)=>{ const on=!!got[c]; $("#sl"+i).classList.toggle("on",on); $("#sg"+i).textContent=on?got[c].join("·")+"조":""; if(on)cnt++; else all=false; });

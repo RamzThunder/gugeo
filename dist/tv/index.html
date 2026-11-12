@@ -108,7 +108,7 @@ button:hover{border-color:var(--amber)}
 #setup.show{display:flex}
 #setup input{font:inherit;font-size:5vh;text-align:center;width:20ch;background:var(--card);color:var(--tx);border:3px solid var(--line);padding:1vh}
 </style>
-<link rel="stylesheet" href="teacher-vintage.css?v=8222f2da">
+<link rel="stylesheet" href="teacher-vintage.css?v=2ebb2f79">
 </head>
 <body>
 <div class="room-props" aria-hidden="true"><div class="prop-lamp"><img class="lamp-arm" src="vintage-assets/censor-room/lamp_arm.webp" alt=""><div class="lamp-swing"><i class="lamp-light"></i><img class="lamp-shade" src="vintage-assets/censor-room/lamp_shade.webp" alt=""></div></div><img class="prop-books" src="vintage-assets/censor-room/books.webp" alt=""><img class="prop-ink" src="vintage-assets/censor-room/ink_documents.webp" alt=""><img class="prop-typewriter" src="vintage-assets/censor-room/typewriter.webp" alt=""></div>
@@ -785,7 +785,7 @@ function paint(){
     if(fin){ $("#pc"+n).textContent=g.piece||netPiece(n); $("#pt"+n).textContent="걸린 시간 "+tm.textContent+" · 의심도 "+sus; (got[g.piece||netPiece(n)]=got[g.piece||netPiece(n)]||[]).push(n); }
   }
   paintLimit();
-  const q=queue(); $("#rq").textContent="시 확인 대기 "+q.length+"개"; $("#rq").classList.toggle("on",q.length>0);
+  const q=queue(); $("#rq").innerHTML=`<span class="rqn">시 확인 대기 ${q.length}개</span>`; $("#rq").classList.toggle("on",q.length>0);
   if(rvOpen) paintReview();
   const w=[...CONFIG.finalWord]; let all=true, cnt=0;
   w.forEach((c,i)=>{ const on=!!got[c]; $("#sl"+i).classList.toggle("on",on); $("#sg"+i).textContent=on?got[c].join("·")+"조":""; if(on)cnt++; else all=false; });
