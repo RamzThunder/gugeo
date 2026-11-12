@@ -108,7 +108,7 @@ button:hover{border-color:var(--amber)}
 #setup.show{display:flex}
 #setup input{font:inherit;font-size:5vh;text-align:center;width:20ch;background:var(--card);color:var(--tx);border:3px solid var(--line);padding:1vh}
 </style>
-<link rel="stylesheet" href="teacher-vintage.css?v=5efa0059">
+<link rel="stylesheet" href="teacher-vintage.css?v=46eef6c6">
 </head>
 <body>
 <div class="room-props" aria-hidden="true"><div class="prop-lamp"><img class="lamp-arm" src="vintage-assets/censor-room/lamp_arm.webp" alt=""><div class="lamp-swing"><i class="lamp-light"></i><img class="lamp-shade" src="vintage-assets/censor-room/lamp_shade.webp" alt=""></div></div><img class="prop-books" src="vintage-assets/censor-room/books.webp" alt=""><img class="prop-ink" src="vintage-assets/censor-room/ink_documents.webp" alt=""><img class="prop-typewriter" src="vintage-assets/censor-room/typewriter.webp" alt=""></div>
@@ -127,7 +127,7 @@ button:hover{border-color:var(--amber)}
   <div class="hd"><b id="rvg"></b><span>위장한 시</span><span class="sp"></span><span id="rvw"></span></div>
   <pre id="rvp"></pre>
   <details id="rvd"><summary>동지만 아는 뜻 보기</summary><p id="rvm"></p></details>
-  <div class="act"><button class="ok" id="rvok" type="button">통과</button><button class="no" id="rvcz" type="button">검열</button><button class="vg" id="rvvg" type="button">의미 모호</button><span class="st" id="rvs"></span><span class="sp"></span><button id="rvx" type="button">닫기</button></div>
+  <div class="act"><button class="ok" id="rvok" type="button">통과</button><button class="no" id="rvcz" type="button">검열</button><button class="vg" id="rvvg" type="button">보류</button><span class="st" id="rvs"></span><span class="sp"></span><button id="rvx" type="button">닫기</button></div>
 </div></div>
 <div id="qrbig" role="dialog" aria-modal="true" aria-label="학생 입장 QR 크게 보기"><div class="box">
   <div class="qt">학생 입장</div><div class="qr-in"><div id="qrbox"></div>
@@ -833,7 +833,7 @@ function paintReview(){ const n=rvOpen, p=(data.poems||{})[n];
   const open=!judged&&!(g&&g.done);
   ["#rvok","#rvcz","#rvvg"].forEach(b=>$(b).style.display=open?"":"none");
   const k=judged?(v.kind||(v.ok?"pass":"vague")):"";
-  $("#rvs").textContent=judged?{pass:"통과시켰습니다",censor:"검열에 걸렸습니다 · 취조실로",vague:"의미가 모호해 돌려보냈습니다"}[k]:(g&&g.done?"이미 탈출했습니다":"");
+  $("#rvs").textContent=judged?{pass:"통과시켰습니다",censor:"검열에 걸렸습니다 · 취조실로",vague:"보류 · 다시 써 오라고 돌려보냈습니다"}[k]:(g&&g.done?"이미 탈출했습니다":"");
   $("#rvs").style.color=k==="censor"?"var(--bad)":k==="vague"?"var(--amber)":"var(--ok)"; }
 function closeReview(){ rvOpen=0; $("#rv").classList.remove("show"); }
 const RVB=["#rvok","#rvcz","#rvvg"];
