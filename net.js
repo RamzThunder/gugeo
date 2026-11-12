@@ -6,7 +6,18 @@ const NET={
   root:"censor"
 };
 const netRoomOk=r=>/^[0-9A-Za-z가-힣-]{2,12}$/.test(r||"");
-const netPiece=g=>{const w=CONFIG.finalWord;return w[(g-1)%w.length];};
+/* 글자 조각: 조마다 받는 글자를 방마다 다르게 섞음.
+   방 번호 + 초기화 기록(resetId)을 씨앗으로 섞어서, 같은 방의 학생 기기와 TV는 늘 같은 순서를 얻음 (글자가 겹치지 않음).
+   새 검열실 개설·기록 초기화를 하면 resetId가 바뀌어 순서도 새로 섞임. */
+function netOrder(seed){
+  const w=[...CONFIG.finalWord]; let h=2166136261;
+  for(const c of String(seed)){ h^=c.codePointAt(0); h=Math.imul(h,16777619)>>>0; }
+  const rnd=()=>{ h=(h+0x6D2B79F5)>>>0; let t=h; t=Math.imul(t^t>>>15,t|1); t^=t+Math.imul(t^t>>>7,t|61); return ((t^t>>>14)>>>0)/4294967296; };
+  for(let i=w.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [w[i],w[j]]=[w[j],w[i]]; }
+  return w;
+}
+const netPieceSeed=(room,rid)=>(room||"")+"|"+(rid||"none");
+const netPiece=(g,seed)=>{ const w=netOrder(seed!=null?seed:(typeof S!=="undefined"?netPieceSeed(S.room,S.resetId):"")); return w[(g-1)%w.length]; };
 const netUrl=(room,g)=>`${NET.db}/${NET.root}/${encodeURIComponent(room)}${g?"/groups/"+g:""}.json`;
 let _netSig="", _netAt=0;
 function netPush(force){

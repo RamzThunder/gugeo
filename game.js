@@ -536,7 +536,7 @@ function rejected(kind){
 function finish(){S.done=Date.now();save();render();window.scrollTo(0,0);}
 /* ---------- 마무리 ---------- */
 function finaleHTML(){
-  const w=CONFIG.finalWord, ch=w[(S.group-1)%w.length], el=Math.round((S.done-S.start)/1000)+S.penalty-S.extra, over=remain()<0;
+  const ch=netPiece(S.group), el=Math.round((S.done-S.start)/1000)+S.penalty-S.extra, over=remain()<0;
   return `<div style="display:flex;flex-direction:column;gap:18px;padding-top:24px"><h3>${S.group}조</h3><h1>${T(TEXT.finale.title)}</h1>
   <p class="story">${T(S.sus<30?TEXT.finale.good:S.sus<70?TEXT.finale.mid:TEXT.finale.bad)} ${T(TEXT.finale.after)}</p>
   <div class="big" aria-label="글자 조각">${esc(ch)}</div>

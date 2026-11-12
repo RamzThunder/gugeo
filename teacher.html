@@ -211,7 +211,8 @@ function paint(){
     [...$("#tk"+n).children].forEach((i,k)=>i.className=k<idx?"f":(k===idx&&!g.done&&!cau?"c":""));
     paintCtl(n);
     $("#sb"+n).style.width=sus+"%"; $("#sb"+n).style.background=sus>=70?"var(--bad)":sus>=40?"var(--amber)":"var(--ok)"; $("#sn"+n).textContent=sus;
-    if(fin){ $("#pc"+n).textContent=g.piece||netPiece(n); $("#pt"+n).textContent="걸린 시간 "+tm.textContent+" · 의심도 "+sus; (got[g.piece||netPiece(n)]=got[g.piece||netPiece(n)]||[]).push(n); }
+    // 글자는 학생 기기가 보낸 것을 우선 씀. 없으면 같은 씨앗(방 번호 + 초기화 기록)으로 계산
+    if(fin){ const pc=g.piece||netPiece(n,netPieceSeed(room,data.settings&&data.settings.resetId)); $("#pc"+n).textContent=pc; $("#pt"+n).textContent="걸린 시간 "+tm.textContent+" · 의심도 "+sus; (got[pc]=got[pc]||[]).push(n); }
   }
   paintLimit();
   const q=queue(); $("#rq").innerHTML=`<span class="rqn">시 확인 대기 ${q.length}개</span>`; $("#rq").classList.toggle("on",q.length>0);
