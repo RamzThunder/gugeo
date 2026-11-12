@@ -38,6 +38,9 @@ t = t.replace("url(fonts/", "url(../game/fonts/")   # TV는 게임 폴더의 글
 os.makedirs(os.path.join(ROOT, "dist", "tv"), exist_ok=True)
 tout = os.path.join(ROOT, "dist", "tv", "index.html")
 open(tout, "w", encoding="utf-8").write(t)
+# 관제판 빈티지 스킨: 외부 CSS와 가벼운 SVG 이미지도 함께 배포
+shutil.copy2(os.path.join(ROOT, "teacher-vintage.css"), os.path.join(ROOT, "dist", "tv", "teacher-vintage.css"))
+shutil.copytree(os.path.join(ROOT, "vintage-assets"), os.path.join(ROOT, "dist", "tv", "vintage-assets"), dirs_exist_ok=True)
 print("만들었습니다:", tout, round(os.path.getsize(tout) / 1024), "KB")
 
 # dist 폴더만 배포하는 호스팅(Cloudflare Workers 등)을 위한 첫 화면: 게임으로 넘겨 줍니다
