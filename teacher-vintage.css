@@ -46,7 +46,7 @@ header>div:last-child{justify-content:center}
 .grid>.g{width:min(calc((100cqw - 3*var(--gx))/4),calc((100cqh - var(--gy))/2*5/4));aspect-ratio:5/4;height:auto}
 .g{display:block;container-type:size;background:url('vintage-assets/group_card.webp') center/100% 100% no-repeat;border:0;border-radius:0;padding:0;overflow:visible;color:#37271b;filter:drop-shadow(0 .5vh .7vh #000a)}
 .g .top{display:contents}
-.g .no{position:absolute;left:4.5%;top:5%;width:31%;height:18%;display:flex;align-items:center;justify-content:center;font:900 15cqh "GriunMyoeun",serif;color:#372418}
+.g .no{position:absolute;left:4.5%;top:5%;width:31%;height:18%;display:flex;align-items:center;justify-content:center;font:900 15cqh serif;color:#372418}
 .g .st,.g .tm,.g .sus,.g .ctl{position:absolute;left:19.5%;right:9.5%}
 .g .st{top:26.5%;height:10%;display:flex;align-items:center;font-size:clamp(11px,8.4cqh,24px);font-weight:800;line-height:1.1;color:#4b3425;min-height:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .trk{position:absolute;left:19.5%;right:9.5%;top:36.6%;height:2.4%;gap:.3cqw}
@@ -80,7 +80,7 @@ header>div:last-child{justify-content:center}
 .g.ask{cursor:pointer}
 /* 탈출 성공: 초록 카드 + 통과 도장 + 얻은 글자 */
 .g .piece{inset:0;background:url('vintage-assets/group_card_done.webp') center/100% 100% no-repeat;color:#375c35;gap:1cqh;z-index:3}
-.piece .ch{font:900 38cqh "GriunMyoeun",Georgia,serif;color:#3f5c33;text-shadow:1px 2px #d9e1bc}
+.piece .ch{font:900 38cqh serif;color:#3f5c33;text-shadow:1px 2px #d9e1bc}
 .piece .lb{order:-1;width:46%;height:24%;font-size:0;color:transparent;background:url('vintage-assets/stamp_passed.png') center/contain no-repeat;transform:rotate(-5deg)}
 .piece .tt{color:#4b5a3c;font-size:clamp(10px,6.5cqh,17px);font-weight:700}
 
@@ -88,7 +88,7 @@ header>div:last-child{justify-content:center}
 .sum{position:relative;display:block;flex:none;align-self:center;height:13vh;width:min(100%,calc(13vh*2000/202));padding:0;border:0;background:url('vintage-assets/mission_footer.webp') center/100% 100% no-repeat;filter:drop-shadow(0 .5vh .8vh #000b)}
 .sum>.lt:first-child,.sum .fill{display:none}
 .sum .slots{position:absolute;left:60.6%;right:4.5%;top:24%;bottom:24%;display:flex;align-items:center;gap:.8%;padding:0 1%}
-.slot{flex:none;height:78%;aspect-ratio:1;width:auto;background:#f6ead2;border:2px dashed #a98463;font:900 4.6vh "GriunMyoeun",serif;line-height:1;color:transparent}
+.slot{flex:none;height:78%;aspect-ratio:1;width:auto;background:#f6ead2;border:2px dashed #a98463;font:900 4.6vh serif;line-height:1;color:transparent}
 .slot.on{border:2px solid #a84837;background:#fbecd2;color:#983a29}
 .slot small{bottom:auto;top:100%;color:#f0dcb6;font-size:1.3vh;white-space:nowrap}
 .sum #cnt{position:absolute;right:5.5%;top:50%;transform:translateY(-50%);color:#5b3d27;font-size:2vh;font-weight:800}
@@ -247,7 +247,7 @@ body{isolation:isolate;background-image:linear-gradient(#0d08056b,#0d080533),url
 .g .ctl button[id^="p5"][data-badge]:not([data-badge=""]):after{
  content:attr(data-badge);background:url('vintage-assets/redrawn-controls/badge_extra_minutes_blank.webp') center/100% 100% no-repeat;
  color:#4b2815;border:0;border-radius:0;box-shadow:none;right:2%;top:-36%;min-width:0;text-align:center;
- padding:.35em .6em;font:900 clamp(9px,4.4cqh,13px) "GriunMyoeun",serif;line-height:1.1;transform:rotate(-3deg);
+ padding:.35em .6em;font:900 clamp(9px,4.4cqh,13px) serif;line-height:1.1;transform:rotate(-3deg);
 }
 .g .ctl button[id^="mode"].on:after{display:none}
 

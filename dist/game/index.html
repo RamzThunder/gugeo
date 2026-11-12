@@ -245,6 +245,7 @@ const FONT_LIST={
 const FONT_USE={
   // 학생 게임
   기본:    "갈무리",          // 대사, 안내문, 버튼 등 아래에 없는 나머지 전부
+  조번호:  "갈무리",          // 위쪽 상태줄과 대사 화면 왼쪽 위의 "N조"
   제목:    "그리운경찰인권",    // 게임 제목, 단계 제목
   도장:    "그리운경찰인권",    // 삭제·통과 도장
   종이글:  "그리운묘은흘림",    // 시구 카드, 압수 문서, 전할 메시지
@@ -253,6 +254,10 @@ const FONT_USE={
   이름표:  "갈무리",          // 대사 위에 뜨는 말하는 사람 이름
   글자조각: "갈무리",          // 결과 화면의 큰 글자 조각
   // 교실 TV
+  TV조번호:  "그리운묘은흘림",  // 조 카드 왼쪽 위의 "N조"
+  TV글자조각: "그리운묘은흘림",  // 탈출한 조 카드에 뜨는 큰 글자
+  TV모은글자: "그리운묘은흘림",  // 아래쪽 '그날이오면-심훈' 글자 칸
+  TV추가시간: "그리운묘은흘림",  // +5분 버튼 위 '총 +N분' 꼬리표
   TV시:     "그리운묘은흘림",   // 시 확인 창에 뜨는 학생 시
   TV축하:   "그리운묘은흘림"    // 글자를 다 모았을 때 뜨는 큰 글자
 };
@@ -262,7 +267,9 @@ const FONT_USE={
 const FONT_SLOTS={
   기본:"body,button,input,.choices,.why,.paper .no",
   제목:"h1,h2", 도장:".stamp", 종이글:".paper .txt", 시쓰기:"textarea", 자막:".vcap span",
-  이름표:".vnm,.mbub", 글자조각:".big",
+  이름표:".vnm,.mbub", 글자조각:".big", 조번호:".bar .grp,.vtop span",
+  TV조번호:".g .no", TV글자조각:".piece .ch", TV모은글자:".slot",
+  TV추가시간:'.g .ctl button[id^="p5"][data-badge]:not([data-badge=""]):after',
   TV시:"#rv pre", TV축하:"#done .w"
 };
 (function applyFonts(){
@@ -280,8 +287,8 @@ const FONT_SLOTS={
   Object.keys(FONT_USE).filter(mine).forEach(k=>{ const n=FONT_USE[k], f=FONT_LIST[n], sel=FONT_SLOTS[k];
     if(!f||!sel){ console.warn("글꼴 설정 확인:",k,n); return; }
     const stack=f.system?f.system:`"${fam(n)}","Apple SD Gothic Neo","Malgun Gothic",sans-serif`;
-    // 굵은 꼴이 없는 글꼴은 억지로 굵게 만들지 않음
-    css+=`${sel}{font-family:${stack};${!f.system&&!f.bold?"font-synthesis:none;font-weight:400;":""}}\n`;
+    // 게임: 굵은 꼴이 없는 글꼴은 억지로 굵게 만들지 않음. TV: 디자인에서 정한 굵기 그대로 둠
+    css+=`${sel}{font-family:${stack};${!tv&&!f.system&&!f.bold?"font-synthesis:none;font-weight:400;":""}}\n`;
     if(k==="기본"&&!tv) css+=`:root{--sans:${stack};--serif:${stack}}\n`; });
   const st=document.createElement("style"); st.id="font-settings"; st.textContent=css; document.head.appendChild(st);
 })();
