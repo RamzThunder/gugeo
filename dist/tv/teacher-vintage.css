@@ -10,10 +10,13 @@ body{padding:1.2vh 1.2vw;gap:1.1vh;background:linear-gradient(#0d0805aa,#0d08056
 header{min-height:14vh;gap:.8vw;align-items:stretch;position:relative}
 header h1{flex:0 1 34%;min-width:0;margin:0;font-size:0;color:transparent;background:url('vintage-assets/title_banner.png') center/contain no-repeat}
 header .sp{display:none}
-#conn{position:absolute;left:1vw;bottom:-2.3vh;z-index:3;background:#f3e3c4;padding:.15vh .5vw;border:1px solid #8e6746;border-radius:2px;color:#483421!important;font-size:1.5vh!important}
-.dot{background:var(--bad)}.dot.on{background:var(--ok)}
-.code,.lim{position:relative;background:var(--paper);border:2px solid #8a6443;border-radius:4px;box-shadow:inset 0 0 1.4vh #a07a4f88,0 .45vh 1vh #0008;padding:4.2vh .8vw .8vh;color:#322419}
-.code:before,.lim:before{content:"";position:absolute;left:50%;top:-.6vh;transform:translateX(-50%);width:min(10vw,90%);height:4.4vh;background:center/contain no-repeat}
+/* 연결 표시: 방 번호 아래, 불 들어오는 램프가 달린 명찰 (빨강=끊김·깜빡임, 초록=실시간 연결) */
+#conn{display:inline-flex;align-items:center;gap:.5vw;margin-top:.7vh;padding:.4vh .8vw .4vh .45vw;background:var(--paper-dark);border:1px solid #2b1709;border-radius:999px;box-shadow:inset 0 1px 0 #ffffff26,inset 0 -1px 0 #0006,0 .2vh .4vh #0007;color:#f6e4c4;font:800 clamp(10px,1.45vh,16px) "Malgun Gothic",sans-serif;letter-spacing:.03em;white-space:nowrap}
+.dot{width:1.4vh;height:1.4vh;min-width:9px;min-height:9px;margin:0;border-radius:50%;border:1px solid #1c0d05;background:radial-gradient(circle at 35% 30%,#ffc2b6,#d0412f 50%,#5e130c);box-shadow:0 0 .7vh #ff5a40aa;animation:lamp 1.4s infinite}
+.dot.on{background:radial-gradient(circle at 35% 30%,#efffd8,#6fbf4c 50%,#24451a);box-shadow:0 0 .9vh #9ae874;animation:none}
+@keyframes lamp{50%{opacity:.4}}
+.code,.lim{position:relative;background:var(--paper);border:2px solid #8a6443;border-radius:4px;box-shadow:inset 0 0 1.4vh #a07a4f88,0 .45vh 1vh #0008;padding:5vh .8vw .8vh;color:#322419}
+.code:before,.lim:before{content:"";position:absolute;left:50%;top:-.9vh;transform:translateX(-50%);width:min(14vw,92%);height:5.6vh;background:center/contain no-repeat;filter:drop-shadow(0 .2vh .3vh #0006)}
 .code:before{background-image:url('vintage-assets/label_room.png')}
 .lim:before{background-image:url('vintage-assets/label_timer.png')}
 .code{flex:1 1 26%;min-width:0;gap:.8vw}
@@ -30,11 +33,11 @@ button{font:800 clamp(12px,1.7vh,19px) "Malgun Gothic",sans-serif;color:#38251a;
 button:hover{filter:brightness(1.06)}button:active{transform:translateY(1px)}
 button:focus-visible{outline:3px solid #c8463a;outline-offset:2px}button:disabled{opacity:.55;cursor:not-allowed}
 /* 글씨가 그려진 그림 버튼: 글자는 화면에서만 숨기고(읽어 주기용으로는 남음) 그림을 보여 줌 */
-#newroom,#clear,.g .ctl button,#rv .act .ok,#rv .act .no{color:transparent!important;text-shadow:none;border:0;border-radius:0;background:center/100% 100% no-repeat transparent;box-shadow:none;filter:drop-shadow(0 .3vh .4vh #0009)}
-#newroom{background-image:url('vintage-assets/button_new_room.png');width:12.5vw;height:6vh}
-#clear{background-image:url('vintage-assets/button_reset.png');width:12.5vw;height:5.6vh}
+#newroom,#clear,.g .ctl button,#rv .act .ok,#rv .act .no{color:transparent!important;text-shadow:none;border:0;border-radius:0;background:center/contain no-repeat transparent;box-shadow:none;filter:drop-shadow(0 .3vh .4vh #0009)}
+#newroom{background-image:url('vintage-assets/button_new_room.png');height:6.4vh;width:auto;aspect-ratio:244/77;padding:0}
+#clear{background-image:url('vintage-assets/button_reset.png');height:6vh;width:auto;aspect-ratio:233/69;padding:0}
 header>div:last-child{justify-content:center}
-#rq{background:url('vintage-assets/label_waiting.png') center 0/auto 4.6vh no-repeat,var(--paper)!important;color:#8e2f22!important;border:3px double #9a3b2c!important;min-width:9vw;max-width:12vw;white-space:normal;line-height:1.2;font-size:clamp(13px,2vh,22px)!important;padding:5.2vh .6vw .8vh}
+#rq{background:url('vintage-assets/label_waiting.png') center .4vh/auto 5.4vh no-repeat,var(--paper)!important;color:#8e2f22!important;border:3px double #9a3b2c!important;min-width:9vw;max-width:12vw;white-space:normal;line-height:1.2;font-size:clamp(13px,2vh,22px)!important;padding:6.2vh .6vw .8vh}
 
 /* ---- 조별 카드(5:4): group_card.webp의 칸(책·모래시계·눈·바구니)에 맞춰 내용을 놓음 */
 .grid{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:1.2vh 1vw;min-height:0}
@@ -49,9 +52,9 @@ header>div:last-child{justify-content:center}
 .g .sus{top:56%;height:13%;gap:2cqw;font-size:clamp(10px,7.6cqh,20px);font-weight:800;color:#513927}
 .sus .bar{height:32%;background:#d6c09a;border:1px solid #9c7b56}
 .sus b{min-width:2.2ch;text-align:right;font-family:Georgia,serif}
-.g .ctl{top:71.5%;height:12%;gap:3cqw;margin:0;display:flex}
+.g .ctl{top:71%;height:13%;gap:4cqw;margin:0;display:flex;align-items:center}
 .g.empty .ctl{display:flex}   /* 입장 전에도 조별 카드에 +5분·관리 모드가 보이게 */
-.g .ctl button{flex:1;min-width:0;height:100%;padding:0;font-size:1px;position:relative;filter:drop-shadow(0 .2vh .3vh #0007)}
+.g .ctl button{flex:none;width:auto;aspect-ratio:194/76;min-width:0;height:100%;padding:0;font-size:1px;position:relative;filter:drop-shadow(0 .2vh .3vh #0007)}
 .g .ctl button[id^="p5"]{background-image:url('vintage-assets/button_five_minutes.png')}
 .g .ctl button[id^="ad"]{background-image:url('vintage-assets/button_admin.png')}
 .g .ctl button.on{background-color:transparent;background-size:100% 100%;border:0;filter:drop-shadow(0 0 .5vh #d0402e) drop-shadow(0 0 .2vh #d0402e)}
@@ -108,21 +111,20 @@ header>div:last-child{justify-content:center}
 #setup button{font-size:clamp(14px,2.4vh,26px);padding:1.2vh 2vw}
 
 /* ---- 노트북·작은 화면 */
-@media(max-width:1100px){header{flex-wrap:wrap;gap:1vh 1vw}header h1{flex:1 1 100%;height:9vh}#conn{bottom:auto;top:9.5vh}
-  .code{flex:1 1 40%}.lim{flex:1 1 25%}#newroom,#clear{width:22vw}header>div:last-child{flex-direction:row!important;flex:1 1 100%;justify-content:flex-end}}
+@media(max-width:1100px){header{flex-wrap:wrap;gap:1vh 1vw}header h1{flex:1 1 100%;height:9vh}
+  .code{flex:1 1 40%}.lim{flex:1 1 25%}#newroom,#clear{width:auto}header>div:last-child{flex-direction:row!important;flex:1 1 100%;justify-content:flex-end}}
 /* ---- 휴대폰: 카드 2열(아주 좁으면 1열), 화면을 아래로 내려 봄 */
 @media(max-width:740px){
   html,body{height:auto}
   body{overflow:auto;min-height:100vh;padding:10px;gap:14px}
   header{flex-wrap:wrap;min-height:0;gap:10px}
   header h1{flex:1 1 100%;height:auto;aspect-ratio:768/172}
-  #conn{position:static;order:1;flex:1 1 100%;text-align:center;font-size:12px!important}
   .code,.lim{padding-top:40px}.code:before,.lim:before{width:110px;height:38px;top:-4px}
   .code{order:2;flex:1 1 100%}.code b{font-size:38px}#qr img,#qr canvas{width:84px!important;height:84px!important}
   .lim{order:3;flex:1 1 100%}.lim b{font-size:36px}.lim button{width:42px;height:42px}.lim #lm{font-size:11px!important}
   #rq{order:4;max-width:none;flex:1 1 100%;background-size:auto 40px,cover!important;padding-top:44px;font-size:16px!important}
   header>div:last-child{order:5;flex:1 1 100%;flex-direction:row!important;gap:10px!important}
-  #newroom,#clear{flex:1;width:auto;height:auto;aspect-ratio:240/75}
+  #newroom,#clear{flex:1 1 0;height:auto;max-width:48%}
   .grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;gap:12px 8px;flex:none}
   .g{aspect-ratio:1000/789}
   .g .ctl button[data-badge]:not([data-badge=""]):after{top:-34%}
