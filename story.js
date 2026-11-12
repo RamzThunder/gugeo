@@ -17,7 +17,7 @@
      (관리 모드와 +5분은 교실 TV에서 조마다 켭니다.) */
 const CONFIG={
   minutes:20, hintPenaltySec:30, teacherPin:"1919", requireTeacher:true,
-  finalWord:"그날이오면", groups:8,
+  finalWord:"그날이오면-심훈", groups:8,
   periods:["1910년대","1920년대","1930년대","1930년대 말~1940년대 초"],
   cards:[
     {title:"김소월 「초혼」",

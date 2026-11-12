@@ -253,3 +253,10 @@ body{isolation:isolate;background-image:radial-gradient(ellipse at 6% 10%,#b8712
 #newroom:before,#clear:before{background-size:contain}
 #newroom{aspect-ratio:2172/724}
 #clear{aspect-ratio:2149/732}
+
+/* 글자 조각 8칸(그날이오면-심훈): 오른쪽 '0 / 8 글자' 자리를 비워 두고, 칸 수에 맞춰 같은 폭으로 나눔 */
+@media(min-width:741px) and (min-aspect-ratio:1/1){
+ .sum .slots{right:15%}
+ .sum .slot{flex:1 1 0;min-width:0;width:auto;height:auto;max-height:78%;aspect-ratio:1;font-size:3.2vh}
+}
+#done .w{font-size:min(16vh,8.5vw);letter-spacing:.12em;white-space:nowrap}
