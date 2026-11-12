@@ -210,3 +210,34 @@ header,.grid,.sum{position:relative;z-index:1}
 }
 @media(min-width:1101px) and (min-aspect-ratio:3/2){header h1{flex-basis:30%;margin-left:4vw}.prop-lamp{width:7vw}.prop-ink{left:10vw;bottom:0;width:6vw;height:9vh}}
 @media(max-width:740px),(max-aspect-ratio:1/1){#rq{min-height:120px;padding-top:90px}}
+
+/* Paper controls: native borders avoid the pale bevel baked into older PNGs. */
+#newroom,#clear,.g .ctl button,.g .ctl button[id^="ad"].on{
+ color:#322015!important;text-shadow:none;background:var(--paper);border:1px solid #68482d;border-radius:6px;
+ box-shadow:inset 0 0 5px 2px #79543166,0 2px 3px #160c0770;
+ filter:none;clip-path:none;font-family:"GriunMyoeun",serif;font-weight:900;
+}
+#newroom,#clear{width:auto;aspect-ratio:3.2;height:6vh;padding:.4vh 1vw;font-size:clamp(15px,2.5vh,28px)}
+#newroom{background:linear-gradient(#77291be6,#5b1d13e6),var(--paper);color:#ecd4ad!important;border-color:#5b2a1b}
+#clear{font-size:clamp(16px,2.7vh,30px)}
+.g .ctl button{font-size:clamp(12px,7cqh,24px);aspect-ratio:2.65;display:flex;align-items:center;justify-content:center;gap:.25em;line-height:1;padding:0 .35em}
+.g .ctl button[id^="p5"]:before{content:'⌛';font-family:serif;font-size:.9em}
+.g .ctl button[id^="ad"]:before{content:'⚙';font-family:serif;font-size:.95em}
+.g .ctl button[id^="ad"].on{background:linear-gradient(#812d20e8,#632016e8),var(--paper);color:#f1d9b6!important;aspect-ratio:2.65;border-color:#4f2316}
+.g .ctl button[id^="ad"].on:after{display:block}
+#newroom:hover,#clear:hover,.g .ctl button:hover{filter:brightness(1.08)}
+
+/* Keep the information in focus; foreground props sit closer to the camera. */
+body{isolation:isolate;background-image:radial-gradient(ellipse at 6% 10%,#b8712729,transparent 34%),linear-gradient(#0d08056b,#0d080533),url('vintage-assets/wood_background.webp')}
+.room-props{z-index:2}
+.room-props .prop-lamp{left:-1.4vw;top:-3vh;width:12vw;height:24vh;filter:drop-shadow(0 7px 9px #000b);transform:rotate(-7deg)}
+.room-props .prop-books{left:-2.8vw;bottom:-4vh;width:16vw;height:22vh;filter:blur(2px) brightness(.72) drop-shadow(6px 6px 8px #000a);transform:rotate(-3deg)}
+.room-props .prop-ink{left:7vw;bottom:-3vh;width:9vw;height:13vh;filter:blur(2.8px) brightness(.7) drop-shadow(4px 6px 8px #000b)}
+.room-props .prop-typewriter{right:-3vw;bottom:-5vh;width:17vw;height:26vh;filter:blur(2.4px) brightness(.76) drop-shadow(-5px 8px 9px #000b);transform:rotate(4deg)}
+.room-props:after{content:'';position:absolute;left:-5vw;top:4vh;width:27vw;height:30vh;background:radial-gradient(ellipse at 25% 30%,#edac4933,transparent 64%);mix-blend-mode:screen;filter:blur(16px)}
+@media(min-width:1101px) and (min-aspect-ratio:3/2){header h1{margin-left:5vw;flex-basis:29%}}
+@media(max-width:740px),(max-aspect-ratio:1/1){#newroom,#clear{height:auto;min-height:48px;font-size:clamp(14px,4vw,20px);padding:8px 5px}.g .ctl button{font-size:clamp(12px,7cqh,24px)}}
+.g .ctl button[id^="p5"],.g .ctl button[id^="ad"]{background:var(--paper);background-size:512px 512px}
+.g .ctl button[id^="ad"].on{background:linear-gradient(#812d20e8,#632016e8),var(--paper);background-size:auto,512px 512px}
+.g .ctl button[id^="p5"]:before{content:'⧖';font-family:Georgia,serif;font-size:1.2em}
+#clear:before{content:'↻';font-family:Georgia,serif;margin-right:.4em}
