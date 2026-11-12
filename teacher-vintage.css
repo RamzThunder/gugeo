@@ -301,8 +301,10 @@ body{isolation:isolate;background-image:linear-gradient(#0d08056b,#0d080533),url
   .room-info{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9vh;height:100%}
   .room-number{max-height:9vh;width:auto;height:9vh}
   .code #lk{display:none}
-  #conn{margin:0;align-self:center}
   .lim{align-self:center;margin:0}
-  header>div:last-child{align-self:center;justify-content:center;gap:1.2vh!important}
+  /* 맨 오른쪽 세로 3칸: 새 검열실 개설 · 기록 초기화 · 통신 꼬리표 */
+  header>.hd-right{align-self:center;justify-content:center;align-items:center;gap:.5vh!important}
+  #newroom,#clear{height:5.2vh}
+  .hd-right #conn{margin:.2vh 0 0;align-self:center}
   #rq{align-self:center}
 }
