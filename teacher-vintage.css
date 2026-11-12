@@ -212,7 +212,7 @@ header,.grid,.sum{position:relative;z-index:1}
 @media(max-width:740px),(max-aspect-ratio:1/1){#rq{min-height:120px;padding-top:90px}}
 
 /* Keep the information in focus; foreground props sit closer to the camera. */
-body{isolation:isolate;background-image:radial-gradient(ellipse at 6% 10%,#b8712729,transparent 34%),linear-gradient(#0d08056b,#0d080533),url('vintage-assets/wood_background.webp')}
+body{isolation:isolate;background-image:linear-gradient(#0d08056b,#0d080533),url('vintage-assets/wood_background.webp')}
 .room-props{z-index:2}
 .room-props .prop-lamp{left:-1.4vw;top:-3vh;width:12vw;height:24vh;filter:drop-shadow(0 7px 9px #000b);transform:rotate(-7deg)}
 .room-props .prop-books{left:-2.8vw;bottom:-4vh;width:16vw;height:22vh;filter:blur(2px) brightness(.72) drop-shadow(6px 6px 8px #000a);transform:rotate(-3deg)}
@@ -266,9 +266,14 @@ body{isolation:isolate;background-image:radial-gradient(ellipse at 6% 10%,#b8712
 .prop-lamp img,.prop-lamp .lamp-swing{position:absolute;inset:0;width:100%;height:100%}
 .prop-lamp img{filter:drop-shadow(0 7px 9px #000b)}
 .prop-lamp .lamp-swing{transform-origin:53.7% 6%;animation:lamp-swing 3.6s ease-in-out infinite alternate}
-.prop-lamp .lamp-light{position:absolute;left:61%;top:79%;width:27vw;height:30vh;transform:translate(-50%,-42%);border-radius:50%;
- background:radial-gradient(ellipse at 50% 42%,#ffd27a55,#edac4926 32%,transparent 66%);mix-blend-mode:screen;filter:blur(14px);
- animation:lamp-flicker 4.3s ease-in-out infinite}
+.prop-lamp .lamp-light{position:absolute;left:61%;top:79%;width:0;height:0;animation:lamp-flicker 4.3s ease-in-out infinite}
+/* 전구 둘레 빛무리 */
+.prop-lamp .lamp-light:before{content:'';position:absolute;left:-14vw;top:-15vh;width:28vw;height:30vh;border-radius:50%;
+ background:radial-gradient(ellipse at 50% 50%,#ffd27a4d,#e9a2442b 30%,transparent 66%);filter:blur(12px)}
+/* 전구에서 아래로 퍼지는 빛줄기: 길어서 갓이 흔들리면 끝이 크게 움직임 */
+.prop-lamp .lamp-light:after{content:'';position:absolute;left:-13vw;top:-1vh;width:26vw;height:52vh;
+ background:radial-gradient(ellipse 50% 100% at 50% 0,#ffd88a33,#f0b25a17 45%,transparent 80%);
+ clip-path:polygon(40% 0,60% 0,100% 100%,0 100%);filter:blur(18px)}
 .room-props:after{display:none}
-@keyframes lamp-swing{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+@keyframes lamp-swing{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
 @keyframes lamp-flicker{0%,100%{opacity:1}46%{opacity:.86}52%{opacity:.97}}
