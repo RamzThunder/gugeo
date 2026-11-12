@@ -63,8 +63,9 @@ header>div:last-child{justify-content:center}
 .g.empty{opacity:1}.g.empty>*:not(.ctl){opacity:.55}.g.empty .st{color:#74624f}
 /* 카드 오른쪽 위 도장: 진행 중 / 원고 검토 대기 / 시간 초과 */
 .g:after{content:"";position:absolute;right:8%;top:8%;width:42%;height:14%;background:center/contain no-repeat;pointer-events:none;transform:rotate(-3deg)}
-.g:not(.empty):not(.done):not(.caught):not(.ask):after{background-image:url('vintage-assets/status_progress.png')}
+.g:not(.empty):not(.done):not(.caught):not(.censored):not(.ask):after{background-image:url('vintage-assets/status_progress.png')}
 .g.caught:after{background-image:url('vintage-assets/stamp_timeout.png');width:48%;height:19%}
+.g.censored:after{background-image:url('vintage-assets/stamp_caught.png');width:42%;height:19%}
 .g.caught .st{color:#97362b}
 .g .rv{display:none;position:absolute;right:6%;top:6%;width:50%;height:17%;z-index:2;padding:0;font-size:0;color:transparent;border:0;background:url('vintage-assets/stamp_review_wait.png') center/contain no-repeat;transform:rotate(-4deg);animation:stp 1.3s infinite}
 .g.ask .rv{display:block}
@@ -139,10 +140,20 @@ header>div:last-child{justify-content:center}
 @media(max-width:420px){.grid{grid-template-columns:1fr}}
 
 /* Corrected independent PNG assets; interaction code remains unchanged. */
-.g .ctl button[id^="ad"].on{background-image:url('vintage-assets/button_admin_on.png');aspect-ratio:784/304;filter:drop-shadow(0 .2vh .3vh #0007)}
+.g .ctl button[id^="ad"].on{background-image:url('vintage-assets/button_admin_on.png');aspect-ratio:400/156;filter:drop-shadow(0 .2vh .3vh #0007)}
 .g .ctl button[id^="ad"].on:after{display:none}
 .slot{background:url('vintage-assets/letter_slot_empty.png') center/100% 100% no-repeat;border:0}
 .slot.on{background:url('vintage-assets/letter_slot_filled.png') center/100% 100% no-repeat;border:0}
 .lim #mminus,.lim #mplus{background-size:contain}
 .lim button{border:0;box-shadow:none;background:url('vintage-assets/button_timer_minus.png') center/contain no-repeat;color:transparent}
 .lim button:last-of-type{background-image:url('vintage-assets/button_timer_plus.png')}
+
+/* Paper confirmation dialog; Escape and Cancel preserve the current state. */
+#action-confirm{box-sizing:border-box;width:min(800px,calc(100vw - 32px));min-height:350px;max-height:calc(100dvh - 32px);overflow:auto;padding:clamp(24px,4vw,52px);background:var(--paper);color:#392718;border:6px double #805a38;border-radius:5px;box-shadow:inset 0 0 32px #94704466,0 20px 60px #0009}
+#action-confirm::backdrop{background:#190e09cc}
+#action-confirm form{display:flex;flex-direction:column;gap:24px;min-height:230px;margin:0}
+#action-confirm h2{font-size:clamp(22px,3vw,32px);margin:0;border-bottom:1px solid #94714b;padding-bottom:16px}
+#action-confirm p{font-size:clamp(17px,2.3vw,24px);line-height:1.7;word-break:keep-all;margin:0;flex:1}
+.confirm-actions{display:flex;justify-content:flex-end;gap:16px;flex-wrap:wrap}
+#action-confirm button{font-size:clamp(16px,2vw,22px);min-height:48px;padding:10px 24px}
+#action-confirm #confirm-accept{background:#893729;color:#f7e5bf;border-color:#62261d}

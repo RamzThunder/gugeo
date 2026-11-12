@@ -119,6 +119,13 @@ button:hover{border-color:var(--amber)}
   <div class="act"><button class="ok" id="rvok" type="button">통과</button><button class="no" id="rvcz" type="button">검열</button><button class="vg" id="rvvg" type="button">의미 모호</button><span class="st" id="rvs"></span><span class="sp"></span><button id="rvx" type="button">닫기</button></div>
 </div></div>
 <div id="setup"><h2>방 번호를 정하세요</h2><input id="si" maxlength="12" placeholder="예: 3반 또는 1234"><button id="sg" type="button">시작</button><button id="sr" type="button">랜덤 4자리로 시작</button></div>
+<dialog id="action-confirm" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+  <form method="dialog">
+    <h2 id="confirm-title">작업 확인</h2>
+    <p id="confirm-message"></p>
+    <div class="confirm-actions"><button value="cancel" autofocus>취소</button><button value="accept" id="confirm-accept">확인</button></div>
+  </form>
+</dialog>
 <script>
 /* ===== 대사·설정 파일 =====
    이 파일만 고치면 대사와 설정이 바뀝니다. 고친 뒤 game.html을 브라우저에서 새로고침하세요.
@@ -550,6 +557,21 @@ setTimeout(netCtl,500); setInterval(netCtl,5000);
 </script>
 <script>
 const $=s=>document.querySelector(s);
+function confirmAction(title,message,label="확인"){
+  const dialog=$("#action-confirm");
+  if(dialog.open) return Promise.resolve(false);
+  $("#confirm-title").textContent=title; $("#confirm-message").textContent=message;
+  $("#confirm-accept").textContent=label; dialog.returnValue="cancel";
+  return new Promise(resolve=>{
+    const finish=accepted=>{
+      dialog.querySelector("form").onsubmit=null; dialog.oncancel=null;
+      dialog.close(accepted?"accept":"cancel"); resolve(accepted);
+    };
+    dialog.querySelector("form").onsubmit=e=>{e.preventDefault();finish(e.submitter?.value==="accept");};
+    dialog.oncancel=e=>{e.preventDefault();finish(false);};
+    dialog.showModal();
+  });
+}
 const params=new URLSearchParams(location.search);
 let room=(params.get("room")||localStorage.getItem("censor-room")||"").trim();
 let data={};            // {groups:{1:{...}}}
@@ -591,7 +613,9 @@ function paint(){
     const idx=stepIdx(g), r=remain(g), sus=Math.min(100,g.sus||0), stale=!g.done&&now-(g.t||0)>40000;
     const fin=!!(g.done&&g.epi);   // 에필로그까지 다 본 뒤에 글자 조각을 보여 줌
     const cau=!g.done&&!!g.caught;  // 시간 초과로 붙잡힘(배드엔딩)
-    el.className="g"+(fin?" done":"")+(cau?" caught":"")+(ask?" ask":(!g.done&&sus>=70?" warn":""))+(hp?" haspoem":"");
+    const poem=(data.poems||{})[n], verdict=(data.verdict||{})[n];
+    const censored=!g.done&&!cau&&!!poem&&!!verdict&&verdict.for===poem.t&&verdict.kind==="censor";
+    el.className="g"+(fin?" done":"")+(cau?" caught":"")+(censored?" censored":"")+(ask?" ask":(!g.done&&sus>=70?" warn":""))+(hp?" haspoem":"");
     $("#st"+n).textContent=cau?"시간 초과 · 붙잡힘":fin?"탈출 성공":g.done?"탈출 · 에필로그 보는 중":(stale?"신호 끊김 · ":"")+(WHERE[g.where]||STAGE[g.stage|0]||"");
     const tm=$("#tm"+n); tm.textContent=g.done?fmt(Math.max(0,Math.round((g.done-g.start)/1000)+(g.penalty||0)-(g.extra||0))):fmt(r); tm.className="tm"+(!g.done&&r<=120?" low":""); if(cau) tm.textContent="00:00";
     [...$("#tk"+n).children].forEach((i,k)=>i.className=k<idx?"f":(k===idx&&!g.done&&!cau?"c":""));
@@ -620,17 +644,17 @@ function paintCtl(n){ const c=ctlOf(n), b=$("#ad"+n), p=$("#p5"+n);
 function setCtl(n,patch){ data.ctl=data.ctl||{}; data.ctl[n]=Object.assign({},ctlOf(n),patch); paintCtl(n);
   netSetCtl(room,n,patch).then(ok=>{ if(!ok) alert("저장하지 못했습니다. 인터넷을 확인하세요."); }); }
 function giveTime(n){ setCtl(n,{sec:(ctlOf(n).sec||0)+300}); }
-function toggleAdmin(n){ const on=!ctlOf(n).admin;
-  if(on&&!confirm(n+"조 기기에 관리 모드를 켤까요? 그 기기에서 단계를 건너뛸 수 있게 됩니다.")) return;
+async function toggleAdmin(n){ const on=!ctlOf(n).admin;
+  if(on&&!await confirmAction("관리 모드 켜기",n+"조 기기에 관리 모드를 켤까요? 그 기기에서 단계를 건너뛸 수 있게 됩니다.","관리 모드 켜기")) return;
   setCtl(n,{admin:on}); }
 // ---- 제한 시간(분): censor/방/settings/minutes. 학생 게임이 8초마다 받아 반영
 const limit=()=>{ const m=data.settings&&data.settings.minutes; return Number.isInteger(m)?m:CONFIG.minutes; };
 function paintLimit(){ $("#mv").textContent=limit(); }
-function setLimit(m){ m=Math.max(1,Math.min(120,m)); if(m===limit()) return;
+async function setLimit(m){ m=Math.max(1,Math.min(120,m)); if(m===limit()) return;
   const G=data.groups||{}, now=Date.now();
   const hit=Object.keys(G).filter(n=>{ const g=G[n]; if(!g||!g.start||g.done||g.caught||(g.stage|0)>=4) return false;
     return m*60+(g.extra||0)-(now-g.start)/1000-(g.penalty||0)<=0; });
-  if(m<limit()&&hit.length&&!confirm(hit.join(", ")+"조는 남은 시간이 없어 바로 붙잡힙니다(배드엔딩). 줄일까요?")) return;
+  if(m<limit()&&hit.length&&!await confirmAction("제한 시간 줄이기",hit.join(", ")+"조는 남은 시간이 없어 바로 붙잡힙니다(배드엔딩). 줄일까요?","시간 줄이기")) return;
   data.settings=Object.assign({},data.settings,{minutes:m}); paintLimit(); $("#lm").textContent="저장 중…";
   netSetMinutes(room,m).then(ok=>{ $("#lm").textContent=ok?"모든 조에 적용":"저장 실패"; }); }
 $("#mdn").onclick=()=>setLimit(limit()-1);
@@ -689,8 +713,8 @@ function start(r){ room=r; try{localStorage.setItem("censor-room",room);}catch(e
   connect(); }
 $("#sg").onclick=()=>{ const v=$("#si").value.trim(); if(netRoomOk(v)) start(v); else $("#si").focus(); };
 $("#sr").onclick=()=>start(String(Math.floor(1000+Math.random()*9000)));
-$("#newroom").onclick=()=>{ if(confirm("새 방 번호를 만들까요? 지금 화면의 진행 상황은 사라집니다.")) start(String(Math.floor(1000+Math.random()*9000))); };
-$("#clear").onclick=()=>{ if(confirm("이 방의 진행 상황을 모두 지울까요?")) netClear(room).then(()=>{celebrated=false;}); };
+$("#newroom").onclick=async()=>{ if(await confirmAction("새 검열실 개설","새 방 번호로 이동할까요? 현재 방의 기록은 그대로 남습니다.","새 방으로 이동")) start(String(Math.floor(1000+Math.random()*9000))); };
+$("#clear").onclick=async()=>{ const target=room; if(await confirmAction("진행 초기화","이 방의 모든 조 진행 상황을 지웁니다. 되돌릴 수 없습니다. 초기화할까요?","진행 초기화")) netClear(target).then(()=>{celebrated=false;}); };
 $("#dx").onclick=()=>$("#done").classList.remove("show");
 build();
 const qs=document.createElement("script"); qs.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"; qs.onload=init; qs.onerror=init; document.head.appendChild(qs);
