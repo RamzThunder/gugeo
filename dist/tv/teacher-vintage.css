@@ -244,8 +244,8 @@ body{isolation:isolate;background-image:linear-gradient(#0d08056b,#0d080533),url
 }
 .g .ctl button[id^="p5"][data-badge]:not([data-badge=""]):after{
  content:attr(data-badge);background:url('vintage-assets/redrawn-controls/badge_extra_minutes_blank.webp') center/100% 100% no-repeat;
- color:#4b2815;border:0;border-radius:0;box-shadow:none;right:-10%;top:-46%;min-width:6em;text-align:center;
- padding:.45em .85em;font:900 clamp(10px,5.8cqh,17px) "GriunMyoeun",serif;line-height:1.1;transform:rotate(-3deg);
+ color:#4b2815;border:0;border-radius:0;box-shadow:none;right:2%;top:-36%;min-width:0;text-align:center;
+ padding:.35em .6em;font:900 clamp(9px,4.4cqh,13px) "GriunMyoeun",serif;line-height:1.1;transform:rotate(-3deg);
 }
 .g .ctl button[id^="mode"].on:after{display:none}
 
