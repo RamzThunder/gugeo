@@ -620,6 +620,7 @@ setTimeout(netCtl,500); setInterval(netCtl,5000);
        "신라문화"         붓글씨 느낌 제목체          2.3MB  (굵게까지 쓰면 +2.4MB)
        "기기고딕"         기기에 깔린 기본 고딕       0MB   받을 것 없음
        "기기명조"         기기에 깔린 기본 명조       0MB   받을 것 없음
+       "조지아숫자"       영문 신문 숫자(Georgia)     0MB   받을 것 없음, TV 숫자의 원래 글꼴
 
    ▶ 글꼴이 유난히 작거나 크면: FONT_LIST 에서 그 글꼴에 size:숫자 (%) 를 넣으세요. 화면 전체에서 그 글꼴만 커지거나 작아집니다.
        예) "델타돋움": {file:"DeltaDotumKR.woff2", size:140},   ← 140% 로 키움 (100 이 원래 크기)
@@ -643,7 +644,8 @@ const FONT_LIST={
   "조선100년":      {file:"ChosunCentennial.woff2", note:"무료, 배포된 형태 그대로 (눈누 배포 원본)"},
   "신라문화":       {file:"Shilla_CultureM-Medium.woff2", bold:"Shilla_CultureB-Bold.woff2", note:"눈누 배포 원본"},
   "기기고딕":       {system:'"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif'},
-  "기기명조":       {system:'"AppleMyungjo","Batang","Noto Serif KR",serif'}
+  "기기명조":       {system:'"AppleMyungjo","Batang","Noto Serif KR",serif'},
+  "조지아숫자":     {system:'Georgia,"Times New Roman",serif'}
 };
 
 /* 2) 자리별 글꼴 — 여기 이름만 바꾸세요 */
@@ -660,6 +662,10 @@ const FONT_USE={
   이름표:  "모나10x12",          // 대사 위에 뜨는 말하는 사람 이름
   글자조각: "조선100년",          // 결과 화면의 큰 글자 조각
   // 교실 TV
+  TV기본:   "기기고딕",         // TV에서 아래에 없는 나머지 전부 (조 카드의 '아직 입장 전', '의심 정도' 등)
+  TV숫자:   "조지아숫자",       // 검열실 번호, 제한 시간 숫자, 조 카드의 남은 시간
+  TV창제목: "그리운경찰인권",    // 확인 창 제목('새 검열실 개설' 등), 첫 화면 '방 번호를 정하세요'
+  TV창본문: "조선100년",        // 확인 창 설명과 취소·확인 버튼, 첫 화면 번호 칸과 시작 버튼
   TV조번호:  "신라문화",  // 조 카드 왼쪽 위의 "N조"
   TV글자조각: "조선100년",  // 탈출한 조 카드에 뜨는 큰 글자
   TV모은글자: "조선100년",  // 아래쪽 '그날이오면-심훈' 글자 칸
@@ -678,6 +684,8 @@ const FONT_SLOTS={
   본문:".vtx,.vch button,.story,.note,.msg,.toast,.cap,.card p,.key,.why",
   제목:"h1,h2", 도장:".stamp", 종이글:".paper .txt", 시쓰기:"textarea", 자막:".vcap span",
   이름표:".vnm,.mbub", 글자조각:".big", 조번호:".bar .grp,.vtop span",
+  TV기본:"body,button,input", TV숫자:".code b,.lim b,.g .tm",
+  TV창제목:"#confirm-title,#setup h2", TV창본문:"#confirm-message,#action-confirm button,#setup input,#setup button",
   TV조번호:".g .no", TV통신:"#ct", TV글자조각:".piece .ch", TV모은글자:".slot",
   TV추가시간:'.g .ctl button[id^="p5"][data-badge]:not([data-badge=""]):after',
   TVQR번호:"#qrbig .qr-room", TVQR주소:"#qrbig .qr-link,#qrbig .qr-close",
