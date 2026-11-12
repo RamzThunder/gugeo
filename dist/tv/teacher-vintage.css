@@ -318,3 +318,6 @@ body{isolation:isolate;background-image:linear-gradient(#0d08056b,#0d080533),url
   .hd-right #conn{margin:.2vh 0 0;align-self:center}
   #rq{align-self:center}
 }
+
+/* 학생 입장 QR 크게 보기: 종이 질감 */
+#qrbig .box{background:var(--paper);box-shadow:inset 0 0 3vh #9c764a88,0 1.5vh 3vh #000b;border:6px double #805a38}

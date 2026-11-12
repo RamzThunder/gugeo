@@ -93,6 +93,16 @@ button:hover{border-color:var(--amber)}
 #rv .act .vg{background:#3d3420;border-color:var(--amber)}
 #rv .act .sp{flex:1}
 #rv .st{font-size:2.6vh;font-weight:800}
+#qr{cursor:zoom-in}
+#qrbig{position:fixed;inset:0;z-index:18;display:none;align-items:center;justify-content:center;background:rgba(10,8,6,.85);cursor:zoom-out}
+#qrbig.show{display:flex}
+#qrbig .box{display:flex;flex-direction:column;align-items:center;gap:1.6vh;padding:3vh 3vw;background:#f1e4c6;color:#33231a;border:6px double #8a6443}
+#qrbig .qt{font-size:4.5vh;font-weight:800;letter-spacing:.1em}
+#qrbox{background:#fff;padding:1.4vh;line-height:0}
+#qrbox img,#qrbox canvas{display:block}
+#qrbig .qr-room{font-size:3.2vh}#qrbig .qr-room b{font-size:5vh;letter-spacing:.1em;margin-left:1vw}
+#qrbig .qr-link{font-size:2vh;color:#6a4c32;word-break:break-all;text-align:center}
+#qrbig .qr-close{font-size:1.6vh;color:#8a6443}
 #setup{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;gap:2vh;z-index:20}
 #setup.show{display:flex}
 #setup input{font:inherit;font-size:5vh;text-align:center;width:20ch;background:var(--card);color:var(--tx);border:3px solid var(--line);padding:1vh}
@@ -117,6 +127,11 @@ button:hover{border-color:var(--amber)}
   <pre id="rvp"></pre>
   <details id="rvd"><summary>동지만 아는 뜻 보기</summary><p id="rvm"></p></details>
   <div class="act"><button class="ok" id="rvok" type="button">통과</button><button class="no" id="rvcz" type="button">검열</button><button class="vg" id="rvvg" type="button">의미 모호</button><span class="st" id="rvs"></span><span class="sp"></span><button id="rvx" type="button">닫기</button></div>
+</div></div>
+<div id="qrbig" role="dialog" aria-modal="true" aria-label="학생 입장 QR 크게 보기"><div class="box">
+  <div class="qt">학생 입장</div><div id="qrbox"></div>
+  <div class="qr-room">검열실 번호 <b id="qrrc"></b></div><div class="qr-link" id="qrlk"></div>
+  <div class="qr-close">아무 곳이나 누르면 닫힙니다</div>
 </div></div>
 <div id="setup"><h2>방 번호를 정하세요</h2><input id="si" maxlength="12" placeholder="예: 3반 또는 1234"><button id="sg" type="button">시작</button><button id="sr" type="button">랜덤 4자리로 시작</button></div>
 <dialog id="action-confirm" aria-labelledby="confirm-title" aria-describedby="confirm-message">
@@ -279,10 +294,20 @@ function connect(){
   es.addEventListener("put",e=>{ const m=JSON.parse(e.data); data=setPath(data,m.path,m.data,false); paint(); });
   es.addEventListener("patch",e=>{ const m=JSON.parse(e.data); data=setPath(data,m.path,m.data,true); paint(); });
 }
+// ---- 학생 입장 QR 크게 보기: QR을 누르면 화면 가운데에 크게
+let joinLink="";
+function openQR(){ if(!joinLink) return; const b=$("#qrbox"); b.innerHTML="";
+  const s=Math.round(Math.min(innerWidth,innerHeight)*0.56);
+  try{ new QRCode(b,{text:joinLink,width:s,height:s,correctLevel:QRCode.CorrectLevel.M}); }catch(e){ return; }
+  $("#qrrc").textContent=room; $("#qrlk").textContent=joinLink.replace(/^https?:\/\//,""); $("#qrbig").classList.add("show"); }
+const closeQR=()=>$("#qrbig").classList.remove("show");
+$("#qr").title="눌러서 크게 보기"; $("#qr").onclick=openQR;
+$("#qrbig").onclick=closeQR;
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeQR(); });
 function start(r){ room=r; try{localStorage.setItem("censor-room",room);}catch(e){}
   $("#setup").classList.remove("show"); $("#rc").textContent=room;
   const link=location.href.split("?")[0].replace(/teacher\.html$/,"escape_room.html").replace(/\/tv(\/index\.html)?\/?$/,"/game/")+"?room="+encodeURIComponent(room);
-  $("#lk").textContent=link.replace(/^https?:\/\//,""); $("#qr").innerHTML="";
+  joinLink=link; $("#lk").textContent=link.replace(/^https?:\/\//,""); $("#qr").innerHTML="";
   try{ new QRCode($("#qr"),{text:link,width:92,height:92,correctLevel:QRCode.CorrectLevel.M}); }catch(e){ $("#qr").style.display="none"; }
   connect(); }
 $("#sg").onclick=()=>{ const v=$("#si").value.trim(); if(netRoomOk(v)) start(v); else $("#si").focus(); };
