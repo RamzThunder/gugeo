@@ -266,14 +266,16 @@ body{isolation:isolate;background-image:linear-gradient(#0d08056b,#0d080533),url
 .prop-lamp img,.prop-lamp .lamp-swing{position:absolute;inset:0;width:100%;height:100%}
 .prop-lamp img{filter:drop-shadow(0 7px 9px #000b)}
 .prop-lamp .lamp-swing{transform-origin:53.7% 6%;animation:lamp-swing 3.6s ease-in-out infinite alternate}
-.prop-lamp .lamp-light{position:absolute;left:61%;top:79%;width:0;height:0;animation:lamp-flicker 4.3s ease-in-out infinite}
+.prop-lamp .lamp-light{position:absolute;left:61%;top:79%;width:0;height:0;filter:blur(20px);animation:lamp-flicker 4.3s ease-in-out infinite}
 /* 전구 둘레 빛무리 */
 .prop-lamp .lamp-light:before{content:'';position:absolute;left:-14vw;top:-15vh;width:28vw;height:30vh;border-radius:50%;
- background:radial-gradient(ellipse at 50% 50%,#ffd27a4d,#e9a2442b 30%,transparent 66%);filter:blur(12px)}
-/* 전구에서 아래로 퍼지는 빛줄기: 길어서 갓이 흔들리면 끝이 크게 움직임 */
-.prop-lamp .lamp-light:after{content:'';position:absolute;left:-13vw;top:-1vh;width:26vw;height:52vh;
- background:radial-gradient(ellipse 50% 100% at 50% 0,#ffd88a33,#f0b25a17 45%,transparent 80%);
- clip-path:polygon(40% 0,60% 0,100% 100%,0 100%);filter:blur(18px)}
+ background:radial-gradient(ellipse at 50% 50%,#ffd27a4d,#e9a2442b 30%,transparent 66%)}
+/* 전구에서 아래로 퍼지는 빛줄기: 갓 입구 폭(약 10vw)에서 시작해 넓게 퍼짐.
+   모양을 자른 뒤 부모(.lamp-light)의 blur로 가장자리를 흐리고, 좌우 끝은 mask로 한 번 더 부드럽게 사라지게 함 */
+.prop-lamp .lamp-light:after{content:'';position:absolute;left:-18vw;top:-2vh;width:36vw;height:54vh;
+ background:radial-gradient(ellipse 52% 100% at 50% 0,#ffd88a38,#f0b25a1a 45%,transparent 82%);
+ clip-path:polygon(35% 0,65% 0,100% 100%,0 100%);
+ -webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent)}
 .room-props:after{display:none}
 @keyframes lamp-swing{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
 @keyframes lamp-flicker{0%,100%{opacity:1}46%{opacity:.86}52%{opacity:.97}}
