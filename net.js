@@ -44,13 +44,32 @@ setInterval(()=>netPush(false),4000);
 const netSetUrl=room=>`${NET.db}/${NET.root}/${encodeURIComponent(room)}/settings.json`;
 function netSettings(){
   if(typeof S==="undefined"||!netRoomOk(S.room)) return;
-  try{ fetch(netSetUrl(S.room),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
-    const m=j&&j.minutes; if(!Number.isInteger(m)||m<1||m>120||m===CONFIG.minutes) return;
+  const room=S.room;
+  try{ fetch(netSetUrl(room),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
+    j=j||{}; if(S.room!==room) return;
+    // TV의 '기록 초기화'·'새 검열실 개설': resetId가 바뀌면 진행 중이던 게임을 처음으로 (closed면 방 번호도 지움)
+    const rid=j.resetId||"none";
+    if(S.resetId==null){ S.resetId=rid; save(); }
+    else if(rid!==S.resetId){ S.resetId=rid;
+      if(S.group&&typeof roomReset==="function"){ roomReset(!!j.closed); return; }   // 모둠을 고른 뒤라면 처음으로
+      if(j.closed){ S.room=""; } save(); if(j.closed&&typeof render==="function") render(); return; }
+    const m=j.minutes; if(!Number.isInteger(m)||m<1||m>120||m===CONFIG.minutes) return;
     CONFIG.minutes=m; if(typeof paintClock==="function") paintClock(); netPush(true);
   }).catch(()=>{}); }catch(e){}
 }
 function netSetMinutes(room,m){
-  try{ return fetch(netSetUrl(room),{method:"PUT",body:JSON.stringify({minutes:m})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
+  try{ return fetch(netSetUrl(room),{method:"PATCH",body:JSON.stringify({minutes:m})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
+}
+// TV: 이 방의 모든 진행 기록을 지우고, 학생 게임에도 '처음으로' 신호를 보냄. close=true면 방을 닫음(학생은 방 번호부터 다시)
+function netResetRoom(room,close){
+  if(!netRoomOk(room)) return Promise.resolve(false);
+  const rid=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  return netClear(room).then(()=>{ try{ return fetch(netSetUrl(room),{method:"PATCH",body:JSON.stringify({resetId:rid,closed:close?true:null})}).then(r=>r.ok).catch(()=>false); }catch(e){ return false; } });
+}
+// TV: 방을 열 때 '닫힘' 표시를 지움 (같은 번호를 다시 쓸 수 있게)
+function netOpenRoom(room){
+  if(!netRoomOk(room)) return Promise.resolve(false);
+  try{ return fetch(netSetUrl(room),{method:"PATCH",body:JSON.stringify({closed:null})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
 }
 setTimeout(netSettings,300); setInterval(netSettings,8000);
 // 조별 관리: censor/방/ctl/조 = {sec: TV에서 준 추가 시간(초, 누적), admin: 관리 모드}. 5초마다 받아 옴

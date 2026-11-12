@@ -738,6 +738,15 @@ const TEXT={
     next:"다음 시간: 표현은 했지만 끝내 발표하지 못한 시를 만납니다."
   },
 
+  /* 교실 TV에서 '기록 초기화' / '새 검열실 개설'을 눌렀을 때 학생 화면에 뜨는 안내 */
+  reset:{
+    title:"기록이 초기화되었습니다",
+    line:"선생님이 모든 조의 진행 기록을 지웠습니다. 모둠 번호를 다시 고르고 처음부터 시작하세요.",
+    closedTitle:"검열실이 닫혔습니다",
+    closed:"선생님이 새 검열실을 열었습니다. 교실 TV에 나온 새 방 번호를 넣고 다시 들어오세요.",
+    btn:"확인"
+  },
+
   /* 배드엔딩 결과 화면 (제한 시간 초과) */
   badend:{
     title:"탈출 실패",
@@ -794,13 +803,32 @@ setInterval(()=>netPush(false),4000);
 const netSetUrl=room=>`${NET.db}/${NET.root}/${encodeURIComponent(room)}/settings.json`;
 function netSettings(){
   if(typeof S==="undefined"||!netRoomOk(S.room)) return;
-  try{ fetch(netSetUrl(S.room),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
-    const m=j&&j.minutes; if(!Number.isInteger(m)||m<1||m>120||m===CONFIG.minutes) return;
+  const room=S.room;
+  try{ fetch(netSetUrl(room),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
+    j=j||{}; if(S.room!==room) return;
+    // TV의 '기록 초기화'·'새 검열실 개설': resetId가 바뀌면 진행 중이던 게임을 처음으로 (closed면 방 번호도 지움)
+    const rid=j.resetId||"none";
+    if(S.resetId==null){ S.resetId=rid; save(); }
+    else if(rid!==S.resetId){ S.resetId=rid;
+      if(S.group&&typeof roomReset==="function"){ roomReset(!!j.closed); return; }   // 모둠을 고른 뒤라면 처음으로
+      if(j.closed){ S.room=""; } save(); if(j.closed&&typeof render==="function") render(); return; }
+    const m=j.minutes; if(!Number.isInteger(m)||m<1||m>120||m===CONFIG.minutes) return;
     CONFIG.minutes=m; if(typeof paintClock==="function") paintClock(); netPush(true);
   }).catch(()=>{}); }catch(e){}
 }
 function netSetMinutes(room,m){
-  try{ return fetch(netSetUrl(room),{method:"PUT",body:JSON.stringify({minutes:m})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
+  try{ return fetch(netSetUrl(room),{method:"PATCH",body:JSON.stringify({minutes:m})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
+}
+// TV: 이 방의 모든 진행 기록을 지우고, 학생 게임에도 '처음으로' 신호를 보냄. close=true면 방을 닫음(학생은 방 번호부터 다시)
+function netResetRoom(room,close){
+  if(!netRoomOk(room)) return Promise.resolve(false);
+  const rid=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  return netClear(room).then(()=>{ try{ return fetch(netSetUrl(room),{method:"PATCH",body:JSON.stringify({resetId:rid,closed:close?true:null})}).then(r=>r.ok).catch(()=>false); }catch(e){ return false; } });
+}
+// TV: 방을 열 때 '닫힘' 표시를 지움 (같은 번호를 다시 쓸 수 있게)
+function netOpenRoom(room){
+  if(!netRoomOk(room)) return Promise.resolve(false);
+  try{ return fetch(netSetUrl(room),{method:"PATCH",body:JSON.stringify({closed:null})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
 }
 setTimeout(netSettings,300); setInterval(netSettings,8000);
 // 조별 관리: censor/방/ctl/조 = {sec: TV에서 준 추가 시간(초, 누적), admin: 관리 모드}. 5초마다 받아 옴
@@ -819,6 +847,7 @@ setTimeout(netCtl,500); setInterval(netCtl,5000);
 
 </script>
 <script>
+CONFIG.defaultMinutes=CONFIG.minutes;
 /* 게임 동작 코드. 대사는 story.js, 그림 경로는 assets.js에 있습니다. */
 const TYPES=["직접","돌려","안으로"], TLABEL={직접:"직접 말하기",돌려:"돌려 말하기",안으로:"안으로 향하기"};
 const KEY="censor-escape-v1";
@@ -1446,6 +1475,18 @@ function teacher(){
   q("#tc").onclick=()=>o.remove();
   o.querySelectorAll("[data-j]").forEach(b=>b.onclick=()=>{o.remove();jumpTo(+b.dataset.j);});
   q("#rs").onclick=()=>{o.remove();resetAll();};
+}
+// TV에서 '기록 초기화'나 '새 검열실 개설'을 누르면: 진행을 모두 지우고 처음 화면으로
+function roomReset(closed){
+  vnStop(); if(typeof stopVerdict==="function") stopVerdict(); disposePanels();
+  document.querySelectorAll(".overlay").forEach(x=>x.remove());
+  const rm=closed?"":S.room, rid=S.resetId;
+  if(closed){ try{ history.replaceState(null,"",location.pathname); }catch(e){} }   // 주소의 ?room= 도 지움
+  S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",poemAt:0,caught:0,badSeen:false,wired:false,room:rm,resetId:closed?null:rid};
+  CONFIG.minutes=CONFIG.defaultMinutes||CONFIG.minutes; setTeacherMode(false); save(); render(); window.scrollTo(0,0);
+  const o=document.createElement("div"); o.className="overlay"; o.setAttribute("role","dialog");
+  o.innerHTML=`<div class="card"><h2>${T(closed?TEXT.reset.closedTitle:TEXT.reset.title)}</h2><p>${T(closed?TEXT.reset.closed:TEXT.reset.line)}</p><button class="btn" type="button">${T(TEXT.reset.btn)}</button></div>`;
+  document.body.appendChild(o); o.querySelector("button").onclick=()=>o.remove();
 }
 // TV에서 준 추가 시간(초, 누적)을 반영. 붙잡힌 조는 붙잡힌 순간부터 다시 이어서 함
 function applyBonus(sec){

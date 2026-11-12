@@ -103,6 +103,12 @@
           },
           "$other": {
             ".validate": false
+          },
+          "resetId": {
+            ".validate": "newData.isString() && newData.val().length <= 24"
+          },
+          "closed": {
+            ".validate": "newData.isBoolean()"
           }
         },
         "ctl": {

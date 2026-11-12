@@ -1,3 +1,4 @@
+CONFIG.defaultMinutes=CONFIG.minutes;
 /* 게임 동작 코드. 대사는 story.js, 그림 경로는 assets.js에 있습니다. */
 const TYPES=["직접","돌려","안으로"], TLABEL={직접:"직접 말하기",돌려:"돌려 말하기",안으로:"안으로 향하기"};
 const KEY="censor-escape-v1";
@@ -625,6 +626,18 @@ function teacher(){
   q("#tc").onclick=()=>o.remove();
   o.querySelectorAll("[data-j]").forEach(b=>b.onclick=()=>{o.remove();jumpTo(+b.dataset.j);});
   q("#rs").onclick=()=>{o.remove();resetAll();};
+}
+// TV에서 '기록 초기화'나 '새 검열실 개설'을 누르면: 진행을 모두 지우고 처음 화면으로
+function roomReset(closed){
+  vnStop(); if(typeof stopVerdict==="function") stopVerdict(); disposePanels();
+  document.querySelectorAll(".overlay").forEach(x=>x.remove());
+  const rm=closed?"":S.room, rid=S.resetId;
+  if(closed){ try{ history.replaceState(null,"",location.pathname); }catch(e){} }   // 주소의 ?room= 도 지움
+  S={group:null,start:null,penalty:0,extra:0,stage:0,hints:0,done:null,approved:false,sus:0,grilled:0,epi:false,poem:"",meaning:"",poemAt:0,caught:0,badSeen:false,wired:false,room:rm,resetId:closed?null:rid};
+  CONFIG.minutes=CONFIG.defaultMinutes||CONFIG.minutes; setTeacherMode(false); save(); render(); window.scrollTo(0,0);
+  const o=document.createElement("div"); o.className="overlay"; o.setAttribute("role","dialog");
+  o.innerHTML=`<div class="card"><h2>${T(closed?TEXT.reset.closedTitle:TEXT.reset.title)}</h2><p>${T(closed?TEXT.reset.closed:TEXT.reset.line)}</p><button class="btn" type="button">${T(TEXT.reset.btn)}</button></div>`;
+  document.body.appendChild(o); o.querySelector("button").onclick=()=>o.remove();
 }
 // TV에서 준 추가 시간(초, 누적)을 반영. 붙잡힌 조는 붙잡힌 순간부터 다시 이어서 함
 function applyBonus(sec){

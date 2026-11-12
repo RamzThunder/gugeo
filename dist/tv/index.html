@@ -491,6 +491,15 @@ const TEXT={
     next:"다음 시간: 표현은 했지만 끝내 발표하지 못한 시를 만납니다."
   },
 
+  /* 교실 TV에서 '기록 초기화' / '새 검열실 개설'을 눌렀을 때 학생 화면에 뜨는 안내 */
+  reset:{
+    title:"기록이 초기화되었습니다",
+    line:"선생님이 모든 조의 진행 기록을 지웠습니다. 모둠 번호를 다시 고르고 처음부터 시작하세요.",
+    closedTitle:"검열실이 닫혔습니다",
+    closed:"선생님이 새 검열실을 열었습니다. 교실 TV에 나온 새 방 번호를 넣고 다시 들어오세요.",
+    btn:"확인"
+  },
+
   /* 배드엔딩 결과 화면 (제한 시간 초과) */
   badend:{
     title:"탈출 실패",
@@ -547,13 +556,32 @@ setInterval(()=>netPush(false),4000);
 const netSetUrl=room=>`${NET.db}/${NET.root}/${encodeURIComponent(room)}/settings.json`;
 function netSettings(){
   if(typeof S==="undefined"||!netRoomOk(S.room)) return;
-  try{ fetch(netSetUrl(S.room),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
-    const m=j&&j.minutes; if(!Number.isInteger(m)||m<1||m>120||m===CONFIG.minutes) return;
+  const room=S.room;
+  try{ fetch(netSetUrl(room),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
+    j=j||{}; if(S.room!==room) return;
+    // TV의 '기록 초기화'·'새 검열실 개설': resetId가 바뀌면 진행 중이던 게임을 처음으로 (closed면 방 번호도 지움)
+    const rid=j.resetId||"none";
+    if(S.resetId==null){ S.resetId=rid; save(); }
+    else if(rid!==S.resetId){ S.resetId=rid;
+      if(S.group&&typeof roomReset==="function"){ roomReset(!!j.closed); return; }   // 모둠을 고른 뒤라면 처음으로
+      if(j.closed){ S.room=""; } save(); if(j.closed&&typeof render==="function") render(); return; }
+    const m=j.minutes; if(!Number.isInteger(m)||m<1||m>120||m===CONFIG.minutes) return;
     CONFIG.minutes=m; if(typeof paintClock==="function") paintClock(); netPush(true);
   }).catch(()=>{}); }catch(e){}
 }
 function netSetMinutes(room,m){
-  try{ return fetch(netSetUrl(room),{method:"PUT",body:JSON.stringify({minutes:m})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
+  try{ return fetch(netSetUrl(room),{method:"PATCH",body:JSON.stringify({minutes:m})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
+}
+// TV: 이 방의 모든 진행 기록을 지우고, 학생 게임에도 '처음으로' 신호를 보냄. close=true면 방을 닫음(학생은 방 번호부터 다시)
+function netResetRoom(room,close){
+  if(!netRoomOk(room)) return Promise.resolve(false);
+  const rid=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  return netClear(room).then(()=>{ try{ return fetch(netSetUrl(room),{method:"PATCH",body:JSON.stringify({resetId:rid,closed:close?true:null})}).then(r=>r.ok).catch(()=>false); }catch(e){ return false; } });
+}
+// TV: 방을 열 때 '닫힘' 표시를 지움 (같은 번호를 다시 쓸 수 있게)
+function netOpenRoom(room){
+  if(!netRoomOk(room)) return Promise.resolve(false);
+  try{ return fetch(netSetUrl(room),{method:"PATCH",body:JSON.stringify({closed:null})}).then(r=>r.ok).catch(()=>false); }catch(e){ return Promise.resolve(false); }
 }
 setTimeout(netSettings,300); setInterval(netSettings,8000);
 // 조별 관리: censor/방/ctl/조 = {sec: TV에서 준 추가 시간(초, 누적), admin: 관리 모드}. 5초마다 받아 옴
@@ -844,11 +872,21 @@ function start(r){ room=r; try{localStorage.setItem("censor-room",room);}catch(e
   const link=location.href.split("?")[0].replace(/teacher\.html$/,"escape_room.html").replace(/\/tv(\/index\.html)?\/?$/,"/game/")+"?room="+encodeURIComponent(room);
   joinLink=link; $("#lk").textContent=link.replace(/^https?:\/\//,""); $("#qr").innerHTML="";
   try{ new QRCode($("#qr"),{text:link,width:92,height:92,correctLevel:QRCode.CorrectLevel.M}); }catch(e){ $("#qr").style.display="none"; }
-  connect(); }
+  netOpenRoom(room); connect(); }
 $("#sg").onclick=()=>{ const v=$("#si").value.trim(); if(netRoomOk(v)) start(v); else $("#si").focus(); };
 $("#sr").onclick=()=>start(String(Math.floor(1000+Math.random()*9000)));
-$("#newroom").onclick=async()=>{ if(await confirmAction("새 검열실 개설","새 방 번호로 이동할까요? 현재 방의 기록은 그대로 남습니다.","새 방으로 이동")) start(String(Math.floor(1000+Math.random()*9000))); };
-$("#clear").onclick=async()=>{ const target=room; if(await confirmAction("진행 초기화","이 방의 모든 조 진행 상황을 지웁니다. 되돌릴 수 없습니다. 초기화할까요?","진행 초기화")) netClear(target).then(()=>{celebrated=false;}); };
+// 새 검열실 개설: 지금 검열실을 닫고(기록 삭제, 학생 화면은 방 번호 입력부터) 번호를 새로 적는 첫 화면으로
+$("#newroom").onclick=async()=>{ const old=room;
+  if(!await confirmAction("새 검열실 개설","지금 검열실("+old+")을 닫고 새 번호를 정합니다. 이 검열실의 기록은 모두 지워지고, 학생 화면은 방 번호 입력 화면으로 돌아갑니다.","검열실 닫기")) return;
+  await netResetRoom(old,true);
+  if(es){ es.close(); es=null; } room=""; data={}; celebrated=false; closeReview(); closeQR();
+  try{ localStorage.removeItem("censor-room"); history.replaceState(null,"",location.pathname); }catch(e){}
+  $("#rc").textContent="----"; $("#qr").innerHTML=""; joinLink=""; $("#si").value=""; paint();
+  $("#setup").classList.add("show"); $("#si").focus(); };
+// 기록 초기화: 번호는 그대로, 모든 조의 진행·추가 시간·관리 모드·시를 지우고 학생 게임도 처음 화면으로
+$("#clear").onclick=async()=>{ const target=room;
+  if(await confirmAction("기록 초기화","검열실 번호("+target+")는 그대로 두고, 모든 조의 진행 상황·추가 시간·관리 모드·제출한 시를 지웁니다. 학생 화면도 모둠 고르기부터 다시 시작합니다. 되돌릴 수 없습니다.","기록 초기화"))
+    netResetRoom(target,false).then(()=>{ celebrated=false; data.groups={}; data.poems={}; data.verdict={}; data.ctl={}; paint(); }); };
 $("#dx").onclick=()=>$("#done").classList.remove("show");
 build();
 const qs=document.createElement("script"); qs.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"; qs.onload=init; qs.onerror=init; document.head.appendChild(qs);
