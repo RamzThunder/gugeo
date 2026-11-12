@@ -2,3 +2,7 @@
 # 받아 둔 원본 글꼴(용량 큼). 화면에서는 fonts/의 woff2만 씀
 fonts/*.ttf
 fonts/*.otf
+# 단, 아래 글꼴은 "배포된 그대로 쓰라"는 조건이 있어 원본 ttf를 그대로 둠
+!fonts/ChosunCentennial_ttf.ttf
+!fonts/Shilla_Culture(B).ttf
+!fonts/Shilla_Culture(M).ttf
