@@ -48,6 +48,10 @@ print("만들었습니다:", out, round(os.path.getsize(out) / 1024), "KB")
 # 교실 TV용 교사 화면 (그림 없이 가벼움)
 t = re.sub(r'<script src="([^"]+)"></script>', lambda m: "<script>\n" + read(m.group(1)) + "\n</script>", read("teacher.html"))
 t = t.replace('data-fontdir="fonts/"', 'data-fontdir="../game/fonts/"')   # TV는 게임 폴더의 글꼴을 같이 씀
+# TV 디자인 CSS는 브라우저가 4시간 동안 기억하므로, 내용이 바뀌면 주소에 새 버전 꼬리표(?v=)를 붙여 바로 새로 받게 함
+import hashlib
+_v = hashlib.md5(open(os.path.join(ROOT, "teacher-vintage.css"), "rb").read()).hexdigest()[:8]
+t = t.replace('href="teacher-vintage.css"', 'href="teacher-vintage.css?v=' + _v + '"')
 os.makedirs(os.path.join(ROOT, "dist", "tv"), exist_ok=True)
 tout = os.path.join(ROOT, "dist", "tv", "index.html")
 open(tout, "w", encoding="utf-8").write(t)
