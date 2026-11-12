@@ -1,38 +1,130 @@
-/* 1940년대 검열실 관제판 — 기존 기능과 ID 유지 */
-:root{--bg:#24170e;--card:#ead9ba;--line:#785037;--tx:#302217;--mute:#73583d;--amber:#a06c31;--ok:#567147;--bad:#9e3c30}
-html,body{background:#20150e;color:var(--tx);font-family:"Malgun Gothic","Noto Sans KR",sans-serif}
-body{padding:1.4vh 1.3vw;gap:1.2vh;background:linear-gradient(90deg,#100904ad,transparent 9%,transparent 91%,#100904ad),url('vintage-assets/wood.svg') center/auto 42vh repeat;overflow:hidden}
-header{min-height:14vh;gap:.75vw;align-items:stretch;position:relative}
-header h1{display:flex;align-items:center;justify-content:center;position:relative;flex:0 1 34%;min-width:0;margin:0;padding:3.3vh 1vw 1vh;background:url('vintage-assets/parchment.svg') center/100% 100% no-repeat;border:4px double #815839;box-shadow:0 .7vh 1.4vh #0b0605b5;color:#332214;text-align:center;font-family:"GriunMyoeun","Malgun Gothic",serif;font-size:clamp(24px,3vw,52px);line-height:1.1}
-header h1:before{content:"朝鮮總督府 圖書課";position:absolute;top:.7vh;left:1vw;color:#68432c;font:700 clamp(10px,.95vw,16px) serif;letter-spacing:.14em}
-header h1:after{content:"極秘";position:absolute;right:1vw;top:1vh;transform:rotate(-12deg);font:900 clamp(13px,1.2vw,21px) serif;color:#903c31;border:2px solid #903c31;padding:.1em .3em}
+/* 1940년대 검열실 관제판 — 원본 PNG 그림을 입힘. 기능과 ID는 teacher.html 그대로 */
+:root{--bg:#1b120c;--card:#ead9ba;--line:#7b5738;--tx:#2f2116;--mute:#6e583f;--amber:#a36c32;--ok:#567146;--bad:#9d3a2f;
+  /* 종이 결: paper_light.png 가운데(흰 테두리 없는 부분)만 크게 확대해 씀 */
+  --paper:url('vintage-assets/paper_light.png') 30% 55%/420% 420% no-repeat #e9d6b2}
+html,body{background:#18110d;color:var(--tx);font-family:"Malgun Gothic","Noto Sans KR",sans-serif}
+body{padding:1.2vh 1.2vw;gap:1.1vh;background:linear-gradient(#0d0805aa,#0d080566),url('vintage-assets/wood_background.png') center/cover no-repeat #18110d;overflow:hidden}
+
+/* ---- 윗줄: 제목 · 방 번호 · 제한 시간 · 검토 대기 · 버튼 */
+header{min-height:14vh;gap:.8vw;align-items:stretch;position:relative}
+header h1{flex:0 1 34%;min-width:0;margin:0;font-size:0;color:transparent;background:url('vintage-assets/title_banner.png') center/contain no-repeat}
 header .sp{display:none}
-#conn{position:absolute;left:1.2vw;bottom:-2.5vh;z-index:3;background:#e8d4aa;padding:.16vh .5vw;border:1px solid #7e5738;color:#493420!important}
+#conn{position:absolute;left:1vw;bottom:-2.3vh;z-index:3;background:#f3e3c4;padding:.15vh .5vw;border:1px solid #8e6746;border-radius:2px;color:#483421!important;font-size:1.5vh!important}
 .dot{background:var(--bad)}.dot.on{background:var(--ok)}
-.code,.lim{background:url('vintage-assets/parchment.svg') center/100% 100%;border:3px double #805536;box-shadow:0 .5vh 1vh #1208049e;padding:1vh .7vw;color:#322419}
-.code{flex:1 1 26%;min-width:0;gap:.8vw}.code b{color:#34251b;font:900 clamp(24px,3vw,50px) Georgia,serif;letter-spacing:.12em}.code small{color:#6a4c32;font-size:clamp(10px,1vw,17px);font-weight:800}
-#lk{font-size:clamp(8px,.78vw,13px);word-break:break-all}#qr{background:#fff;padding:4px;border:2px solid #926d4d;flex-shrink:0}#qr img,#qr canvas{max-width:6vw;height:auto!important}
-.lim{flex:0 1 21%;min-width:0;justify-content:center;gap:.3vw}.lim small{font-weight:800;color:#63442f;font-size:clamp(10px,1vw,16px)}.lim b{font:900 clamp(23px,2.8vw,45px) Georgia,serif;color:#2c2118;min-width:2ch}.lim button{font-size:clamp(19px,1.8vw,31px);min-width:29px;width:4vh;height:4vh;padding:0}
-button{font:800 clamp(11px,1.05vw,18px) "Malgun Gothic",sans-serif;color:#38251a;background:linear-gradient(#f4e2be,#d9ba8d);border:2px solid #855938;border-radius:3px;box-shadow:inset 0 0 0 2px #f4e7cd,0 .3vh 0 #3b2618;padding:.65vh .7vw;cursor:pointer;white-space:nowrap}
-button:hover{filter:brightness(1.07)}button:focus-visible{outline:3px solid #a63829;outline-offset:2px}button:disabled{opacity:.55;cursor:not-allowed}
-#newroom{background:#85392b;color:#f8e8ca;text-shadow:none;border-color:#c08463}#newroom,#clear{padding:.75vh .6vw}
-#rq{background:#913d2d!important;color:#fbe1c4!important;border:3px double #c78c6e!important;min-width:7vw;max-width:10vw;white-space:normal;line-height:1.25;font-size:clamp(12px,1.2vw,18px)!important}
-.grid{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:1vw;min-height:0}
-.g{position:relative;background:url('vintage-assets/card.svg') center/100% 100% no-repeat;border:3px double #895d3b;border-radius:5px;box-shadow:0 .5vh 1vh #0b0504b8;padding:1.1vh .85vw .8vh;gap:.6vh;color:#37271b}
-.g:before{content:"檢閱記錄";position:absolute;right:.65vw;top:.45vh;font:700 clamp(8px,.75vw,12px) serif;color:#8b6544}
-.g .top{padding:.8vh 0 .3vh;border-bottom:1px solid #ac8c62;align-items:baseline}.g .no{font:900 clamp(24px,2.5vw,42px) "GriunMyoeun",serif;color:#372418}.g .tm{font:900 clamp(20px,2.2vw,36px) Georgia,serif;color:#35241a}.g .tm.low{color:#aa3225}
-.g .st{color:#4b3425;font-size:clamp(12px,1.13vw,18px);font-weight:800;line-height:1.25;min-height:2.5vh}
-.g.empty{opacity:.65}.g.empty .st{color:#74624f}.trk{gap:.25vw}.trk i{height:1.1vh;background:#c8ac7f;border:1px solid #b59871}.trk i.f{background:#826947}.trk i.c{background:#b37b34}
-.sus{color:#513927;font-size:clamp(11px,1.04vw,17px);font-weight:800}.sus .bar{height:1.4vh;background:#c9af86;border:1px solid #9c7b56}.sus .bar i{background:var(--ok)}
-.g.warn{border-color:#a13a2d}.g.done{background:url('vintage-assets/card-done.svg') center/100% 100% no-repeat;border-color:#537348}.g.caught{border-color:#aa4031}.g.caught .st{color:#97362b}
-.g .ctl{gap:.45vw;margin-top:auto}.g .ctl button{flex:1;min-width:0;padding:.65vh .1vw;font-size:clamp(10px,.99vw,16px)}.g .ctl button:first-child:before{content:"⌛ "}.g .ctl button:last-child:before{content:"⚙ "}.g .ctl button.on{background:#8d3b2c;color:#f7e9d0;border-color:#6c2f22;box-shadow:none}
-.g .rv{background:#eecda7;color:#8e3527;border:3px double #a54937;font:900 clamp(12px,1.12vw,18px) serif;padding:.35vh .4vw}.g.ask{border-color:#a1422c}
-.g .piece{inset:2px;background:url('vintage-assets/card-done.svg') center/100% 100%;color:#375c35}.piece .ch{font:900 clamp(70px,8vw,130px) Georgia,serif;color:#4e6840;text-shadow:1px 2px #d9e1bc}.piece .lb{color:#467044;border:4px double #6e8d51;border-radius:50%;padding:.3vh 1vw;transform:rotate(-5deg);font-size:clamp(17px,1.5vw,26px)}.piece .tt{color:#586548;font-size:clamp(11px,1vw,15px)}
-.sum{background:linear-gradient(#39281cdd,#21140eea),url('vintage-assets/wood.svg') center/auto 100%;border:4px double #94714c;box-shadow:0 .5vh 1vh #140804;min-height:10.5vh;padding:.7vh 1vw;gap:1vw;color:#eedab8}.sum:before{content:"最終任務";background:#e0c9a4;color:#3e271c;padding:.6vh 1vw;font:800 clamp(11px,1.25vw,20px) serif;transform:rotate(-3deg)}.sum .lt{color:#e5cd9e;font-size:clamp(12px,1.23vw,19px);font-weight:800}
-.slots{gap:.5vw}.slot{width:min(5.5vw,8vh);height:min(5.5vw,8vh);background:#e7d3ae;border:2px dashed #9e7354;font:900 clamp(23px,3vw,45px) "GriunMyoeun",serif;color:transparent;box-shadow:0 .25vh 0 #372114}.slot.on{border:2px solid #a84837;background:#f3dfc0;color:#983a29}.slot small{color:#ebd5ab;bottom:-1.6vh;font-size:clamp(8px,.7vw,11px)}
-#rv{background:#1a0e08e8}#rv .box{background:url('vintage-assets/parchment.svg') center/100% 100%;border:7px double #875e3b;box-shadow:0 1.5vh 3vh #060302b8;color:#302217;gap:1.6vh}#rv .hd{color:#674a31}#rv .hd b{color:#342418}#rv pre{background:#f6e9d1;border:3px double #ae8d65;box-shadow:inset 0 0 0 7px #ebd6b7;font-size:clamp(18px,2.6vw,43px)}#rv details{color:#5e4834}#rv details p{color:#382719}#rv .act{flex-wrap:wrap;gap:.7vw}#rv .act button{font-size:clamp(14px,1.6vw,27px);padding:1vh 1.5vw}#rv .act .ok{background:#597047;color:#fff3dc}#rv .act .no{background:#a33e30;color:#fff3dc}#rv .act .vg{background:#9b783e;color:#fff3dc}
-#done{background:#20140ef0}#done .w{color:#f3d9ad}#done .s{color:#ead3ab}
-#setup{background:url('vintage-assets/wood.svg') center/auto 35vh;color:#f2dfbf}#setup input{background:#f1ddb9;border:4px double #97704e;color:#392718}
-@media(max-width:1100px){header{gap:.4vw}header h1{font-size:2.7vw}.code{flex-basis:21%}.lim{flex-basis:20%}#newroom,#clear{font-size:1vw}.g{padding:.8vh .55vw}.g .st{font-size:1.12vw}}
-@media(max-width:740px){body{overflow:auto;height:auto;min-height:100vh;padding:10px;gap:12px}header{flex-wrap:wrap;min-height:0}header h1{flex:1 1 100%;height:110px;font-size:33px}header h1:before,header h1:after{display:none}#conn{position:static;order:2}.code{flex:1 1 55%}.lim{flex:1 1 40%}#rq{max-width:none;min-width:100%;order:4}.grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;gap:10px}.g{min-height:220px;padding:12px}.g .no,.g .tm{font-size:24px}.g .st{font-size:14px}.g .ctl button{font-size:12px}.sum{flex-wrap:wrap;min-height:100px}.slot{width:35px;height:40px;font-size:23px}#rv .box{padding:18px;max-height:90vh}#rv pre{font-size:24px}}
-@media(prefers-reduced-motion:reduce){.g.warn,.g .rv,.trk i.c{animation:none}}
+.code,.lim{position:relative;background:var(--paper);border:2px solid #8a6443;border-radius:4px;box-shadow:inset 0 0 1.4vh #a07a4f88,0 .45vh 1vh #0008;padding:4.2vh .8vw .8vh;color:#322419}
+.code:before,.lim:before{content:"";position:absolute;left:50%;top:-.6vh;transform:translateX(-50%);width:min(10vw,90%);height:4.4vh;background:center/contain no-repeat}
+.code:before{background-image:url('vintage-assets/label_room.png')}
+.lim:before{background-image:url('vintage-assets/label_timer.png')}
+.code{flex:1 1 26%;min-width:0;gap:.8vw}
+.code small:first-child{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}   /* '학생 입장 방 번호'는 그림 이름표로 대신 */
+.code b{color:#34251b;font:900 clamp(24px,4.6vh,52px) Georgia,serif;letter-spacing:.12em}
+#lk{color:#6a4c32;font-size:clamp(9px,1.4vh,14px);font-weight:700;word-break:break-all}
+#qr{background:#fff;padding:4px;border:2px solid #926d4d;flex-shrink:0}#qr img,#qr canvas{width:8vh!important;height:8vh!important}
+.lim{flex:0 1 18%;min-width:0;justify-content:center;gap:.4vw}
+.lim>div small{display:none}.lim #lm{position:absolute;left:0;right:0;bottom:.3vh;text-align:center;color:#6a4c32!important;font-size:1.3vh!important}
+.lim b{font:900 clamp(23px,5vh,52px) Georgia,serif;color:#2c2118;min-width:2ch}
+.lim>span{color:#4b3425;font-weight:800}
+.lim button{font-size:clamp(18px,3vh,32px);width:5vh;height:5vh;min-width:30px;min-height:30px;padding:0;border-radius:50%}
+button{font:800 clamp(12px,1.7vh,19px) "Malgun Gothic",sans-serif;color:#38251a;background:var(--paper);border:2px solid #8a6443;border-radius:4px;box-shadow:0 .25vh .5vh #0006;padding:.7vh .8vw;cursor:pointer;white-space:nowrap}
+button:hover{filter:brightness(1.06)}button:active{transform:translateY(1px)}
+button:focus-visible{outline:3px solid #c8463a;outline-offset:2px}button:disabled{opacity:.55;cursor:not-allowed}
+/* 글씨가 그려진 그림 버튼: 글자는 화면에서만 숨기고(읽어 주기용으로는 남음) 그림을 보여 줌 */
+#newroom,#clear,.g .ctl button,#rv .act .ok,#rv .act .no{color:transparent!important;text-shadow:none;border:0;border-radius:0;background:center/100% 100% no-repeat transparent;box-shadow:none;filter:drop-shadow(0 .3vh .4vh #0009)}
+#newroom{background-image:url('vintage-assets/button_new_room.png');width:12.5vw;height:6vh}
+#clear{background-image:url('vintage-assets/button_reset.png');width:12.5vw;height:5.6vh}
+header>div:last-child{justify-content:center}
+#rq{background:url('vintage-assets/label_waiting.png') center 0/auto 4.6vh no-repeat,var(--paper)!important;color:#8e2f22!important;border:3px double #9a3b2c!important;min-width:9vw;max-width:12vw;white-space:normal;line-height:1.2;font-size:clamp(13px,2vh,22px)!important;padding:5.2vh .6vw .8vh}
+
+/* ---- 조별 카드: group_card.png의 칸(책·모래시계·눈·바구니)에 맞춰 내용을 놓음 */
+.grid{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:1.2vh 1vw;min-height:0}
+.g{display:block;container-type:size;background:url('vintage-assets/group_card.png') center/100% 100% no-repeat;border:0;border-radius:0;padding:0;overflow:visible;color:#37271b;filter:drop-shadow(0 .5vh .7vh #000a)}
+.g .top{display:contents}
+.g .no{position:absolute;left:4%;top:2%;width:31%;height:20%;display:flex;align-items:center;justify-content:center;font:900 15cqh "GriunMyoeun",serif;color:#372418}
+.g .st,.g .tm,.g .sus,.g .ctl{position:absolute;left:18%;right:6%}
+.g .st{top:26%;height:12%;display:flex;align-items:center;font-size:clamp(11px,8.4cqh,24px);font-weight:800;line-height:1.1;color:#4b3425;min-height:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trk{position:absolute;left:18%;right:6%;top:38.5%;height:3%;gap:.3cqw}
+.trk i{height:100%;background:#cdb489;border:1px solid #b09670}.trk i.f{background:#7b6140}.trk i.c{background:#b0762f}
+.g .tm{top:44%;height:14%;display:flex;align-items:center;font:900 clamp(16px,11.5cqh,36px) Georgia,serif;color:#35241a}.g .tm.low{color:#aa3225}
+.g .sus{top:60%;height:14%;gap:2cqw;font-size:clamp(10px,7.6cqh,20px);font-weight:800;color:#513927}
+.sus .bar{height:32%;background:#d6c09a;border:1px solid #9c7b56}
+.sus b{min-width:2.2ch;text-align:right;font-family:Georgia,serif}
+.g .ctl{top:75.5%;height:14.5%;gap:3cqw;margin:0;display:flex}
+.g.empty .ctl{display:flex}   /* 입장 전에도 조별 카드에 +5분·관리 모드가 보이게 */
+.g .ctl button{flex:1;min-width:0;height:100%;padding:0;font-size:1px;position:relative;filter:drop-shadow(0 .2vh .3vh #0007)}
+.g .ctl button[id^="p5"]{background-image:url('vintage-assets/button_five_minutes.png')}
+.g .ctl button[id^="ad"]{background-image:url('vintage-assets/button_admin.png')}
+.g .ctl button.on{background-color:transparent;background-size:100% 100%;border:0;filter:drop-shadow(0 0 .5vh #d0402e) drop-shadow(0 0 .2vh #d0402e)}
+/* 그림 버튼 위 작은 꼬리표: '켜짐', '총 +10분' 같은 상태 */
+.g .ctl button[data-badge]:not([data-badge=""]):after{content:attr(data-badge);position:absolute;right:-2%;top:-38%;color:#fff4e0;background:#9a3324;border:1px solid #f0c9a8;border-radius:3px;padding:.1em .4em;font:800 clamp(9px,6cqh,15px) "Malgun Gothic",sans-serif;white-space:nowrap;transform:rotate(3deg)}
+.g.empty{opacity:1}.g.empty>*:not(.ctl){opacity:.55}.g.empty .st{color:#74624f}
+/* 카드 오른쪽 위 도장: 진행 중 / 원고 검토 대기 / 시간 초과 */
+.g:after{content:"";position:absolute;right:4%;top:5%;width:42%;height:16%;background:center/contain no-repeat;pointer-events:none;transform:rotate(-3deg)}
+.g:not(.empty):not(.done):not(.caught):not(.ask):after{background-image:url('vintage-assets/status_progress.png')}
+.g.caught:after{background-image:url('vintage-assets/stamp_timeout.png');width:48%;height:19%}
+.g.caught .st{color:#97362b}
+.g .rv{display:none;position:absolute;right:3%;top:3%;width:50%;height:20%;z-index:2;padding:0;font-size:0;color:transparent;border:0;background:url('vintage-assets/stamp_review_wait.png') center/contain no-repeat;transform:rotate(-4deg);animation:stp 1.3s infinite}
+.g.ask .rv{display:block}
+@keyframes stp{50%{transform:rotate(-4deg) scale(1.08)}}
+.g.warn{filter:drop-shadow(0 0 .9vh #c0392bcc);animation:none}
+.g.done{background:url('vintage-assets/group_card_done.png') center/100% 100% no-repeat}
+.g.caught{background:url('vintage-assets/group_card.png') center/100% 100% no-repeat}
+.g.ask{cursor:pointer}
+/* 탈출 성공: 초록 카드 + 통과 도장 + 얻은 글자 */
+.g .piece{inset:0;background:url('vintage-assets/group_card_done.png') center/100% 100% no-repeat;color:#375c35;gap:1cqh;z-index:3}
+.piece .ch{font:900 38cqh "GriunMyoeun",Georgia,serif;color:#3f5c33;text-shadow:1px 2px #d9e1bc}
+.piece .lb{order:-1;width:46%;height:24%;font-size:0;color:transparent;background:url('vintage-assets/stamp_passed.png') center/contain no-repeat;transform:rotate(-5deg)}
+.piece .tt{color:#4b5a3c;font-size:clamp(10px,6.5cqh,17px);font-weight:700}
+
+/* ---- 아랫줄: 최종 임무. 그림 오른쪽의 미리 그려진 글자 칸은 진짜 글자 칸으로 덮음 */
+.sum{position:relative;display:block;flex:none;align-self:center;height:13vh;width:min(100%,calc(13vh*1255/131));padding:0;border:0;background:url('vintage-assets/mission_footer.png') center/100% 100% no-repeat;filter:drop-shadow(0 .5vh .8vh #000b)}
+.sum>.lt:first-child,.sum .fill{display:none}
+.sum .slots{position:absolute;left:58.6%;right:2.6%;top:26%;bottom:26%;display:flex;align-items:center;gap:.6%;padding:0 .8%;background:var(--paper);border-radius:3px}
+.slot{flex:none;height:78%;aspect-ratio:1;width:auto;background:#f6ead2;border:2px dashed #a98463;font:900 6.6vh "GriunMyoeun",serif;line-height:1;color:transparent}
+.slot.on{border:2px solid #a84837;background:#fbecd2;color:#983a29}
+.slot small{bottom:auto;top:100%;color:#f0dcb6;font-size:1.3vh;white-space:nowrap}
+.sum #cnt{position:absolute;right:4%;top:50%;transform:translateY(-50%);color:#5b3d27;font-size:2vh;font-weight:800}
+
+/* ---- 시 검토 창 */
+#rv{background:#1a0e08e8}
+#rv .box{background:var(--paper);border:6px double #875e3b;border-radius:4px;box-shadow:inset 0 0 4vh #9c764a88,0 1.5vh 3vh #000b;color:#302217;gap:1.8vh}
+#rv .hd{color:#674a31}#rv .hd b{color:#342418}
+#rv pre{background:#f8eedb;border:0;box-shadow:inset 0 0 0 .7vh #ead5b3;color:#2a1d12}
+#rv details{color:#5e4834}#rv details p{color:#382719}
+#rv .act{flex-wrap:wrap;align-items:center}
+#rv .act .ok,#rv .act .no{width:16vh;height:9vh;padding:0;background-size:contain}
+#rv .act .ok{background-image:url('vintage-assets/stamp_overlay_passed.png')}
+#rv .act .no{background-image:url('vintage-assets/stamp_overlay_review.png')}   /* '검열' 도장 */
+#rv .act .vg{background:var(--paper);color:#7a4b16;border:3px double #a07434}
+#rv .act button:hover{filter:drop-shadow(0 .3vh .4vh #0009) brightness(1.08)}
+#done{background:#20140ef0}#done .w{font-family:"GriunMyoeun",serif;color:#f3d9ad}#done .s{color:#ead3ab}
+#setup{background:linear-gradient(#0d0805aa,#0d0805aa),url('vintage-assets/wood_background.png') center/cover no-repeat #18110d;color:#f2dfbf}
+#setup input{background:#f1ddb9;border:4px double #97704e;color:#392718}
+
+/* ---- 노트북·작은 화면 */
+@media(max-width:1100px){header{flex-wrap:wrap;gap:1vh 1vw}header h1{flex:1 1 100%;height:9vh}#conn{bottom:auto;top:9.5vh}
+  .code{flex:1 1 40%}.lim{flex:1 1 25%}#newroom,#clear{width:22vw}header>div:last-child{flex-direction:row!important;flex:1 1 100%;justify-content:flex-end}}
+/* ---- 휴대폰: 카드 2열(아주 좁으면 1열), 화면을 아래로 내려 봄 */
+@media(max-width:740px){
+  html,body{height:auto}
+  body{overflow:auto;min-height:100vh;padding:10px;gap:14px}
+  header{flex-wrap:wrap;min-height:0;gap:10px}
+  header h1{flex:1 1 100%;height:auto;aspect-ratio:768/172}
+  #conn{position:static;order:1;flex:1 1 100%;text-align:center;font-size:12px!important}
+  .code,.lim{padding-top:40px}.code:before,.lim:before{width:110px;height:38px;top:-4px}
+  .code{order:2;flex:1 1 100%}.code b{font-size:38px}#qr img,#qr canvas{width:84px!important;height:84px!important}
+  .lim{order:3;flex:1 1 100%}.lim b{font-size:36px}.lim button{width:42px;height:42px}.lim #lm{font-size:11px!important}
+  #rq{order:4;max-width:none;flex:1 1 100%;background-size:auto 40px,cover!important;padding-top:44px;font-size:16px!important}
+  header>div:last-child{order:5;flex:1 1 100%;flex-direction:row!important;gap:10px!important}
+  #newroom,#clear{flex:1;width:auto;height:auto;aspect-ratio:240/75}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;gap:12px 8px;flex:none}
+  .g{aspect-ratio:427/250}
+  .g .ctl button[data-badge]:not([data-badge=""]):after{top:-60%}
+  .sum{width:100%;height:auto;align-self:stretch;margin-bottom:16px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:12px;background:var(--paper);border:3px double #875e3b}
+  .sum>.lt:first-child{display:block;flex:1 1 100%;color:#4b3425;font-size:15px;font-weight:800}
+  .sum .slots{position:static;padding:0;gap:6px;background:none}
+  .slot{width:44px;height:44px;font-size:30px;border-width:1px}.slot small{font-size:10px;color:#6a4c32}
+  .sum #cnt{position:static;transform:none;margin-left:auto;font-size:14px}
+  #rv{padding:10px}#rv .box{padding:16px;max-height:94vh}#rv pre{font-size:22px}#rv .hd b{font-size:24px}
+  #rv .act .ok,#rv .act .no{width:84px;height:48px}#rv .act button{font-size:15px}
+}
+@media(max-width:420px){.grid{grid-template-columns:1fr}.g{aspect-ratio:427/230}}

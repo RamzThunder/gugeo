@@ -597,7 +597,7 @@ function paint(){
     [...$("#tk"+n).children].forEach((i,k)=>i.className=k<idx?"f":(k===idx&&!g.done&&!cau?"c":""));
     paintCtl(n);
     $("#sb"+n).style.width=sus+"%"; $("#sb"+n).style.background=sus>=70?"var(--bad)":sus>=40?"var(--amber)":"var(--ok)"; $("#sn"+n).textContent=sus;
-    if(fin){ $("#pc"+n).textContent=g.piece||netPiece(n); $("#pt"+n).textContent="걸린 시간 "+tm.textContent+" · 의심도 "+sus; (got[g.piece||netPiece(n)]=got[g.piece||netPiece(n)]||[]).push(n); }
+    if(fin){ $("#pc"+n).textContent=g.piece||netPiece(n); $("#pt"+n).textContent="걸린 시간 "+tm.textContent+" · 의심 정도 "+sus; (got[g.piece||netPiece(n)]=got[g.piece||netPiece(n)]||[]).push(n); }
   }
   paintLimit();
   const q=queue(); $("#rq").textContent="시 확인 대기 "+q.length+"개"; $("#rq").classList.toggle("on",q.length>0);
@@ -615,7 +615,8 @@ function pending(n){ const p=(data.poems||{})[n], v=(data.verdict||{})[n], g=(da
 const ctlOf=n=>(data.ctl||{})[n]||{};
 function paintCtl(n){ const c=ctlOf(n), b=$("#ad"+n), p=$("#p5"+n);
   b.classList.toggle("on",!!c.admin); b.textContent=c.admin?"관리 모드 켜짐":"관리 모드";
-  p.textContent=c.sec?"+5분 (총 +"+Math.round(c.sec/60)+"분)":"+5분"; }
+  p.textContent=c.sec?"+5분 (총 +"+Math.round(c.sec/60)+"분)":"+5분";
+  b.dataset.badge=c.admin?"켜짐":""; p.dataset.badge=c.sec?"총 +"+Math.round(c.sec/60)+"분":""; }   // 그림 버튼 위 꼬리표
 function setCtl(n,patch){ data.ctl=data.ctl||{}; data.ctl[n]=Object.assign({},ctlOf(n),patch); paintCtl(n);
   netSetCtl(room,n,patch).then(ok=>{ if(!ok) alert("저장하지 못했습니다. 인터넷을 확인하세요."); }); }
 function giveTime(n){ setCtl(n,{sec:(ctlOf(n).sec||0)+300}); }
