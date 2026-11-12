@@ -288,3 +288,21 @@ body{isolation:isolate;background-image:linear-gradient(#0d08056b,#0d080533),url
 .room-props:after{display:none}
 @keyframes lamp-swing{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
 @keyframes lamp-flicker{0%,100%{opacity:1}46%{opacity:.86}52%{opacity:.97}}
+
+/* ===== 윗줄 정렬 (TV·컴퓨터 넓은 화면) =====
+   제목 띠·QR·검열실 번호·제한 시간·오른쪽 버튼을 같은 높이의 띠 안에서 세로 가운데로 맞춤.
+   검열실 번호 명찰 아래에 통신 꼬리표를 가운데로, 주소 글씨는 QR이 대신하므로 숨김 */
+@media(min-width:1101px){
+  header{height:17vh;min-height:0;align-items:center}
+  header h1{align-self:stretch}
+  header>*{margin-top:0;margin-bottom:0}
+  .code{align-self:center;height:15vh;display:flex;align-items:center}
+  .entry-paper{height:15vh}
+  .room-info{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9vh;height:100%}
+  .room-number{max-height:9vh;width:auto;height:9vh}
+  .code #lk{display:none}
+  #conn{margin:0;align-self:center}
+  .lim{align-self:center;margin:0}
+  header>div:last-child{align-self:center;justify-content:center;gap:1.2vh!important}
+  #rq{align-self:center}
+}
