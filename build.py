@@ -15,8 +15,21 @@ html = re.sub(r'<script src="([^"]+)"></script>',
 # 2) 그림(img/)과 글꼴(fonts/)은 HTML에 넣지 않고 dist/game/ 옆 폴더로 복사합니다.
 #    HTML이 가벼워져 첫 화면이 바로 뜨고, 그림은 뒤따라 받아집니다.
 import shutil
+def font_files():
+    # fonts.js 의 FONT_USE 에서 실제로 쓰는 글꼴만 골라 그 파일들을 복사 목록에 넣음 (게임·TV 모두)
+    js = read("fonts.js")
+    use = re.search(r'const FONT_USE=\{(.*?)\n\};', js, re.S).group(1)
+    names = set(re.findall(r':\s*"([^"]+)"', re.sub(r'//[^\n]*', '', use)))
+    lst = re.search(r'const FONT_LIST=\{(.*?)\n\};', js, re.S).group(1)
+    out = set()
+    for n in names:
+        m = re.search(r'"' + re.escape(n) + r'"\s*:\s*\{([^}]*)\}', lst)
+        if not m:
+            print("  fonts.js 에 없는 글꼴 이름:", n); continue
+        out |= {"fonts/" + f for f in re.findall(r'(?:file|bold)\s*:\s*"([^"]+)"', m.group(1))}
+    return out
 def copy_assets(dst):
-    used = set(re.findall(r'"(img/[^"]+\.png)"', html)) | set(re.findall(r'(fonts/[^)"]+\.woff2)', html))
+    used = set(re.findall(r'"(img/[^"]+\.png)"', html)) | font_files()
     for d in ("img", "fonts"):
         shutil.rmtree(os.path.join(dst, d), ignore_errors=True)
     for p in sorted(used):
@@ -34,7 +47,7 @@ open(out, "w", encoding="utf-8").write(html)
 print("만들었습니다:", out, round(os.path.getsize(out) / 1024), "KB")
 # 교실 TV용 교사 화면 (그림 없이 가벼움)
 t = re.sub(r'<script src="([^"]+)"></script>', lambda m: "<script>\n" + read(m.group(1)) + "\n</script>", read("teacher.html"))
-t = t.replace("url(fonts/", "url(../game/fonts/")   # TV는 게임 폴더의 글꼴을 같이 씀
+t = t.replace('data-fontdir="fonts/"', 'data-fontdir="../game/fonts/"')   # TV는 게임 폴더의 글꼴을 같이 씀
 os.makedirs(os.path.join(ROOT, "dist", "tv"), exist_ok=True)
 tout = os.path.join(ROOT, "dist", "tv", "index.html")
 open(tout, "w", encoding="utf-8").write(t)
