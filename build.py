@@ -57,5 +57,10 @@ shutil.copytree(os.path.join(ROOT, "vintage-assets"), os.path.join(ROOT, "dist",
 print("만들었습니다:", tout, round(os.path.getsize(tout) / 1024), "KB")
 
 # dist 폴더만 배포하는 호스팅(Cloudflare Workers 등)을 위한 첫 화면: 게임으로 넘겨 줍니다
-open(os.path.join(ROOT, "dist", "index.html"), "w", encoding="utf-8").write('<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>검열국을 탈출하라</title><meta http-equiv="refresh" content="0; url=game/"></head><body></body></html>')
+open(os.path.join(ROOT, "dist", "index.html"), "w", encoding="utf-8").write('<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>검열국을 탈출하라</title><meta http-equiv="refresh" content="0; url=game/"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"></head><body></body></html>')
 print("만들었습니다: dist/index.html")
+
+# 사이트 아이콘(파비콘): favicon/ 폴더의 파일을 dist 맨 위로 (모든 페이지가 /favicon.ico 등으로 씀)
+for f in os.listdir(os.path.join(ROOT, "favicon")):
+    shutil.copy2(os.path.join(ROOT, "favicon", f), os.path.join(ROOT, "dist", f))
+print("만들었습니다: dist/favicon.ico 외 사이트 아이콘")
