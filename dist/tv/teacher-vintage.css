@@ -221,28 +221,30 @@ body{isolation:isolate;background-image:radial-gradient(ellipse at 6% 10%,#b8712
 .room-props:after{content:'';position:absolute;left:-5vw;top:4vh;width:27vw;height:30vh;background:radial-gradient(ellipse at 25% 30%,#edac4933,transparent 64%);mix-blend-mode:screen;filter:blur(16px)}
 @media(min-width:1101px) and (min-aspect-ratio:3/2){header h1{margin-left:5vw;flex-basis:29%}}
 
-/* Original illustrated controls, with the same aged paper grain as the panels. */
-#newroom{--button-art:url('vintage-assets/button_new_room.png')}
-#clear{--button-art:url('vintage-assets/button_reset.png')}
+/* Independent redrawn assets: render once, with their original alpha and paper grain. */
+#newroom{--button-art:url('vintage-assets/redrawn-controls/button_new_room.webp');aspect-ratio:3.2}
+#clear{--button-art:url('vintage-assets/redrawn-controls/button_reset.webp');aspect-ratio:3.2}
 .g .ctl button[id^="p5"]{--button-art:url('vintage-assets/button_five_minutes.png')}
 .g .ctl button[id^="ad"]{--button-art:url('vintage-assets/button_admin.png')}
-.g .ctl button[id^="ad"].on{--button-art:url('vintage-assets/button_admin_on.png')}
-#newroom,#clear,.g .ctl button,.g .ctl button[id^="ad"].on{
- position:relative;background:none;border:0;border-radius:0;box-shadow:none;color:transparent!important;text-shadow:none;
+.g .ctl button[id^="ad"].on{--button-art:url('vintage-assets/redrawn-controls/button_admin_on.webp');aspect-ratio:3}
+#newroom,#clear,.g .ctl button,.g .ctl button[id^="p5"],.g .ctl button[id^="ad"],.g .ctl button[id^="ad"].on{
+ position:relative;background:none!important;border:0;border-radius:0;box-shadow:none;color:transparent!important;text-shadow:none;
  filter:drop-shadow(0 2px 2px #2b160954);
 }
 #newroom:before,#clear:before,.g .ctl button:before{
  content:'';position:absolute;inset:0;pointer-events:none;
+ background:var(--button-art) center/100% 100% no-repeat;
+}
+/* Retain the existing off-state and +5 button artwork's paper tint. */
+.g .ctl button[id^="p5"]:before,.g .ctl button[id^="ad"]:not(.on):before{
  background-image:var(--button-art),url('vintage-assets/paper_light.webp');
- background-position:center,center;background-size:100% 100%,180px 180px;background-repeat:no-repeat,repeat;background-blend-mode:multiply;
+ background-size:100% 100%,180px 180px;background-repeat:no-repeat,repeat;background-blend-mode:multiply;
  -webkit-mask-image:var(--button-art);mask-image:var(--button-art);
  -webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
 }
+.g .ctl button[id^="p5"][data-badge]:not([data-badge=""]):after{
+ content:attr(data-badge);background:url('vintage-assets/redrawn-controls/badge_extra_minutes_blank.webp') center/100% 100% no-repeat;
+ color:#4b2815;border:0;border-radius:0;box-shadow:none;right:-10%;top:-46%;min-width:6em;text-align:center;
+ padding:.45em .85em;font:900 clamp(10px,5.8cqh,17px) "GriunMyoeun",serif;line-height:1.1;transform:rotate(-3deg);
+}
 .g .ctl button[id^="ad"].on:after{display:none}
-/* The artwork lives only on ::before; older ID-specific backgrounds must not paint beneath it. */
-#newroom,#clear,.g .ctl button,.g .ctl button[id^="p5"],.g .ctl button[id^="ad"],.g .ctl button[id^="ad"].on{background:none!important}
-/* Trim the pale outer bevel without changing the illustrated lettering or paper. */
-#newroom:before,#clear:before{clip-path:inset(4% 1.8% 5.5% 1.8% round 8px)}
-/* Use the same reliable paper artwork in both admin states. */
-.g .ctl button[id^="ad"].on{--button-art:url('vintage-assets/button_admin.png');aspect-ratio:194/76}
-.g .ctl button[id^="ad"].on:after{display:block;background:#852d20;color:#f8e4c4;border-color:#643523;box-shadow:0 1px 2px #0005}
