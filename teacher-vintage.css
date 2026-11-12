@@ -319,5 +319,12 @@ body{isolation:isolate;background-image:linear-gradient(#0d08056b,#0d080533),url
   #rq{align-self:center}
 }
 
-/* 학생 입장 QR 크게 보기: 종이 질감 */
-#qrbig .box{background:var(--paper);box-shadow:inset 0 0 3vh #9c764a88,0 1.5vh 3vh #000b;border:6px double #805a38}
+/* 학생 입장 QR 크게 보기: 윗줄의 '학생 입장' 종이 팻말 그림을 그대로 크게 키워 씀 (제목 글자는 그림에 찍혀 있음) */
+#qrbig .box{position:relative;height:min(90vh,calc(90vw*450/390));aspect-ratio:390/450;padding:0;gap:0;border:0;box-shadow:none;
+  background:url('vintage-assets/censor-room/entry_sign.webp') center/100% 100% no-repeat;filter:drop-shadow(0 2vh 3vh #000c)}
+#qrbig .qt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+#qrbig .qr-in{position:absolute;left:10%;right:10%;top:37%;bottom:7%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4vh}
+#qrbox{padding:1vh;background:#fff;box-shadow:0 0 0 2px #a8865f,0 .4vh .8vh #0004}
+#qrbig .qr-room{font-size:3.4vh;color:#3a2618;white-space:nowrap}#qrbig .qr-room b{font-size:5.2vh;letter-spacing:.08em;margin-left:.8vw;color:#2c1d13}
+#qrbig .qr-link{font-size:1.7vh;color:#6a4c32}
+#qrbig .qr-close{position:absolute;left:0;right:0;bottom:-4.5vh;text-align:center;color:#f1e4c6;font-size:1.8vh;opacity:.85}

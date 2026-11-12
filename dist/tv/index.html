@@ -129,8 +129,8 @@ button:hover{border-color:var(--amber)}
   <div class="act"><button class="ok" id="rvok" type="button">통과</button><button class="no" id="rvcz" type="button">검열</button><button class="vg" id="rvvg" type="button">의미 모호</button><span class="st" id="rvs"></span><span class="sp"></span><button id="rvx" type="button">닫기</button></div>
 </div></div>
 <div id="qrbig" role="dialog" aria-modal="true" aria-label="학생 입장 QR 크게 보기"><div class="box">
-  <div class="qt">학생 입장</div><div id="qrbox"></div>
-  <div class="qr-room">검열실 번호 <b id="qrrc"></b></div><div class="qr-link" id="qrlk"></div>
+  <div class="qt">학생 입장</div><div class="qr-in"><div id="qrbox"></div>
+  <div class="qr-room">검열실 번호 <b id="qrrc"></b></div><div class="qr-link" id="qrlk"></div></div>
   <div class="qr-close">아무 곳이나 누르면 닫힙니다</div>
 </div></div>
 <div id="setup"><h2>방 번호를 정하세요</h2><input id="si" maxlength="12" placeholder="예: 3반 또는 1234"><button id="sg" type="button">시작</button><button id="sr" type="button">랜덤 4자리로 시작</button></div>
@@ -622,6 +622,8 @@ const FONT_USE={
   TV모은글자: "그리운묘은흘림",  // 아래쪽 '그날이오면-심훈' 글자 칸
   TV추가시간: "그리운묘은흘림",  // +5분 버튼 위 '총 +N분' 꼬리표
   TV통신:   "그리운묘은흘림",   // 방 번호 아래 '통신 양호 / 통신 끊김' 꼬리표
+  TVQR번호: "그리운경찰인권",   // QR 크게 보기 창의 '검열실 번호 8771'
+  TVQR주소: "기기고딕",         // QR 크게 보기 창의 입장 주소와 '닫힙니다' 안내
   TV시:     "그리운묘은흘림",   // 시 확인 창에 뜨는 학생 시
   TV축하:   "그리운묘은흘림"    // 글자를 다 모았을 때 뜨는 큰 글자
 };
@@ -634,6 +636,7 @@ const FONT_SLOTS={
   이름표:".vnm,.mbub", 글자조각:".big", 조번호:".bar .grp,.vtop span",
   TV조번호:".g .no", TV통신:"#ct", TV글자조각:".piece .ch", TV모은글자:".slot",
   TV추가시간:'.g .ctl button[id^="p5"][data-badge]:not([data-badge=""]):after',
+  TVQR번호:"#qrbig .qr-room", TVQR주소:"#qrbig .qr-link,#qrbig .qr-close",
   TV시:"#rv pre", TV축하:"#done .w"
 };
 (function applyFonts(){
@@ -811,7 +814,8 @@ function connect(){
 // ---- 학생 입장 QR 크게 보기: QR을 누르면 화면 가운데에 크게
 let joinLink="";
 function openQR(){ if(!joinLink) return; const b=$("#qrbox"); b.innerHTML="";
-  const s=Math.round(Math.min(innerWidth,innerHeight)*0.56);
+  // 팻말 그림(390×450) 높이에 맞춰 QR 크기를 정함
+  const H=Math.min(innerHeight*0.9,innerWidth*0.9*450/390), s=Math.round(H*0.39);
   try{ new QRCode(b,{text:joinLink,width:s,height:s,correctLevel:QRCode.CorrectLevel.M}); }catch(e){ return; }
   $("#qrrc").textContent=room; $("#qrlk").textContent=joinLink.replace(/^https?:\/\//,""); $("#qrbig").classList.add("show"); }
 const closeQR=()=>$("#qrbig").classList.remove("show");
