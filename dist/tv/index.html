@@ -593,6 +593,9 @@ setTimeout(netCtl,500); setInterval(netCtl,5000);
        "기기고딕"         기기에 깔린 기본 고딕       0MB   받을 것 없음
        "기기명조"         기기에 깔린 기본 명조       0MB   받을 것 없음
 
+   ▶ 글꼴이 유난히 작거나 크면: FONT_LIST 에서 그 글꼴에 size:숫자 (%) 를 넣으세요. 화면 전체에서 그 글꼴만 커지거나 작아집니다.
+       예) "델타돋움": {file:"DeltaDotumKR.woff2", size:140},   ← 140% 로 키움 (100 이 원래 크기)
+
    ▶ 새 글꼴 넣기: 파일을 fonts/ 폴더에 넣고 FONT_LIST 에 한 줄 더 적으세요.
        "이름": {file:"파일이름.woff2", bold:"굵은파일.woff2(없으면 지우기)", note:"설명"},
      woff2 가 가장 가볍습니다. 눈누(noonnu.cc) 글꼴은 웹용 woff2 주소가 따로 있으니 그걸 받아 쓰세요.
@@ -606,7 +609,7 @@ const FONT_LIST={
   "모나10x12":     {file:"Mona10x12.woff2", bold:"Mona10x12-Bold.woff2", note:"모나 글꼴, SIL OFL 1.1"},
   "모나12":        {file:"Mona12.woff2", bold:"Mona12-Bold.woff2", note:"모나 글꼴, SIL OFL 1.1"},
   "모나8x12":      {file:"Mona8x12.woff2", note:"모나 글꼴, SIL OFL 1.1"},
-  "델타돋움":       {file:"DeltaDotumKR.woff2", note:"눈누 배포 원본"},
+  "델타돋움":       {file:"DeltaDotumKR.woff2", size:140, note:"눈누 배포 원본. 한글이 다른 글꼴보다 30%쯤 작게 그려져서 140%로 키움"},
   "그리운묘은흘림":  {file:"Griun_MyoeunHeullim-Rg.woff2", note:"무료, 수정·판매 금지 (눈누 배포 원본)"},
   "그리운경찰인권":  {file:"Griun_PolHumanrights-Rg.woff2", note:"무료, 수정·판매 금지 (눈누 배포 원본)"},
   "조선100년":      {file:"ChosunCentennial.woff2", note:"무료, 배포된 형태 그대로 (눈누 배포 원본)"},
@@ -662,7 +665,8 @@ const FONT_SLOTS={
   used.forEach(n=>{ const f=FONT_LIST[n]; if(f.system) return;
     [[f.file,400],[f.bold,700]].forEach(([file,w])=>{ if(!file) return;
       const url=dir+encodeURI(file);
-      css+=`@font-face{font-family:"${fam(n)}";font-weight:${w};src:url("${url}") format("${fmt(file)}");font-display:block}\n`;
+      const adj=f.size&&f.size!==100?`size-adjust:${f.size}%;`:"";   // 글꼴별 크기 배율
+      css+=`@font-face{font-family:"${fam(n)}";font-weight:${w};src:url("${url}") format("${fmt(file)}");font-display:block;${adj}}\n`;
       const l=document.createElement("link"); l.rel="preload"; l.as="font"; l.href=url; l.crossOrigin="anonymous"; document.head.appendChild(l); }); });
   Object.keys(FONT_USE).filter(mine).forEach(k=>{ const n=FONT_USE[k], f=FONT_LIST[n], sel=FONT_SLOTS[k];
     if(!f||!sel){ console.warn("글꼴 설정 확인:",k,n); return; }
