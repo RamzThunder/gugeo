@@ -55,7 +55,8 @@ header>div:last-child{justify-content:center}
 .g .sus{top:55.2%;height:13%;gap:2cqw;font-size:clamp(10px,7.6cqh,20px);font-weight:800;color:#513927}
 .sus .bar{height:32%;background:#d6c09a;border:1px solid #9c7b56}
 .sus b{min-width:2.2ch;text-align:right;font-family:Georgia,serif}
-.g .ctl{top:70%;height:13%;gap:4cqw;margin:0;display:flex;align-items:center}
+/* 아랫칸(열쇠 아이콘 없음): 두 버튼을 카드 가운데에 */
+.g .ctl{top:70%;height:13%;left:6%;right:6%;gap:4cqw;margin:0;display:flex;align-items:center;justify-content:center}
 .g.empty .ctl{display:flex}   /* 입장 전에도 조별 카드에 +5분·관리 모드가 보이게 */
 .g .ctl button{flex:none;width:auto;aspect-ratio:194/76;min-width:0;height:100%;padding:0;font-size:1px;position:relative;filter:drop-shadow(0 .2vh .3vh #0007)}
 .g .ctl button[id^="p5"]{background-image:url('vintage-assets/button_five_minutes.png')}
