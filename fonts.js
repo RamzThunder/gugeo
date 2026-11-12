@@ -49,6 +49,7 @@ const FONT_USE={
   TV모은글자: "그리운묘은흘림",  // 아래쪽 '그날이오면-심훈' 글자 칸
   TV추가시간: "그리운묘은흘림",  // +5분 버튼 위 '총 +N분' 꼬리표
   TV통신:   "그리운묘은흘림",   // 방 번호 아래 '통신 양호 / 통신 끊김' 꼬리표
+  TVQR제목: "그리운경찰인권",   // QR 크게 보기 창 맨 위 '학생 입장'
   TVQR번호: "그리운경찰인권",   // QR 크게 보기 창의 '검열실 번호 8771'
   TVQR주소: "기기고딕",         // QR 크게 보기 창의 입장 주소와 '닫힙니다' 안내
   TV시:     "그리운묘은흘림",   // 시 확인 창에 뜨는 학생 시
@@ -63,7 +64,7 @@ const FONT_SLOTS={
   이름표:".vnm,.mbub", 글자조각:".big", 조번호:".bar .grp,.vtop span",
   TV조번호:".g .no", TV통신:"#ct", TV글자조각:".piece .ch", TV모은글자:".slot",
   TV추가시간:'.g .ctl button[id^="p5"][data-badge]:not([data-badge=""]):after',
-  TVQR번호:"#qrbig .qr-room", TVQR주소:"#qrbig .qr-link,#qrbig .qr-close",
+  TVQR제목:"#qrbig .qt", TVQR번호:"#qrbig .qr-room", TVQR주소:"#qrbig .qr-link,#qrbig .qr-close",
   TV시:"#rv pre", TV축하:"#done .w"
 };
 (function applyFonts(){

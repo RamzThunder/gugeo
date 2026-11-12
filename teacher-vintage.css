@@ -319,10 +319,12 @@ body{isolation:isolate;background-image:linear-gradient(#0d08056b,#0d080533),url
   #rq{align-self:center}
 }
 
-/* 학생 입장 QR 크게 보기: 윗줄의 '학생 입장' 종이 팻말 그림을 그대로 크게 키워 씀 (제목 글자는 그림에 찍혀 있음) */
-#qrbig .box{position:relative;height:min(90vh,calc(90vw*450/390));aspect-ratio:390/450;padding:0;gap:0;border:0;box-shadow:none;
-  background:url('vintage-assets/censor-room/entry_sign.webp') center/100% 100% no-repeat;filter:drop-shadow(0 2vh 3vh #000c)}
-#qrbig .qt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* 학생 입장 QR 크게 보기: 윗줄의 '학생 입장' 종이 팻말을 벡터로 다시 그려 크게 (teacher.html의 svg.sign). 제목 글꼴은 fonts.js의 TVQR제목 */
+#qrbig .box{position:relative;height:min(90vh,calc(90vw*450/390));aspect-ratio:390/450;padding:0;gap:0;border:0;box-shadow:none;background:none;
+  filter:drop-shadow(0 2vh 3vh #000c);container-type:size}
+#qrbig .sign{position:absolute;inset:0;width:100%;height:100%;display:block}
+#qrbig .qt{position:absolute;left:0;right:0;top:21%;text-align:center;font-size:9.5cqh;line-height:1;letter-spacing:.12em;color:#9a7650;
+  text-shadow:0 .25cqh 0 #fffaf0,0 -.2cqh 0 #5a3e2255}
 #qrbig .qr-in{position:absolute;left:10%;right:10%;top:37%;bottom:7%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4vh}
 #qrbox{padding:1vh;background:#fff;box-shadow:0 0 0 2px #a8865f,0 .4vh .8vh #0004}
 #qrbig .qr-room{font-size:3.4vh;color:#3a2618;white-space:nowrap}#qrbig .qr-room b{font-size:5.2vh;letter-spacing:.08em;margin-left:.8vw;color:#2c1d13}
