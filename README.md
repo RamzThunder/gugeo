@@ -7,14 +7,19 @@
 |---|---|
 | `fonts.js` | **글꼴 설정**. 쓸 수 있는 글꼴 목록(FONT_LIST)과 자리별 글꼴(FONT_USE: 기본·제목·도장·종이글·시쓰기·자막·이름표·글자조각·TV시·TV축하). 이름만 바꿔 넣으면 됩니다 |
 | `story.js` | **대사·문구·설정**. 프롤로그(PRO), 에필로그(EPI), 물건 눌렀을 때 한 줄(FLAVOR), 화면 문구(TEXT: 안내·단계 설명·힌트·결과), 제한 시간·비밀번호·시구 카드·압수 문서(CONFIG) |
-| `game.js` | 게임 동작 코드 (화면, 단계 진행, 힌트, 교사 패널) |
+| `game.js` | 게임 동작 코드 (화면, 단계 진행, 힌트, 미니게임, 관리 모드) |
 | `assets.js` | 그림 경로·눈 깜빡임 조각·검열실 물건 좌표 |
 | `game.html` | 화면 틀과 디자인(CSS) |
 | `img/` | 배경, 캐릭터, 아이콘, 오브젝트 PNG |
 | `fonts/` | 갈무리11 (SIL OFL 1.1, 대사·안내), 그리운 묘은흘림체 (종이 글·위장 시·장면 자막), 그리운 경찰인권체 (제목·도장). 그리운 글꼴 둘은 무료지만 수정·판매 금지라 눈누 배포 원본 woff2를 그대로 씁니다 |
 | `build.py` | 위 파일들을 합쳐 `dist/`를 만듦 |
 | `dist/game/` | **학생용 게임** (`index.html` + `img/` + `fonts/` 폴더째 있어야 함) |
-| `dist/tv/` | 교실 TV 화면 |
+| `dist/tv/` | **교실 TV 화면** (`teacher.html`로 만듦, 글꼴은 `dist/game/fonts/`를 같이 씀) |
+| `teacher.html` | 교실 TV 화면 원본 (조별 진행, 위장 시 판정, 시간 조절, 관리 모드) |
+| `teacher-vintage.css`, `vintage-assets/` | 교실 TV의 옛 문서풍 디자인(그림·버튼·도장). `build.py`가 `dist/tv/`로 복사합니다. 그림은 `vintage-assets/`에만 넣으세요 |
+| `net.js` | 학생 게임과 교실 TV를 잇는 Firebase 연결 코드 |
+| `firebase.json`, `firebase-rules.json` | Firebase 데이터베이스 보안 규칙과 배포 설정 |
+| `index.html` | 저장소 첫 주소로 들어오면 `dist/game/`으로 넘겨 줌 |
 
 ## 고치는 법
 1. `story.js`의 대사를 고칩니다.
@@ -47,8 +52,11 @@
   - 등 돌린 상관: IMG.bossBack
 
 
-### 교실 TV (teacher.html) — 조별 진행 상황 실시간 보기
-- 주소: 게임 주소의 `escape_room.html`을 `teacher.html`로 바꾸면 됩니다 (예: `…/dist/teacher.html`). TV에서 열면 **방 번호**와 학생 입장 QR이 나옵니다.
+### 교실 TV — 조별 진행 상황 실시간 보기
+- 주소: 학생용은 `…/dist/game/`, 교실 TV는 `…/dist/tv/`입니다.
+  - GitHub Pages: 학생 `https://ramzthunder.github.io/gugeo/dist/game/`, TV `https://ramzthunder.github.io/gugeo/dist/tv/`
+  - TV에서 열면 **방 번호**와 학생 입장 QR이 나옵니다. QR은 같은 주소의 `/game/`으로 안내합니다.
+- 고칠 때는 `teacher.html`을 고치고 `python3 build.py`를 실행하면 `dist/tv/index.html`이 새로 만들어집니다.
 - 학생은 QR로 들어오거나, 시작 화면의 "교실 TV에 나온 방 번호"에 번호를 넣으면 됩니다. 번호를 비우면 TV에는 안 나오고 게임은 그대로 됩니다.
 - TV에는 8개 조의 현재 단계, 남은 시간, 의심도가 나오고, 탈출한 조는 큰 글자 조각이 뜨며 `그날이오면-심훈` 여덟 글자가 다 모이면 축하 화면이 나옵니다.
   - 어느 조가 어느 글자를 받는지는 방마다 섞입니다 (방 번호 + 초기화 기록으로 섞어서, 같은 방이면 학생 기기와 TV가 같은 순서를 얻고 글자가 겹치지 않음). `새 검열실 개설`이나 `기록 초기화`를 누르면 다시 섞입니다.
