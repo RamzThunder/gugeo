@@ -248,3 +248,8 @@ body{isolation:isolate;background-image:radial-gradient(ellipse at 6% 10%,#b8712
  padding:.45em .85em;font:900 clamp(10px,5.8cqh,17px) "GriunMyoeun",serif;line-height:1.1;transform:rotate(-3deg);
 }
 .g .ctl button[id^="ad"].on:after{display:none}
+
+/* Preserve the original illustration proportions at every viewport size. */
+#newroom:before,#clear:before{background-size:contain}
+#newroom{aspect-ratio:2172/724}
+#clear{aspect-ratio:2149/732}
