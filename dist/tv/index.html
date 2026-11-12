@@ -101,10 +101,11 @@ button:hover{border-color:var(--amber)}
 <link rel="stylesheet" href="teacher-vintage.css">
 </head>
 <body>
+<div class="room-props" aria-hidden="true"><img class="prop-lamp" src="vintage-assets/censor-room/lamp.webp" alt=""><img class="prop-books" src="vintage-assets/censor-room/books.webp" alt=""><img class="prop-ink" src="vintage-assets/censor-room/ink_documents.webp" alt=""><img class="prop-typewriter" src="vintage-assets/censor-room/typewriter.webp" alt=""></div>
 <header>
   <h1>검열실 상황판</h1>
   <span class="sp"></span>
-  <div class="code"><div id="qr"></div><div><small>학생 입장 방 번호</small><b id="rc">----</b><small id="lk"></small><span id="conn"><i class="dot" id="cd"></i><span id="ct">연결 중…</span></span></div></div>
+  <div class="code"><div class="entry-paper"><div id="qr"></div></div><div class="room-info"><small>학생 입장 방 번호</small><div class="room-number"><b id="rc">----</b></div><small id="lk"></small><span id="conn"><i class="dot" id="cd"></i><span id="ct">연결 중…</span></span></div></div>
   <div class="lim"><div><small>제한 시간</small><span id="lm" style="font-size:1.5vh;color:var(--mute)"></span></div><button id="mdn" type="button" aria-label="1분 줄이기">−</button><b id="mv">20</b><span style="font-size:2.4vh">분</span><button id="mup" type="button" aria-label="1분 늘리기">+</button></div>
   <button id="rq" type="button"></button>
   <div style="display:flex;flex-direction:column;gap:.8vh"><button id="newroom" type="button">새 방 번호</button><button id="clear" type="button">진행 초기화</button></div>

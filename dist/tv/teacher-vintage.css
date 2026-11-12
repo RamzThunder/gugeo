@@ -160,3 +160,53 @@ header>div:last-child{justify-content:center}
 .confirm-actions{display:flex;justify-content:flex-end;gap:16px;flex-wrap:wrap}
 #action-confirm button{font-size:clamp(16px,2vw,22px);min-height:48px;padding:10px 24px}
 #action-confirm #confirm-accept{background:#893729;color:#f7e5bf;border-color:#62261d}
+
+/* Independent cutouts from the original art sheets. Live values remain HTML. */
+.g:not(.empty):not(.done):not(.caught):not(.censored):not(.ask):after{background-image:url('vintage-assets/censor-room/status_progress.webp')}
+.g.caught:after{background-image:url('vintage-assets/censor-room/status_timeout.webp')}
+.g.censored:after{background-image:url('vintage-assets/censor-room/status_caught.webp')}
+.g .rv{background-image:url('vintage-assets/censor-room/status_review_wait.webp')}
+.piece .lb,#done:before{background-image:url('vintage-assets/censor-room/status_passed.webp')}
+.slot{background-image:url('vintage-assets/censor-room/tile_blank.webp')}
+.slot.on{background-image:url('vintage-assets/letter_slot_filled.png')}
+.code{padding:0;border:0;background:none;box-shadow:none;gap:.5vw;align-items:center}
+.code:before{display:none}
+.entry-paper{flex:none;height:14vh;aspect-ratio:390/450;background:url('vintage-assets/censor-room/entry_sign.webp') center/100% 100% no-repeat;display:flex;align-items:center;justify-content:center;padding-top:3.5vh}
+#qr{padding:3px;border:0;background:#fff}
+#qr img,#qr canvas{width:7vh!important;height:7vh!important}
+.room-info{flex:1;min-width:0}
+.room-number{position:relative;width:100%;aspect-ratio:585/185;background:url('vintage-assets/censor-room/room_plate.webp') center/100% 100% no-repeat;display:flex;align-items:center;justify-content:flex-end;padding:0 7% 0 53%}
+.code #rc{font-size:clamp(20px,2.8vh,40px);letter-spacing:.05em}
+.code #lk{font-size:clamp(9px,1.1vh,13px);text-align:center;margin-top:.3vh}
+#conn{max-width:100%;font-size:clamp(9px,1.2vh,14px)}
+.lim{padding:0;align-self:center;aspect-ratio:1085/225;min-height:7vh;flex-basis:24%;background:url('vintage-assets/censor-room/timer_panel.webp') center/100% 100% no-repeat;border:0;border-radius:0;box-shadow:none;display:block}
+.lim:before,.lim>span{display:none}
+.lim #mv{position:absolute;left:57%;top:20%;width:23%;height:53%;display:flex;align-items:center;justify-content:center;font-size:clamp(20px,3.5vh,42px)}
+.lim #mv:after{content:'분';font:700 .4em 'Malgun Gothic',sans-serif;margin-left:.2em}
+.lim #mdn,.lim #mup{position:absolute;top:27%;width:10%;height:46%;min-width:0;min-height:0;background:none;box-shadow:none;border:0;color:transparent;border-radius:0}
+.lim #mdn{left:45%}.lim #mup{left:82%}
+.lim #lm{bottom:-2.3vh;white-space:nowrap}
+#rq{background-image:url('vintage-assets/censor-room/review_sign.webp')!important;background-size:100% auto!important;background-position:center top!important;background-repeat:no-repeat!important;background-color:transparent!important;border:0!important;box-shadow:none;min-width:10vw;padding-top:5vh}
+.room-props{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.room-props img{position:absolute;object-fit:contain;filter:drop-shadow(0 4px 5px #0008)}
+.prop-lamp{left:-1vw;top:0;width:9vw;height:20vh}
+.prop-books{left:0;bottom:0;width:11vw;height:14vh}
+.prop-ink{left:0;bottom:15vh;width:8vw;height:13vh}
+.prop-typewriter{right:0;bottom:0;width:11vw;height:18vh}
+header,.grid,.sum{position:relative;z-index:1}
+/* Decorative objects occupy the spare wall, never a touch target or card. */
+@media(max-width:1100px),(max-aspect-ratio:3/2){.room-props{display:none}}
+@media(max-width:1100px) and (min-width:741px) and (min-aspect-ratio:1/1){.lim{flex-basis:30%;min-height:8vh}.code{flex-basis:40%}}
+@media(max-width:740px),(max-aspect-ratio:1/1){
+ .code{padding:0;gap:12px;flex:1 1 100%}
+ .entry-paper{height:170px;padding-top:40px}
+ #qr img,#qr canvas{width:88px!important;height:88px!important}
+ .code #rc{font-size:clamp(22px,6vw,38px)}
+ .code #lk{font-size:11px}#conn{font-size:11px}
+ .lim{padding:0;flex:0 0 auto;width:100%;min-height:0;max-width:700px;margin:0 auto 16px}
+ .lim #mv{font-size:clamp(24px,6vw,48px)}
+ .lim #lm{bottom:-18px}
+ #rq{min-height:90px;padding:60px 10px 8px;background-size:260px auto!important}
+}
+@media(min-width:1101px) and (min-aspect-ratio:3/2){header h1{flex-basis:30%;margin-left:4vw}.prop-lamp{width:7vw}.prop-ink{left:10vw;bottom:0;width:6vw;height:9vh}}
+@media(max-width:740px),(max-aspect-ratio:1/1){#rq{min-height:120px;padding-top:90px}}
