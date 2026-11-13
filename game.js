@@ -205,8 +205,11 @@ function stage1HTML(){
   const cards=CONFIG.cards.map((c,i)=>{
     const toks=c.text.map((ln,li)=>ln.split(" ").map((w,wi)=>`<button type="button" class="tok" data-c="${i}" data-w="${li}-${wi}" data-t="${esc(w)}">${esc(w)}</button>`).join(" ")).join("<br>");
     const chs=CONFIG.periods.map(p=>`<button type="button" class="ch" data-c="${i}" data-p="${p}">${p}</button>`).join("");
+    // 시인·작품 이름과 힌트는 처음부터 보여 줌 (난이도 낮춤)
     return `<div class="paper" id="card${i}"><span class="no">${T(TEXT.s1.card)} ${["①","②","③","④"][i]||i+1}</span>
+      <div class="poet">${esc(c.title)}</div>
       <div class="txt">${toks}</div>
+      ${c.hint?`<div class="chint">${T(TEXT.s1.cardHint)} ${esc(c.hint)}</div>`:""}
       <div class="choices" role="group" aria-label="시기">${chs}</div><div class="why" id="why${i}" hidden></div></div>`;}).join("");
   return `<div style="display:flex;flex-direction:column;gap:14px"><h2>${T(TEXT.s1.title)}</h2>
   <p class="story">${T(TEXT.s1.story)}</p>
@@ -237,7 +240,7 @@ function bindStage1(){
       const clueHit=words.some(w=>c.clues.some(k=>w.includes(k)||k.includes(w)));
       const good=ui.per[i]===c.answer&&clueHit;
       el.classList.remove("bad");
-      if(good){el.classList.add("ok"); const w=$("#why"+i); w.hidden=false; w.textContent=`${c.answer}: ${c.why}`; el.querySelectorAll("button").forEach(b=>b.disabled=true);}
+      if(good){el.classList.add("ok"); const w=$("#why"+i); w.hidden=false; w.textContent=T(TEXT.s1.cardOk,{시기:c.answer}); el.querySelectorAll("button").forEach(b=>b.disabled=true);}
       else{all=false; wrong++; void el.offsetWidth; el.classList.add("bad");}
     });
     if(wrong) addSus(10*wrong);
