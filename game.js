@@ -260,9 +260,10 @@ function stage2HTML(){
     <span class="stamp ${d.type==="직접"?"":"pass"}" id="st${i}">${d.type==="직접"?"삭제":"통과"}</span></div>`).join("");
   return `<div style="display:flex;flex-direction:column;gap:14px"><h2>${T(TEXT.s2.title)}</h2>
   <p class="story">${T(TEXT.s2.story)}</p>
+  <div id="quiz"></div>
   <div class="grid">${docs}</div>
   <div class="row"><button class="btn" id="chk" type="button">${T(TEXT.s2.submit)}</button><button class="btn ghost" id="hn" type="button">${T(TEXT.common.hintBtn)}</button></div>
-  <div class="msg" id="msg" aria-live="polite"></div><div id="quiz"></div></div>`;
+  <div class="msg" id="msg" aria-live="polite"></div></div>`;
 }
 function bindStage2(){
   ui.cls={};
@@ -288,6 +289,8 @@ function showQuiz(){
   const q=CONFIG.s2quiz; ui.quiz=null;
   $("#quiz").innerHTML=`<div class="card q"><h3>${T(TEXT.s2.quizTitle)}</h3><p><b>${esc(q.q)}</b></p>
   ${q.opts.map((o,i)=>`<button type="button" class="opt" data-o="${i}">${esc(o)}</button>`).join("")}<div class="msg" id="qm" aria-live="polite"></div></div>`;
+  // 문제는 문서 카드들 위에 뜨므로, 그 자리로 화면을 올려 바로 보이게 함
+  try{ $("#quiz").scrollIntoView({behavior:"smooth",block:"start"}); }catch(e){ $("#quiz").scrollIntoView(); }
   document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
     const i=+b.dataset.o;
     if(i===q.ans){b.classList.add("good");document.querySelectorAll(".opt").forEach(x=>x.disabled=true);
