@@ -25,6 +25,8 @@ Object.assign(IMG,{
   contact:"img/contact.png",
   contactSide:"img/contactSide.png",
   contactHappy:"img/contactHappy.png",
+  courier:"img/courier.png",          // 배달부로 위장한 접선책 (보류 장면, 배드엔딩)
+  courierSide:"img/courierSide.png",
   });
 const BLP={
   guard:{s:"img/blink_guard.png", l:36.722,t:29.231,w:34.025},
@@ -34,7 +36,9 @@ const BLP={
   bossSus:{s:"img/blink_bossSus.png", l:37.311,t:29.231,w:28.908},
   contact:{s:"img/blink_contact.png", l:37.278,t:31.538,w:27.416},
   contactSide:{s:"img/blink_contactSide.png", l:37.278,t:31.538,w:27.416},
-  contactHappy:{s:"img/blink_contactHappy.png", l:37.278,t:31.538,w:27.416}
+  contactHappy:{s:"img/blink_contactHappy.png", l:37.278,t:31.538,w:27.416},
+  courier:{s:"img/blink_courier.png", l:37.081,t:29.808,w:25.838},
+  courierSide:{s:"img/blink_courierSide.png", l:42.801,t:30.192,w:23.274}
 };
 const CUT={
   window:{s:"img/cut_window.png", x:118,y:27,w:191,h:215},

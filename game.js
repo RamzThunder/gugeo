@@ -43,8 +43,8 @@ function hint(text,key){
   return text;
 }
 function foot(){return `<div class="foot"><span>${T(TEXT.common.hintFoot)}</span><span><button id="rbtn" type="button">${T(TEXT.common.restart)}</button></span></div>`;}
-const SPRH={guard:"84%",guardCalm:"84%",guardSus:"84%",boss:"88%",bossSus:"88%",contact:"86%",contactSide:"86%",contactHappy:"86%"};
-const sprKey=(k,m)=>!k?k:(({guard:{calm:"guardCalm",sus:"guardSus"},boss:{sus:"bossSus"},contact:{side:"contactSide",happy:"contactHappy"}}[k]||{})[m])||k;
+const SPRH={guard:"84%",guardCalm:"84%",guardSus:"84%",boss:"88%",bossSus:"88%",contact:"86%",contactSide:"86%",contactHappy:"86%",courier:"86%",courierSide:"86%"};
+const sprKey=(k,m)=>!k?k:(({guard:{calm:"guardCalm",sus:"guardSus"},boss:{sus:"bossSus"},contact:{side:"contactSide",happy:"contactHappy"},courier:{side:"courierSide"}}[k]||{})[m])||k;
 function stageHTML(bg,spr){
   return `<div class="stage"><img class="bgimg" src="${IMG[bg]}" width="800" height="480" decoding="sync" alt="">${spr?`<span class="sw" style="--h:${SPRH[spr]}"><img class="spr0" src="${IMG[spr]}" alt="">${BLP[spr]?`<img class="pt" style="left:${BLP[spr].l}%;top:${BLP[spr].t}%;width:${BLP[spr].w}%;visibility:hidden" src="${BLP[spr].s}" alt="">`:''}</span>`:''}</div>`;
 }
@@ -579,7 +579,7 @@ function rejected(kind){
     if(t1){ t1.value=poem||""; t2.value=mean||""; t1.oninput&&t1.oninput(); }
     if(m){ m.className="msg bad"; m.innerHTML=T(msg); } };
   const o=document.createElement("div"); o.className="overlay"; o.setAttribute("role","dialog");
-  o.innerHTML='<div class="card" style="border-color:var(--stamp)">'+(cz?stageHTML("room","bossSus"):stageHTML("street","contactSide"))+`<h2>${T(cz?D.censorTitle:D.rejectTitle)}</h2>
+  o.innerHTML='<div class="card" style="border-color:var(--stamp)">'+(cz?stageHTML("room","bossSus"):stageHTML("street","courierSide"))+`<h2>${T(cz?D.censorTitle:D.rejectTitle)}</h2>
   <p><b>${T(cz?D.censorWho:D.rejectWho)}</b><br>${T(cz?D.censorLine:D.rejectLine)}</p>
   <div class="paper"><span class="no">${T(cz?D.censorPoemLabel:D.rejectPoemLabel)}</span><div class="txt" style="white-space:pre-wrap">${esc(poem)}</div></div>
   ${cz?`<p class="msg bad"><b>${T(D.censorSus)}</b></p>`:`<p class="note">${T(D.rejectNote)}</p>`}
