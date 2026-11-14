@@ -146,7 +146,6 @@ function roomHTML(){
    ${hs("window","창문",118,27,191,215)}${hs("calendar","달력",326,94,62,79)}${hs("poster","검열 기준 포스터",408,67,96,113)}${hs("clock","벽시계",528,49,80,89)}
    ${hs("cabinet","서류함",2,151,116,252)}${hs("drawer","책상 서랍",225,297,95,94)}${hs("typewriter","타자기",346,213,89,66)}${hs("lamp","스탠드",442,190,84,89)}
    ${hs("trash","휴지통",576,338,54,62)}${hs("door","문",635,89,160,304)}
-   ${S.stage<2?'<g transform="translate(0,50)"><path d="M54 296 v-8 a6 6 0 0 1 12 0 v8" fill="none" stroke="#e0a93f" stroke-width="3"/><rect x="50" y="296" width="20" height="16" fill="#e0a93f" stroke="#1a1405" stroke-width="2"/><rect x="58" y="301" width="4" height="6" fill="#1a1405"/></g>':""}
   </svg></div>
   <div class="cap" id="cap" aria-hidden="true">${T(TEXT.room.hover)}</div>
   <div class="toast" id="toast" aria-live="polite">${T(TEXT.room.first)}</div>
