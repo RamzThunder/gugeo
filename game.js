@@ -416,7 +416,7 @@ function bindM3(){
   const mk=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
   // 그림 불러오기 (다 받은 뒤에 그림)
   const load=src=>{const im=new Image(); im.src=src; return im;};
-  const I={bg:load(A.bg), done:load(A.bgDone), rib:A.ribbon.map(load)};
+  const I={bg:load(A.bg), rib:A.ribbon.map(load)};
   const ok=im=>im&&im.complete&&im.naturalWidth>0;
   // 캔버스: 화면 배율(레티나)에 맞춰 선명하게
   const dpr=Math.min(3,Math.max(1,window.devicePixelRatio||1));
@@ -454,25 +454,22 @@ function bindM3(){
     ctx.restore();
   };
   const linked=[];   // 걸린 리본 [{a,b,id}]
-  let drag=null, cur=null, solved=0, raf=0, back=null, fin=null;
+  let drag=null, cur=null, solved=0, raf=0, back=null;
   const draw=()=>{
     ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,H);
     if(ok(I.bg)) ctx.drawImage(I.bg,0,0,W,H);
-    const fa=fin?fin.a:0;
-    linked.forEach(r=>ribbon(r.a,r.b,r.id,1-fa));
+    linked.forEach(r=>ribbon(r.a,r.b,r.id));
     if(drag&&cur) ribbon({x:SX,y:drag.y},cur,drag.id);
     if(back) ribbon({x:SX,y:back.y},back.p,back.id);
-    if(fin&&ok(I.done)){ ctx.globalAlpha=fa; ctx.drawImage(I.done,0,0,W,H); ctx.globalAlpha=1; }
   };
   const loop=()=>{ raf=0; const now=performance.now();
     if(back){ const t=Math.min(1,(now-back.t0)/200);   // 틀렸을 때: 0.2초 동안 시작점으로 줄어듦
       back.p={x:back.from.x+(SX-back.from.x)*t, y:back.from.y+(back.y-back.from.y)*t}; if(t>=1) back=null; }
-    if(fin){ fin.a=Math.min(1,(now-fin.t0)/400); }
     draw();
-    if(drag||back||(fin&&fin.a<1)) raf=requestAnimationFrame(loop);
+    if(drag||back) raf=requestAnimationFrame(loop);
   };
   const kick=()=>{ if(!raf) raf=requestAnimationFrame(loop); };
-  const all=[I.bg,I.done,...I.rib]; let left=all.length;
+  const all=[I.bg,...I.rib]; let left=all.length;
   all.forEach(im=>{ if(im.complete){ if(--left===0) draw(); } else im.onload=im.onerror=()=>{ if(--left===0) draw(); }; });
   if(left>0&&ok(I.bg)) draw();
   const pt=e=>{const m=svg.getScreenCTM().inverse(),p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(m);return {x:q.x,y:q.y};};
@@ -494,11 +491,9 @@ function bindM3(){
       a.hit.style.cursor="default"; spark(640,b.y); kick();
       if(solved<4){ msg.className="msg ok"; msg.innerHTML=T(M.good,{남은:4-solved}); }
       else{ msg.className="msg ok"; msg.innerHTML=T(M.done);
-        // 0.4초 동안 완성 배경으로 교차 페이드, 버클·걸이는 숨김, 그다음 버튼
-        fin={t0:performance.now(),a:0}; svg.style.transition="opacity .4s"; svg.style.opacity="0"; kick();
-        setTimeout(()=>{ svg.style.pointerEvents="none";
-          const go=document.createElement("button"); go.className="btn"; go.type="button"; go.textContent=T(M.sit);
-          go.onclick=()=>{ S.wired=true; save(); closePanel(); openPanel("s3",stage3HTML(),bindStage3); }; $("#m3go").appendChild(go); },420); }
+        svg.style.pointerEvents="none";
+        const go=document.createElement("button"); go.className="btn"; go.type="button"; go.textContent=T(M.sit);
+        go.onclick=()=>{ S.wired=true; save(); closePanel(); openPanel("s3",stage3HTML(),bindStage3); }; $("#m3go").appendChild(go); }
       return; }
     // 빈 곳이나 다른 색: 리본이 시작점으로 되감김
     back={id:a.id,y:a.y,from:cur||p,p:cur||p,t0:performance.now()}; cur=null; kick();

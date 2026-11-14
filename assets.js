@@ -10,7 +10,7 @@ Object.assign(IMG,{
   poem:"img/poem.png"});
 IMG.room="img/room.png";
 /* 3단계 미니게임(타자기 리본 걸기) 그림. 색 순서는 game.js의 WCOL과 같게: 빨강, 파랑, 노랑, 초록 */
-IMG.m3={bg:"img/m3_bg.png", bgDone:"img/m3_bg_done.png",
+IMG.m3={bg:"img/m3_bg.png",
   tip:["img/m3_tip_red.png","img/m3_tip_blue.png","img/m3_tip_yellow.png","img/m3_tip_green.png"],
   hook:["img/m3_hook_red.png","img/m3_hook_blue.png","img/m3_hook_yellow.png","img/m3_hook_green.png"],
   hookDone:["img/m3_hook_done_red.png","img/m3_hook_done_blue.png","img/m3_hook_done_yellow.png","img/m3_hook_done_green.png"],
