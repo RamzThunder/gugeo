@@ -1,6 +1,6 @@
 CONFIG.defaultMinutes=CONFIG.minutes;
 /* 게임 동작 코드. 대사는 story.js, 그림 경로는 assets.js에 있습니다. */
-const TYPES=["직접","돌려","안으로"], TLABEL={직접:"직접 말하기",돌려:"돌려 말하기",안으로:"안으로 향하기"};
+const TYPES=["직접","돌려","안으로"], TLABEL={직접:"직접 말하기",돌려:"상징을 통한 돌려 말하기",안으로:"내면 또는 민족적 정서 말하기"};
 const KEY="censor-escape-v1";
 let ROOT=document;
 const $=s=>ROOT.querySelector(s);
