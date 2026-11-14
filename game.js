@@ -579,7 +579,7 @@ function rejected(kind){
     if(t1){ t1.value=poem||""; t2.value=mean||""; t1.oninput&&t1.oninput(); }
     if(m){ m.className="msg bad"; m.innerHTML=T(msg); } };
   const o=document.createElement("div"); o.className="overlay"; o.setAttribute("role","dialog");
-  o.innerHTML='<div class="card" style="border-color:var(--stamp)">'+(cz?stageHTML("room","bossSus"):stageHTML("street","courierSide"))+`<h2>${T(cz?D.censorTitle:D.rejectTitle)}</h2>
+  o.innerHTML='<div class="card" style="border-color:var(--stamp)">'+(cz?stageHTML("room","bossSus"):stageHTML("street","courier"))+`<h2>${T(cz?D.censorTitle:D.rejectTitle)}</h2>
   <p><b>${T(cz?D.censorWho:D.rejectWho)}</b><br>${T(cz?D.censorLine:D.rejectLine)}</p>
   <div class="paper"><span class="no">${T(cz?D.censorPoemLabel:D.rejectPoemLabel)}</span><div class="txt" style="white-space:pre-wrap">${esc(poem)}</div></div>
   ${cz?`<p class="msg bad"><b>${T(D.censorSus)}</b></p>`:`<p class="note">${T(D.rejectNote)}</p>`}

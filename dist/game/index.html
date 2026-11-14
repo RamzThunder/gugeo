@@ -489,7 +489,7 @@ const CONFIG={
   /* 서류함 미니게임: 리본을 몇 번 당겨야 하는지(pulls), 한 번 당긴 뒤 쉬는 시간(gap, 1000=1초), 들켰을 때 의심도(caughtSus)와 도로 들어가는 횟수(caughtBack) */
   m3:{wrongSus:3, snap:40},   // wrongSus: 색이 다른 곳에 걸었을 때 의심도, snap: 끝점을 인식하는 거리(클수록 쉬움)
   m2:{holdSec:6, caughtSus:10, caughtBackSec:1.5, fakeChance:0.3, quickChance:0.2},   // holdSec: 꾹 눌러야 하는 누적 시간(초), caughtBackSec: 들켰을 때 되감기는 시간(초), fakeChance: 헛기침만 하고 안 돌아볼 확률, quickChance: 금방 또 헛기침할 확률
-  s3:{draft:"오늘 밤 OO 인쇄소에서 일본 경찰 몰래 국권 회복을 위한 선언문을 찍는다!",
+  s3:{draft:"오늘 밤 여기에서 일본 경찰 몰래 국권 회복을 위한 선언문을 찍는다!",
     banned:["일본","일제","총독부","경찰","선언문","독립","만세","국권","왜놈","식민","침략","왜구"],
     symbols:["봄","겨울","새벽","별","씨앗","꽃","강","달","해","아침","불씨","바람","나무","그날","님","뿌리","눈","얼음","밤","새"]}
 };
@@ -1476,7 +1476,7 @@ function rejected(kind){
     if(t1){ t1.value=poem||""; t2.value=mean||""; t1.oninput&&t1.oninput(); }
     if(m){ m.className="msg bad"; m.innerHTML=T(msg); } };
   const o=document.createElement("div"); o.className="overlay"; o.setAttribute("role","dialog");
-  o.innerHTML='<div class="card" style="border-color:var(--stamp)">'+(cz?stageHTML("room","bossSus"):stageHTML("street","courierSide"))+`<h2>${T(cz?D.censorTitle:D.rejectTitle)}</h2>
+  o.innerHTML='<div class="card" style="border-color:var(--stamp)">'+(cz?stageHTML("room","bossSus"):stageHTML("street","courier"))+`<h2>${T(cz?D.censorTitle:D.rejectTitle)}</h2>
   <p><b>${T(cz?D.censorWho:D.rejectWho)}</b><br>${T(cz?D.censorLine:D.rejectLine)}</p>
   <div class="paper"><span class="no">${T(cz?D.censorPoemLabel:D.rejectPoemLabel)}</span><div class="txt" style="white-space:pre-wrap">${esc(poem)}</div></div>
   ${cz?`<p class="msg bad"><b>${T(D.censorSus)}</b></p>`:`<p class="note">${T(D.rejectNote)}</p>`}
