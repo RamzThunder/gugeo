@@ -112,7 +112,7 @@ header>div:last-child{justify-content:center}
 #rv .act .no{background-image:url('vintage-assets/stamp_overlay_review.png')}   /* '검열' 도장 */
 #rv .act .vg{width:22vh;height:7.2vh;padding:0;color:transparent!important;border:0;border-radius:0;box-shadow:none;background:url('vintage-assets/stamp_vague.webp') center/contain no-repeat;filter:drop-shadow(0 .3vh .4vh #0009)}
 #rv .act button:hover{filter:drop-shadow(0 .3vh .4vh #0009) brightness(1.08)}
-#done{background:url('vintage-assets/celebration_background.webp') center/cover no-repeat #20140e}
+#done{background:url('vintage-assets/celebration_background.webp?v=2') center/cover no-repeat #20140e}
 #done:before{content:"";width:min(40vw,34vh);aspect-ratio:196/93;background:url('vintage-assets/stamp_passed.png') center/contain no-repeat;transform:rotate(-6deg)}
 #done .w{color:#8e2f22;background:var(--paper);border:.8vh double #9a3b2c;padding:1vh 4vw;box-shadow:0 1.5vh 3vh #000b}
 #done .s{color:#4b3425;font-weight:800;font-size:3.4vh}
