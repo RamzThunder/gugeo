@@ -915,7 +915,17 @@ $("#clear").onclick=async()=>{ const target=room;
 $("#dx").onclick=()=>$("#done").classList.remove("show");
 build();
 const qs=document.createElement("script"); qs.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"; qs.onload=init; qs.onerror=init; document.head.appendChild(qs);
-function init(){ if(netRoomOk(room)) start(room); else $("#setup").classList.add("show"); setInterval(paint,1000); }
+function init(){ if(params.has("demo")) return demo(); if(netRoomOk(room)) start(room); else $("#setup").classList.add("show"); setInterval(paint,1000); }
+// 미리보기(주소 끝에 ?demo): 인터넷 기록은 건드리지 않고, 가짜 자료로 조들이 하나씩 탈출해 글자가 다 모이는 모습을 보여 줌
+function demo(){ const no=()=>Promise.resolve(true);   // 미리보기에서는 버튼을 눌러도 실제 기록에 쓰지 않음
+  netSetCtl=netSetMinutes=netJudge=netResetRoom=netOpenRoom=no; room="0000"; $("#setup").classList.remove("show"); $("#rc").textContent="미리보기";
+  $("#ct").textContent="미리보기 · 기록 안 함"; $("#lk").textContent="미리보기 화면입니다"; $("#qr").innerHTML="";
+  const w=[...CONFIG.finalWord], N=CONFIG.groups, t0=Date.now()-15*60000; data={groups:{}};
+  for(let n=1;n<=N;n++) data.groups[n]={stage:3,where:"s3",sus:10+n*7%60,start:t0,min:CONFIG.minutes,t:Date.now()};
+  let k=0; paint();
+  const step=()=>{ k++; const g=data.groups[k]; if(!g) return;
+    Object.assign(g,{stage:4,done:Date.now(),epi:1,piece:w[(k-1)%w.length]}); paint(); setTimeout(step,900); };
+  setTimeout(step,1200); setInterval(()=>{ for(const n in data.groups) data.groups[n].t=Date.now(); paint(); },1000); }
 </script>
 </body>
 </html>
