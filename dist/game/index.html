@@ -1379,7 +1379,7 @@ function bindM3(){
     const p=pt(e), h=near(p,RN), a=drag; drag=null;
     if(h&&h[1].id===a.id){ const b=h[1]; a.done=b.done=true; solved++; cur=null;
       linked.push({a:{x:SX,y:a.y},b:{x:EX,y:b.y},id:a.id});
-      b.im.setAttribute("href",A.hookDone[b.id]); b.im.setAttribute("width",166*.34); b.im.setAttribute("height",165*.34);
+      { const im=b.im, hd=new Image(); hd.onload=()=>{ im.setAttribute("width",hd.naturalWidth*.34); im.setAttribute("height",hd.naturalHeight*.34); im.setAttribute("href",hd.src); }; hd.src=A.hookDone[b.id]; }   // 그림 크기는 파일에서 읽어 같은 배율(0.34)로
       a.hit.style.cursor="default"; spark(640,b.y); kick();
       if(solved<4){ msg.className="msg ok"; msg.innerHTML=T(M.good,{남은:4-solved}); }
       else{ msg.className="msg ok"; msg.innerHTML=T(M.done);
