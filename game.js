@@ -405,49 +405,107 @@ function m3HTML(){
   const M=TEXT.m3;
   return `<div style="display:flex;flex-direction:column;gap:14px"><h2>${T(M.title)}</h2>
   <p class="story">${T(M.story)}</p>
-  <div class="pixwrap wirewrap"><svg id="wsvg" viewBox="0 0 400 300" role="group" aria-label="${esc(M.title)}"></svg></div>
+  <div class="pixwrap wirewrap" id="wwrap"><canvas id="wcv" width="810" height="429"></canvas><svg id="wsvg" viewBox="0 0 810 429" role="group" aria-label="${esc(M.title)}"></svg></div>
   <div class="msg" id="msg" aria-live="polite">${T(M.start)}</div><div class="row" id="m3go"></div></div>`;
 }
 function bindM3(){
-  const M=TEXT.m3, C=CONFIG.m3, svg=$("#wsvg"), msg=$("#msg"), NS="http://www.w3.org/2000/svg";
+  const M=TEXT.m3, C=CONFIG.m3, A=IMG.m3, svg=$("#wsvg"), cv=$("#wcv"), wrap=$("#wwrap"), msg=$("#msg"), NS="http://www.w3.org/2000/svg";
   const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
-  const L=[0,1,2,3], R=shuf(L), Y=[42,108,174,240], LX=46, RX=354;
+  // 노드 중심: 왼쪽 버클 x=190, 오른쪽 걸이 x=627 (배경 그림의 못 자리)
+  const W=810, H=429, L=[0,1,2,3], R=shuf(L), Y=[149,200,256,310], LX=190, RX=627, SX=200, EX=649;
   const mk=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
-  svg.appendChild(mk("rect",{x:0,y:0,width:400,height:300,fill:"#15171d"}));
-  [LX-30,RX-16].forEach(x=>svg.appendChild(mk("rect",{x,y:14,width:46,height:272,fill:"#2a2d36",stroke:"#0a0b0e","stroke-width":3})));
-  const wires=svg.appendChild(mk("g",{})), nodes=svg.appendChild(mk("g",{}));
-  const node=(x,y,c,side,id)=>{
-    const g=mk("g",{"data-side":side,"data-c":id,style:"cursor:pointer"});
-    g.appendChild(mk("circle",{cx:x,cy:y,r:30,fill:"transparent"}));
-    g.appendChild(mk("circle",{cx:x,cy:y,r:17,fill:WCOL[id][0],stroke:"#0a0b0e","stroke-width":4}));
-    const t=mk("text",{x,y:y+6,"text-anchor":"middle","font-size":17,"font-weight":700,fill:"#0a0b0e","pointer-events":"none"}); t.textContent=WCOL[id][1]; g.appendChild(t);
-    nodes.appendChild(g); return {x,y,id,g,side,done:false};
+  // 그림 불러오기 (다 받은 뒤에 그림)
+  const load=src=>{const im=new Image(); im.src=src; return im;};
+  const I={bg:load(A.bg), done:load(A.bgDone), rib:A.ribbon.map(load)};
+  const ok=im=>im&&im.complete&&im.naturalWidth>0;
+  // 캔버스: 화면 배율(레티나)에 맞춰 선명하게
+  const dpr=Math.min(3,Math.max(1,window.devicePixelRatio||1));
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const ctx=cv.getContext("2d"); ctx.imageSmoothingEnabled=true; try{ctx.imageSmoothingQuality="high";}catch(_){}
+  // svg 층: 걸이(아래) → 버클 → 반짝임 → 터치 원
+  const hooks=svg.appendChild(mk("g",{})), tips=svg.appendChild(mk("g",{})), fx=svg.appendChild(mk("g",{"pointer-events":"none"})), hits=svg.appendChild(mk("g",{}));
+  const img=(g,href,x,y,w,h)=>g.appendChild(mk("image",{href,x,y,width:w,height:h,preserveAspectRatio:"none",style:"image-rendering:auto","pointer-events":"none"}));
+  const node=(x,y,side,id)=>{
+    const n={x,y,id,side,done:false};
+    if(side==="L") n.im=img(tips,A.tip[id],154,y-27,114*.45,118*.45);
+    else n.im=img(hooks,A.hook[id],614,y-28,152*.34,165*.34);
+    n.hit=hits.appendChild(mk("circle",{cx:x,cy:y,r:36,fill:"transparent",style:side==="L"?"cursor:pointer":""}));
+    return n;
   };
-  const LN=L.map((id,i)=>node(LX,Y[i],0,"L",id)), RN=R.map((id,i)=>node(RX,Y[i],0,"R",id));
-  const path=(a,b)=>{const dx=Math.max(60,Math.abs(b.x-a.x)*.5);return `M${a.x} ${a.y} C${a.x+dx} ${a.y} ${b.x-dx} ${b.y} ${b.x} ${b.y}`;};
-  const draw=(a,b,id,solid)=>{const o=mk("path",{d:path(a,b),fill:"none",stroke:"#0a0b0e","stroke-width":16,"stroke-linecap":"round"}),
-    p=mk("path",{d:path(a,b),fill:"none",stroke:WCOL[id][0],"stroke-width":9,"stroke-linecap":"round"}); wires.append(o,p); return [o,p];};
+  const LN=L.map((id,i)=>node(LX,Y[i],"L",id)), RN=R.map((id,i)=>node(RX,Y[i],"R",id));
+  // 리본: 3차 베지어 곡선을 따라 리본 그림을 잘게 쪼개 이어 그림
+  const ribbon=(a,b,id,alpha)=>{
+    const im=I.rib[id]; if(!ok(im)) return;
+    const d=Math.hypot(b.x-a.x,b.y-a.y); if(d<2) return;
+    const dx=Math.max(40,d*.35), p1={x:a.x+dx,y:a.y}, p2={x:b.x-dx,y:b.y};
+    const N=120, P=[];
+    for(let i=0;i<=N;i++){const t=i/N,u=1-t;
+      P.push({x:u*u*u*a.x+3*u*u*t*p1.x+3*u*t*t*p2.x+t*t*t*b.x, y:u*u*u*a.y+3*u*u*t*p1.y+3*u*t*t*p2.y+t*t*t*b.y});}
+    const seg=[]; let tot=0; for(let i=0;i<N;i++){const l=Math.hypot(P[i+1].x-P[i].x,P[i+1].y-P[i].y); seg.push(l); tot+=l;}
+    if(tot<1) return;
+    const k=Math.min(1,Math.max(0,(d-150)/350)), w=24*(1-.15*k);   // 팽팽할수록 최대 15% 얇게
+    const iw=im.naturalWidth, ih=im.naturalHeight; let s=0;
+    ctx.save(); ctx.globalAlpha=alpha==null?1:alpha;
+    for(let i=0;i<N;i++){ const l=seg[i]; if(l<=0) continue;
+      const sx=s/tot*iw, sw=Math.max(.5,l/tot*iw);
+      ctx.save(); ctx.translate(P[i].x,P[i].y); ctx.rotate(Math.atan2(P[i+1].y-P[i].y,P[i+1].x-P[i].x));
+      ctx.drawImage(im,Math.min(sx,iw-sw),0,sw,ih,0,-w/2,l+.8,w);   // +.8: 조각 사이 틈이 보이지 않게 살짝 겹침
+      ctx.restore(); s+=l; }
+    ctx.restore();
+  };
+  const linked=[];   // 걸린 리본 [{a,b,id}]
+  let drag=null, cur=null, solved=0, raf=0, back=null, fin=null;
+  const draw=()=>{
+    ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,H);
+    if(ok(I.bg)) ctx.drawImage(I.bg,0,0,W,H);
+    const fa=fin?fin.a:0;
+    linked.forEach(r=>ribbon(r.a,r.b,r.id,1-fa));
+    if(drag&&cur) ribbon({x:SX,y:drag.y},cur,drag.id);
+    if(back) ribbon({x:SX,y:back.y},back.p,back.id);
+    if(fin&&ok(I.done)){ ctx.globalAlpha=fa; ctx.drawImage(I.done,0,0,W,H); ctx.globalAlpha=1; }
+  };
+  const loop=()=>{ raf=0; const now=performance.now();
+    if(back){ const t=Math.min(1,(now-back.t0)/200);   // 틀렸을 때: 0.2초 동안 시작점으로 줄어듦
+      back.p={x:back.from.x+(SX-back.from.x)*t, y:back.from.y+(back.y-back.from.y)*t}; if(t>=1) back=null; }
+    if(fin){ fin.a=Math.min(1,(now-fin.t0)/400); }
+    draw();
+    if(drag||back||(fin&&fin.a<1)) raf=requestAnimationFrame(loop);
+  };
+  const kick=()=>{ if(!raf) raf=requestAnimationFrame(loop); };
+  const all=[I.bg,I.done,...I.rib]; let left=all.length;
+  all.forEach(im=>{ if(im.complete){ if(--left===0) draw(); } else im.onload=im.onerror=()=>{ if(--left===0) draw(); }; });
+  if(left>0&&ok(I.bg)) draw();
   const pt=e=>{const m=svg.getScreenCTM().inverse(),p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(m);return {x:q.x,y:q.y};};
   const near=(p,list)=>list.filter(n=>!n.done).map(n=>[Math.hypot(n.x-p.x,n.y-p.y),n]).filter(d=>d[0]<C.snap).sort((a,b)=>a[0]-b[0])[0];
-  let drag=null, solved=0, tmp=null;
+  const spark=(x,y)=>{ let f=0; const s=img(fx,A.spark[0],x-42,y-42,84,84);
+    const step=()=>{ f++; if(f>=A.spark.length){ s.remove(); return; } s.setAttribute("href",A.spark[f]); setTimeout(step,80); };
+    setTimeout(step,80); };
+  const shake=()=>{ wrap.classList.remove("shake"); void wrap.offsetWidth; wrap.classList.add("shake"); };
   svg.style.touchAction="none";
   svg.addEventListener("pointerdown",e=>{ if(solved>=4) return;
-    const p=pt(e), all=[...LN,...RN], hit=all.filter(n=>!n.done).map(n=>[Math.hypot(n.x-p.x,n.y-p.y),n]).filter(d=>d[0]<C.snap).sort((a,b)=>a[0]-b[0])[0];
-    if(!hit) return; e.preventDefault(); drag=hit[1]; try{svg.setPointerCapture(e.pointerId);}catch(_){} });
-  svg.addEventListener("pointermove",e=>{ if(!drag) return; if(tmp) tmp.forEach(x=>x.remove());
-    const p=pt(e); tmp=draw(drag.side==="L"?drag:{x:p.x,y:p.y},drag.side==="L"?{x:p.x,y:p.y}:drag,drag.id); });
-  const end=e=>{ if(!drag) return; if(tmp){tmp.forEach(x=>x.remove());tmp=null;}
-    const p=pt(e), other=drag.side==="L"?RN:LN, h=near(p,other); const a=drag; drag=null;
-    if(!h) return; const b=h[1];
-    if(a.id===b.id){ a.done=b.done=true; solved++; const [l,r]=a.side==="L"?[a,b]:[b,a]; draw(l,r,a.id);
-      a.g.style.cursor=b.g.style.cursor="default";
+    const h=near(pt(e),LN); if(!h) return;   // 왼쪽 버클에서만 끌기 시작
+    e.preventDefault(); drag=h[1]; cur=pt(e); back=null; try{svg.setPointerCapture(e.pointerId);}catch(_){} kick(); });
+  svg.addEventListener("pointermove",e=>{ if(!drag) return; cur=pt(e); kick(); });
+  const end=e=>{ if(!drag) return;
+    const p=pt(e), h=near(p,RN), a=drag; drag=null;
+    if(h&&h[1].id===a.id){ const b=h[1]; a.done=b.done=true; solved++; cur=null;
+      linked.push({a:{x:SX,y:a.y},b:{x:EX,y:b.y},id:a.id});
+      b.im.setAttribute("href",A.hookDone[b.id]); b.im.setAttribute("width",166*.34); b.im.setAttribute("height",165*.34);
+      a.hit.style.cursor="default"; spark(640,b.y); kick();
       if(solved<4){ msg.className="msg ok"; msg.innerHTML=T(M.good,{남은:4-solved}); }
       else{ msg.className="msg ok"; msg.innerHTML=T(M.done);
-        const go=document.createElement("button"); go.className="btn"; go.type="button"; go.textContent=T(M.sit);
-        go.onclick=()=>{ S.wired=true; save(); closePanel(); openPanel("s3",stage3HTML(),bindStage3); }; $("#m3go").appendChild(go); }
-    } else { msg.className="msg bad"; msg.innerHTML=T(M.wrong,{의심도:C.wrongSus}); if(C.wrongSus) addSus(C.wrongSus); }
+        // 0.4초 동안 완성 배경으로 교차 페이드, 버클·걸이는 숨김, 그다음 버튼
+        fin={t0:performance.now(),a:0}; svg.style.transition="opacity .4s"; svg.style.opacity="0"; kick();
+        setTimeout(()=>{ svg.style.pointerEvents="none";
+          const go=document.createElement("button"); go.className="btn"; go.type="button"; go.textContent=T(M.sit);
+          go.onclick=()=>{ S.wired=true; save(); closePanel(); openPanel("s3",stage3HTML(),bindStage3); }; $("#m3go").appendChild(go); },420); }
+      return; }
+    // 빈 곳이나 다른 색: 리본이 시작점으로 되감김
+    back={id:a.id,y:a.y,from:cur||p,p:cur||p,t0:performance.now()}; cur=null; kick();
+    if(h){ msg.className="msg bad"; msg.innerHTML=T(M.wrong,{의심도:C.wrongSus}); if(C.wrongSus) addSus(C.wrongSus); shake(); }
   };
-  svg.addEventListener("pointerup",end); svg.addEventListener("pointercancel",e=>{drag=null;if(tmp){tmp.forEach(x=>x.remove());tmp=null;}});
+  svg.addEventListener("pointerup",end);
+  svg.addEventListener("pointercancel",()=>{ if(!drag) return; back={id:drag.id,y:drag.y,from:cur||{x:SX,y:drag.y},p:cur||{x:SX,y:drag.y},t0:performance.now()}; drag=null; cur=null; kick(); });
 }
 /* ---------- 3단계 ---------- */
 function stage3HTML(){

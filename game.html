@@ -119,8 +119,11 @@ p{margin:0}
 .mhold.lock{opacity:.55}
 .mboss{touch-action:none}
 .roomin{width:100%;font:700 22px var(--serif);padding:12px 14px;background:#0f1116;color:#fff;border:3px solid #0a0b0e;letter-spacing:.1em}
-.wirewrap{max-width:560px;line-height:0}
-.wirewrap svg{width:100%;height:auto;display:block;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.wirewrap{line-height:0}   /* 폭·테두리는 .pixwrap(검열실 그림 화면)과 같음 */
+.wirewrap canvas{width:100%;height:auto;aspect-ratio:810/429;display:block;image-rendering:auto}
+.wirewrap svg{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.wirewrap svg image{image-rendering:auto}
+.wirewrap.shake{animation:shake .3s}
 .mrib{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mute)}
 .mrib .g{flex:1;max-width:320px;height:12px;background:var(--line);display:block;overflow:hidden;border:2px solid #0a0b0e}
 .mrib .g i{display:block;height:100%;width:0;background:var(--amber);transition:width .15s}

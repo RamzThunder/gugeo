@@ -61,7 +61,7 @@ const CONFIG={
   s2quiz:{q:"삭제 도장이 찍힌 글은 어떤 특징을 지니고 있는가?",
     opts:["고향과 가족을 그리워하는 내용이다","일제의 지배와 탄압을 직접 비판하고 저항을 외쳤다","자연물에 빗대어 희망을 노래했다","새로운 학문을 배우자고 권했다"],ans:1},
   /* 서류함 미니게임: 리본을 몇 번 당겨야 하는지(pulls), 한 번 당긴 뒤 쉬는 시간(gap, 1000=1초), 들켰을 때 의심도(caughtSus)와 도로 들어가는 횟수(caughtBack) */
-  m3:{wrongSus:3, snap:34},   // wrongSus: 색이 다른 곳에 걸었을 때 의심도, snap: 끝점을 인식하는 거리(클수록 쉬움)
+  m3:{wrongSus:3, snap:40},   // wrongSus: 색이 다른 곳에 걸었을 때 의심도, snap: 끝점을 인식하는 거리(클수록 쉬움)
   m2:{holdSec:6, caughtSus:10, caughtBackSec:1.5, fakeChance:0.3, quickChance:0.2},   // holdSec: 꾹 눌러야 하는 누적 시간(초), caughtBackSec: 들켰을 때 되감기는 시간(초), fakeChance: 헛기침만 하고 안 돌아볼 확률, quickChance: 금방 또 헛기침할 확률
   s3:{draft:"오늘 밤 일본 경찰 몰래 독립 격문을 찍는다!",
     banned:["일본","일제","총독부","경찰","격문","독립","만세","물러","왜놈","식민","침략"],
