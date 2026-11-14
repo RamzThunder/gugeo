@@ -581,7 +581,7 @@ function rejected(kind){
   const o=document.createElement("div"); o.className="overlay"; o.setAttribute("role","dialog");
   o.innerHTML='<div class="card" style="border-color:var(--stamp)">'+(cz?stageHTML("room","bossSus"):stageHTML("street","courier"))+`<h2>${T(cz?D.censorTitle:D.rejectTitle)}</h2>
   <p><b>${T(cz?D.censorWho:D.rejectWho)}</b><br>${T(cz?D.censorLine:D.rejectLine)}</p>
-  <div class="paper"><span class="no">${T(cz?D.censorPoemLabel:D.rejectPoemLabel)}</span><div class="txt" style="white-space:pre-wrap">${esc(poem)}</div></div>
+  <div class="paper"><span class="no">${T(cz?D.censorPoemLabel:D.rejectPoemLabel)}</span><div class="txt poem" style="white-space:pre-wrap">${esc(poem)}</div></div>
   ${cz?`<p class="msg bad"><b>${T(D.censorSus)}</b></p>`:`<p class="note">${T(D.rejectNote)}</p>`}
   <button class="btn" id="rjx" type="button">${T(cz?D.censorBtn:D.rejectBtn)}</button></div>`;
   document.body.appendChild(o);

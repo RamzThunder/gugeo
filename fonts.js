@@ -55,7 +55,7 @@ const FONT_USE={
   제목:    "그리운경찰인권",    // 게임 제목, 단계 제목
   도장:    "그리운경찰인권",    // 삭제·통과 도장 (지금은 그림 도장이라 글꼴이 보이지 않음)
   종이글:  "그리운묘은흘림",    // 시구 카드, 압수 문서, 전할 메시지
-  시쓰기:  "조선100년",    // 3단계에서 학생이 위장 시를 쓰는 칸
+  시쓰기:  "조선100년",    // 3단계에서 학생이 위장 시를 쓰는 칸, 검열·보류로 되돌아온 시
   자막:    "갈무리장체",    // 장면 자막 ("1940년대 초, 경성, 어느 날 새벽" 등)
   이름표:  "모나10x12",          // 대사 위에 뜨는 말하는 사람 이름
   글자조각: "조선100년",          // 결과 화면의 큰 글자 조각
@@ -82,7 +82,7 @@ const FONT_USE={
 const FONT_SLOTS={
   기본:"body,button,input,.choices,.paper .no",
   본문:".vtx,.vch button,.story,.note,.msg,.toast,.cap,.card p,.key,.why",
-  제목:"h1,h2", 도장:".stamp", 종이글:".paper .txt", 시쓰기:"textarea", 자막:".vcap span",
+  제목:"h1,h2", 도장:".stamp", 종이글:".paper .txt", 시쓰기:"textarea,.paper .txt.poem", 자막:".vcap span",
   이름표:".vnm,.mbub", 글자조각:".big", 조번호:".bar .grp,.vtop span",
   TV기본:"body,button,input", TV숫자:".code b,.lim b", TV남은시간:".g .tm", TV의심도숫자:".g .sus b",
   TV창제목:"#confirm-title,#setup h2", TV창본문:"#confirm-message,#action-confirm button,#setup input,#setup button",
