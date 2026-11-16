@@ -5,7 +5,8 @@
 ## 구성
 | 경로 | 내용 |
 |---|---|
-| `dist/index.html` | gugeo.party 첫 페이지. 활동 카드는 `<section class="card">`를 복사해 더합니다 |
+| `dist/index.html` | gugeo.party 첫 페이지 (국어파티). 활동은 `<article class="feature">`를 복사해 더하고, 첫 화면 초대장(`.ticket`)은 오늘 쓸 활동으로 바꿉니다 |
+| `dist/img/` | 첫 페이지에 쓰는 그림 (방탈출 게임 그림을 WebP로 옮겨 둠) |
 | `dist/_redirects` | 예전 게임 주소(`/game/`, `/tv/`, `/dist/game/`)를 새 주소로 넘겨 줌 |
 | `dist/favicon.ico` 등 | 사이트 아이콘 |
 

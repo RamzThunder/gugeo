@@ -3,43 +3,215 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>gugeo.party</title>
-<meta name="description" content="국어 수업 활동 모음">
+<title>국어파티 · gugeo.party</title>
+<meta name="description" content="읽고, 쓰고, 풀고, 탈출하는 국어 수업 활동 모음">
+<meta property="og:title" content="국어파티 · gugeo.party">
+<meta property="og:description" content="읽고, 쓰고, 풀고, 탈출하는 국어 수업 활동 모음">
+<meta property="og:image" content="https://gugeo.party/img/gate.webp">
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;600;800&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f6f1e7;--fg:#2b2620;--mute:#6f665a;--card:#fffdf8;--line:#e2d8c6;--accent:#9b2c2c}
-@media (prefers-color-scheme:dark){:root{--bg:#16171b;--fg:#ece6da;--mute:#a49b8d;--card:#1f2026;--line:#33343c;--accent:#e07a6a}}
+/* ===== 색 (밝은 화면 / 어두운 화면) ===== */
+:root{
+  --paper:#f4ecdc; --paper2:#ebe0ca; --ink:#1d1a16; --mute:#6b6152; --line:#d6c8ad;
+  --red:#b8342a; --gold:#c8922e; --navy:#1f2a44; --card:#fbf6ec; --shadow:rgba(60,40,10,.14);
+  --hero-ink:#1d1a16;
+}
+@media (prefers-color-scheme:dark){
+  :root{ --paper:#14151a; --paper2:#1b1d24; --ink:#efe7d6; --mute:#a59b89; --line:#2f313a;
+    --red:#e0625a; --gold:#e3b155; --navy:#c9d3ea; --card:#1c1e25; --shadow:rgba(0,0,0,.45); --hero-ink:#efe7d6; }
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;line-height:1.6}
-main{max-width:720px;margin:0 auto;padding:56px 16px 64px}
-h1{font-size:34px;margin:0 0 4px;letter-spacing:-.5px}
-.sub{color:var(--mute);margin:0 0 36px}
-.list{display:grid;gap:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
-.card h2{font-size:20px;margin:0 0 4px}
-.card p{margin:0 0 14px;color:var(--mute);font-size:15px}
-.links{display:flex;gap:10px;flex-wrap:wrap}
-.links a{display:inline-block;padding:8px 16px;border-radius:8px;border:1px solid var(--line);color:var(--fg);text-decoration:none;font-size:15px}
-.links a.main{background:var(--accent);border-color:var(--accent);color:#fff}
-footer{margin-top:48px;color:var(--mute);font-size:13px}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.65;
+  background-image:radial-gradient(circle at 1px 1px,var(--line) 1px,transparent 0);background-size:22px 22px}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.serif{font-family:"Hahmlet","AppleMyungjo","Batang",serif}
+
+/* ===== 위쪽 줄 ===== */
+header{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:600}
+.seal{width:34px;height:34px;border:2px solid var(--red);color:var(--red);display:grid;place-items:center;font-family:"Hahmlet",serif;font-weight:800;font-size:15px;border-radius:6px;transform:rotate(-4deg)}
+.logo small{color:var(--mute);font-weight:400;font-size:14px}
+nav a{text-decoration:none;color:var(--mute);font-size:15px;margin-left:18px}
+nav a:hover{color:var(--ink)}
+
+/* ===== 첫 화면 ===== */
+.hero{position:relative;padding:48px 0 72px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:40px;align-items:center}
+.hero-text{position:relative;z-index:1}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--red);border:1px solid var(--red);padding:3px 12px;border-radius:999px;letter-spacing:.5px}
+.hero h1{font-family:"Hahmlet",serif;font-weight:800;font-size:clamp(56px,13vw,148px);line-height:1;letter-spacing:-4px;margin:22px 0 10px;color:var(--hero-ink)}
+.hero h1 .dot{color:var(--red)}
+.hero h1 .party{position:relative;display:inline-block}
+.hero h1 .party::after{content:"";position:absolute;left:2%;right:2%;bottom:.06em;height:.16em;background:var(--gold);opacity:.55;z-index:-1;transform:skew(-8deg)}
+.lead{font-size:clamp(18px,2.4vw,22px);max-width:560px;margin:0 0 30px;color:var(--ink)}
+.lead b{font-weight:400;color:var(--red)}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:10px;text-decoration:none;font-size:16px;border:1.5px solid var(--ink);transition:transform .15s ease,box-shadow .15s ease}
+.btn.solid{background:var(--ink);color:var(--paper)}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--gold)}
+/* 초대장 카드 */
+.ticket{position:relative;justify-self:end;width:min(100%,400px);background:var(--card);border:1.5px solid var(--ink);border-radius:14px;padding:16px;box-shadow:10px 10px 0 var(--shadow);transform:rotate(2.5deg);transition:transform .25s ease;text-decoration:none;color:inherit;display:block}
+.ticket:hover{transform:rotate(0deg) translateY(-4px)}
+.ticket .top{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--mute);letter-spacing:2px;margin-bottom:12px}
+.ticket .top b{font-family:"Hahmlet",serif;color:var(--red);letter-spacing:4px}
+.ticket .pic{position:relative;aspect-ratio:5/3;border-radius:8px;overflow:hidden;background:#0e0f14}
+.ticket .pic img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated;display:block}
+.ticket .tear{border-top:2px dashed var(--line);margin:16px -16px 14px;position:relative}
+.ticket .tear::before,.ticket .tear::after{content:"";position:absolute;top:-11px;width:20px;height:20px;border-radius:50%;background:var(--paper);border:1.5px solid var(--ink)}
+.ticket .tear::before{left:-11px;clip-path:inset(0 0 0 50%)} .ticket .tear::after{right:-11px;clip-path:inset(0 50% 0 0)}
+.ticket .row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.ticket .t-name{font-family:"Hahmlet",serif;font-weight:800;font-size:24px;line-height:1.2;letter-spacing:-.5px}
+.ticket .t-sub{font-size:14px;color:var(--mute)}
+.ticket .go{white-space:nowrap;font-size:15px;color:var(--red)}
+.ticket .stamp{position:absolute;right:-14px;top:-18px;width:84px;height:84px;border-radius:50%;border:3px solid var(--red);color:var(--red);display:grid;place-items:center;text-align:center;font-family:"Hahmlet",serif;font-weight:800;font-size:15px;line-height:1.15;transform:rotate(-14deg);background:var(--card);box-shadow:0 0 0 4px var(--card) inset,0 0 0 5px var(--red) inset}
+/* 떠다니는 자모 */
+.jamo{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.jamo span{position:absolute;font-family:"Hahmlet",serif;font-weight:800;opacity:.13;color:var(--navy);animation:float 9s ease-in-out infinite}
+.jamo span:nth-child(3n){color:var(--red);opacity:.16}
+.jamo span:nth-child(4n){color:var(--gold);opacity:.22}
+@keyframes float{0%,100%{transform:translateY(0) rotate(var(--r,0deg))}50%{transform:translateY(-14px) rotate(calc(var(--r,0deg) + 6deg))}}
+@media (prefers-reduced-motion:reduce){.jamo span{animation:none}.btn{transition:none}}
+
+/* ===== 구역 제목 ===== */
+section{padding:28px 0 56px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-top:2px solid var(--ink);padding-top:14px;margin-bottom:26px}
+.sec-h h2{font-family:"Hahmlet",serif;font-weight:800;font-size:28px;margin:0;letter-spacing:-.5px}
+.sec-h span{color:var(--mute);font-size:14px}
+
+/* ===== 대표 활동 ===== */
+.feature{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);background:var(--card);border:1.5px solid var(--ink);border-radius:16px;overflow:hidden;box-shadow:8px 8px 0 var(--shadow)}
+.shot{position:relative;min-height:300px;background:#0e0f14}
+.shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
+.info{padding:30px 30px 28px;display:flex;flex-direction:column;gap:14px}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:13px;padding:2px 10px;border-radius:999px;background:var(--paper2);color:var(--mute)}
+.tag.hot{background:var(--red);color:#fff}
+.info h3{font-family:"Hahmlet",serif;font-weight:800;font-size:34px;line-height:1.2;margin:0;letter-spacing:-1px}
+.info p{margin:0;color:var(--mute)}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:4px 0}
+.fact{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--paper)}
+.fact b{display:block;font-family:"Hahmlet",serif;font-size:20px;font-weight:800}
+.fact small{color:var(--mute);font-size:13px}
+.info .cta{margin-top:auto}
+
+/* ===== 진행 방법 ===== */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;counter-reset:s}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+.step::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--navy);color:var(--paper);font-family:"Hahmlet",serif;font-weight:800;margin-bottom:12px}
+.step h4{margin:0 0 6px;font-size:18px;font-family:"Hahmlet",serif;font-weight:600}
+.step p{margin:0;color:var(--mute);font-size:15px}
+
+/* ===== 준비 중 ===== */
+.soon{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.ghost{border:1.5px dashed var(--line);border-radius:14px;padding:24px;color:var(--mute);display:flex;align-items:center;gap:14px;min-height:96px}
+.ghost i{font-style:normal;font-family:"Hahmlet",serif;font-weight:800;font-size:30px;color:var(--gold)}
+
+footer{border-top:1px solid var(--line);padding:26px 0 40px;color:var(--mute);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* ===== 좁은 화면 ===== */
+@media (max-width:820px){
+  .hero{grid-template-columns:minmax(0,1fr);gap:44px;padding-top:28px}
+  .ticket{justify-self:center;transform:rotate(1.5deg)}
+  .feature{grid-template-columns:minmax(0,1fr)}
+  .shot{min-height:0;aspect-ratio:5/3}
+  .steps{grid-template-columns:1fr}
+  .facts{gap:6px}
+  .fact{padding:8px 10px}
+  nav a:not(:last-child){display:none}
+}
+@media (max-width:420px){
+  .wrap{padding:0 16px}
+  .info{padding:22px 18px}
+  .info h3{font-size:28px}
+  .fact b{font-size:16px}
+  .fact small{font-size:12px}
+  .ticket .stamp{width:70px;height:70px;font-size:13px;right:-6px}
+  .hero h1{letter-spacing:-2px}
+}
 </style>
 </head>
 <body>
-<main>
-  <h1>gugeo.party</h1>
-  <p class="sub">국어 수업 활동 모음</p>
-  <div class="list">
-    <!-- 활동을 더할 때는 아래 card 하나를 복사해서 고치면 됩니다 -->
-    <section class="card">
-      <h2>검열국을 탈출하라</h2>
-      <p>일제강점기 문학 방탈출. 검열관으로 위장해 위장 시를 원고 더미에 섞어 내보내라.</p>
-      <div class="links">
-        <a class="main" href="https://censor.gugeo.party/game/">학생 입장</a>
-        <a href="https://censor.gugeo.party/tv/">교실 TV</a>
+<div class="wrap">
+  <header>
+    <a class="logo" href="/"><span class="seal">국</span>국어파티 <small>gugeo.party</small></a>
+    <nav><a href="#activities">활동</a><a href="#how">진행 방법</a></nav>
+  </header>
+
+  <div class="hero">
+    <div class="jamo" aria-hidden="true">
+      <span style="left:46%;top:-4%;font-size:110px;--r:-12deg">ㄱ</span>
+      <span style="left:4%;top:86%;font-size:64px;--r:10deg;animation-delay:-2s">ㅓ</span>
+      <span style="left:52%;top:72%;font-size:72px;--r:-6deg;animation-delay:-4s">ㅇ</span>
+      <span style="left:94%;top:84%;font-size:52px;--r:16deg;animation-delay:-1s">ㅜ</span>
+    </div>
+    <div class="hero-text">
+      <span class="kicker">● 국어 수업 활동 모음</span>
+      <h1>국어<span class="dot">,</span><br><span class="party">파티</span><span class="dot">.</span></h1>
+      <p class="lead">읽고, 쓰고, 풀고, <b>탈출하는</b> 국어 시간.<br>모둠이 함께 움직이는 수업 활동을 모아 둡니다.</p>
+      <div class="cta">
+        <a class="btn solid" href="#activities">활동 보기 →</a>
+        <a class="btn" href="https://censor.gugeo.party/game/">바로 탈출하러 가기</a>
       </div>
-    </section>
+    </div>
+    <a class="ticket" href="https://censor.gugeo.party/game/" aria-label="오늘의 활동: 검열국을 탈출하라, 학생 입장">
+      <span class="stamp">極秘<br>입장</span>
+      <div class="top"><b>招待狀</b><span style="margin-right:64px">ADMIT · 모둠</span></div>
+      <div class="pic"><img src="img/room.webp" alt="검열실 내부 그림" width="800" height="480"></div>
+      <div class="tear"></div>
+      <div class="row">
+        <div><div class="t-sub">오늘의 활동</div><div class="t-name">검열국을 탈출하라</div></div>
+        <span class="go">입장 →</span>
+      </div>
+    </a>
   </div>
-  <footer>gugeo.party</footer>
-</main>
+
+  <section id="activities">
+    <div class="sec-h"><h2>활동</h2><span>01</span></div>
+    <!-- 대표 활동. 새 활동을 더할 때는 이 article을 복사해서 고치면 됩니다 -->
+    <article class="feature">
+      <div class="shot">
+        <img src="img/gate.webp" alt="밤의 검열국 건물 입구 그림" width="800" height="480">
+      </div>
+      <div class="info">
+        <div class="tags"><span class="tag hot">방탈출</span><span class="tag">일제강점기 문학</span><span class="tag">모둠 활동</span></div>
+        <h3>검열국을 탈출하라</h3>
+        <p>검열관으로 위장해 도서과에 잠입한 독립운동가가 되어, 중요한 메시지를 ‘시’로 위장해 검열을 통과시키고 빠져나옵니다. 시대 배경과 상징·표현 방식을 활동으로 익혀요.</p>
+        <div class="facts">
+          <div class="fact"><b>20분</b><small>기본 제한 시간</small></div>
+          <div class="fact"><b>8모둠</b><small>한 방에 동시에</small></div>
+          <div class="fact"><b>TV 연동</b><small>실시간 진행판</small></div>
+        </div>
+        <div class="cta">
+          <a class="btn solid" href="https://censor.gugeo.party/game/">학생 입장</a>
+          <a class="btn" href="https://censor.gugeo.party/tv/">교실 TV 열기</a>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section id="how">
+    <div class="sec-h"><h2>진행 방법</h2><span>02</span></div>
+    <div class="steps">
+      <div class="step"><h4>교실 TV를 엽니다</h4><p>TV 화면에서 방 번호를 정하면 학생 입장 QR이 나와요.</p></div>
+      <div class="step"><h4>모둠이 QR로 들어옵니다</h4><p>모둠마다 기기 하나로 입장해 함께 문제를 풀어요.</p></div>
+      <div class="step"><h4>TV로 함께 지켜봅니다</h4><p>모둠별 단계·남은 시간·의심도가 실시간으로 올라오고, 학생이 쓴 글을 TV에서 바로 판정해요.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-h"><h2>다음 활동</h2><span>03</span></div>
+    <div class="soon">
+      <div class="ghost"><i>ㄷ</i><span>새 활동을 준비하고 있어요.</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>국어파티 · gugeo.party</span>
+    <span>수업 시간에 함께 쓰는 국어 활동</span>
+  </footer>
+</div>
 </body>
 </html>
