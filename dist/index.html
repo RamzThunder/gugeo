@@ -92,9 +92,15 @@ section{padding:72px 0 8px}
 .info .btn.solid{background:var(--blue);border-color:var(--blue);color:#fff}
 .info .btn:not(.solid):hover{border-color:var(--accent);color:var(--accent)}
 
-/* ===== 진행 방법 ===== */
-.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;counter-reset:s}
-.step{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px}
+/* ===== 활동 카드를 누르면 펼쳐지는 진행 방법 ===== */
+.feature{cursor:pointer}
+.howbtn{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;background:none;border:0;padding:2px 0;font:inherit;font-size:15px;font-weight:600;color:var(--accent);cursor:pointer}
+.howbtn i{font-style:normal;display:inline-block;transition:transform .2s ease}
+.feature.open .howbtn i{transform:rotate(180deg)}
+.how{grid-column:1/-1;border-top:1px solid var(--line);padding:26px 32px 30px;background:var(--bg);cursor:default}
+.how h4.ttl{margin:0 0 14px;font-size:18px;font-weight:800;letter-spacing:-.03em}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;counter-reset:s}
+.step{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px}
 .step::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--blue);color:#fff;font-weight:800;margin-bottom:14px}
 .step h4{margin:0 0 6px;font-size:18px;font-weight:700;letter-spacing:-.03em}
 .step p{margin:0;color:var(--mute);font-size:15px}
@@ -114,6 +120,7 @@ footer .fm svg{color:var(--accent)}
   .feature{grid-template-columns:minmax(0,1fr)}
   .shot{min-height:0;aspect-ratio:5/3}
   .steps{grid-template-columns:minmax(0,1fr)}
+  .how{padding:22px 18px 24px}
   .dict{grid-template-columns:minmax(0,1fr);gap:12px;padding:20px 22px}
   .dict .pos{justify-self:start}
   nav a:not(:last-child){display:none}
@@ -142,7 +149,7 @@ footer .fm svg{color:var(--accent)}
 <div class="wrap">
   <header>
     <a class="logo" href="/"><img src="favicon-32.png" srcset="icon-192.png 2x" alt="" width="32" height="32">구거 <small>gugeo.party</small></a>
-    <nav><a href="#activities">활동</a><a href="#how">진행 방법</a></nav>
+    <nav><a href="#activities">활동</a></nav>
   </header>
 
   <div class="hero">
@@ -155,7 +162,6 @@ footer .fm svg{color:var(--accent)}
       <p class="lead">읽고, 쓰고, 풀고, <span>탈출하는</span> 국어 시간.<br>모둠이 함께 움직이는 수업 활동을 모아 둡니다.</p>
       <div class="cta">
         <a class="btn solid" href="#activities">활동 보기 →</a>
-        <a class="btn" href="#how">진행 방법</a>
       </div>
     </div>
   </div>
@@ -183,25 +189,26 @@ footer .fm svg{color:var(--accent)}
           <div class="fact"><b>8모둠</b><small>한 방에 동시에</small></div>
           <div class="fact"><b>TV 연동</b><small>실시간 진행판</small></div>
         </div>
+        <button class="howbtn" type="button" aria-expanded="false" aria-controls="how-censor">진행 방법 보기 <i>▾</i></button>
         <div class="cta">
           <a class="btn solid" href="https://censor.gugeo.party/game/">학생 입장</a>
           <a class="btn" href="https://censor.gugeo.party/tv/">교실 TV 열기</a>
         </div>
       </div>
+      <!-- 카드를 누르면 펼쳐지는 이 활동의 진행 방법 -->
+      <div class="how" id="how-censor" hidden>
+        <h4 class="ttl">진행 방법</h4>
+        <div class="steps">
+          <div class="step"><h4>교실 TV를 엽니다</h4><p>TV 화면에서 방 번호를 정하면 학생 입장 QR이 나와요.</p></div>
+          <div class="step"><h4>모둠이 QR로 들어옵니다</h4><p>모둠마다 기기 하나로 입장해 함께 문제를 풀어요.</p></div>
+          <div class="step"><h4>TV로 함께 지켜봅니다</h4><p>모둠별 단계·남은 시간·의심도가 실시간으로 올라오고, 학생이 쓴 글을 TV에서 바로 판정해요.</p></div>
+        </div>
+      </div>
     </article>
   </section>
 
-  <section id="how">
-    <div class="sec-h"><span class="num">02</span><h2>진행 방법</h2></div>
-    <div class="steps">
-      <div class="step"><h4>교실 TV를 엽니다</h4><p>TV 화면에서 방 번호를 정하면 학생 입장 QR이 나와요.</p></div>
-      <div class="step"><h4>모둠이 QR로 들어옵니다</h4><p>모둠마다 기기 하나로 입장해 함께 문제를 풀어요.</p></div>
-      <div class="step"><h4>TV로 함께 지켜봅니다</h4><p>모둠별 단계·남은 시간·의심도가 실시간으로 올라오고, 학생이 쓴 글을 TV에서 바로 판정해요.</p></div>
-    </div>
-  </section>
-
   <section>
-    <div class="sec-h"><span class="num">03</span><h2>다음 활동</h2></div>
+    <div class="sec-h"><span class="num">02</span><h2>다음 활동</h2></div>
     <div class="ghost"><svg viewBox="0 0 104 80" aria-hidden="true"><rect x="0" y="4" width="104" height="26"/><rect x="78" y="4" width="26" height="76"/></svg><span>새 활동을 준비하고 있어요.</span></div>
   </section>
 
@@ -210,5 +217,15 @@ footer .fm svg{color:var(--accent)}
     <span>수업 시간에 함께 쓰는 국어 활동</span>
   </footer>
 </div>
+<script>
+/* 활동 카드를 누르면 진행 방법이 펼쳐지고 접힘 (링크·버튼을 누른 건 그대로 둠) */
+document.querySelectorAll(".feature").forEach(card=>{
+  const btn=card.querySelector(".howbtn"), how=card.querySelector(".how"); if(!btn||!how) return;
+  const toggle=()=>{ const open=how.hidden; how.hidden=!open; card.classList.toggle("open",open); btn.setAttribute("aria-expanded",open);
+    btn.firstChild.textContent=open?"진행 방법 접기 ":"진행 방법 보기 "; };
+  btn.addEventListener("click",e=>{ e.stopPropagation(); toggle(); });
+  card.addEventListener("click",e=>{ if(e.target.closest("a,button,.how")) return; toggle(); });
+});
+</script>
 </body>
 </html>
