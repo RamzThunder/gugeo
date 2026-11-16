@@ -106,14 +106,9 @@ section{padding:72px 0 8px}
 .step p{margin:0;color:var(--mute);font-size:15px}
 
 .feature+.feature{margin-top:24px}
-.tag.wip{background:none;border:1px dashed var(--accent)}
 .feature.soon .shot img{image-rendering:auto;object-position:left top}
 .info .btn.off{border-style:dashed;color:var(--mute);cursor:default;transform:none}
 
-/* ===== 다음 활동 ===== */
-.ghost{border:1.5px dashed var(--tint2);border-radius:22px;padding:24px 26px;color:var(--mute);display:flex;align-items:center;gap:16px}
-.ghost svg{flex:none;width:44px;height:44px}
-.ghost svg rect{fill:var(--tint2)}
 
 footer{margin-top:72px;border-top:1px solid var(--line);padding:26px 0 44px;color:var(--mute);font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 footer .fm{display:flex;align-items:center;gap:8px}
@@ -210,11 +205,15 @@ footer .fm svg{color:var(--accent)}
         </div>
       </div>
     </article>
+  </section>
 
+  <section>
+    <div class="sec-h"><span class="num">02</span><h2>개발 중</h2></div>
+    <!-- 아직 만들고 있는 활동. 다 만들면 이 article을 01 활동으로 옮기고 입장 링크를 넣으면 됩니다 -->
     <article class="feature soon">
       <div class="shot"><img src="img/war.webp" alt="2030 현대문학사 데이터 점령전 첫 화면: 연도별 기록실이 이어진 데이터센터 맵" width="1000" height="600"></div>
       <div class="info">
-        <div class="tags"><span class="tag hot">점령전</span><span class="tag">현대문학사</span><span class="tag">팀 대항</span><span class="tag wip">제작 중</span></div>
+        <div class="tags"><span class="tag hot">점령전</span><span class="tag">현대문학사</span><span class="tag">팀 대항</span></div>
         <h3>2030 현대문학사 데이터 점령전</h3>
         <p>2030년 데이터센터의 기록 복원 요원이 되어 1920~1950년대 기록실을 돌아다니며 작가와 작품, 시대의 키워드를 이어 붙입니다. 청팀과 홍팀으로 나뉘어 시대를 점령하고, 상대 팀의 복원은 방해해요.</p>
         <div class="facts">
@@ -236,11 +235,6 @@ footer .fm svg{color:var(--accent)}
         </div>
       </div>
     </article>
-  </section>
-
-  <section>
-    <div class="sec-h"><span class="num">02</span><h2>다음 활동</h2></div>
-    <div class="ghost"><svg viewBox="0 0 104 80" aria-hidden="true"><rect x="0" y="4" width="104" height="26"/><rect x="78" y="4" width="26" height="76"/></svg><span>새 활동을 준비하고 있어요.</span></div>
   </section>
 
   <footer>
