@@ -105,6 +105,11 @@ section{padding:72px 0 8px}
 .step h4{margin:0 0 6px;font-size:18px;font-weight:700;letter-spacing:-.03em}
 .step p{margin:0;color:var(--mute);font-size:15px}
 
+.feature+.feature{margin-top:24px}
+.tag.wip{background:none;border:1px dashed var(--accent)}
+.feature.soon .shot img{image-rendering:auto;object-position:left top}
+.info .btn.off{border-style:dashed;color:var(--mute);cursor:default;transform:none}
+
 /* ===== 다음 활동 ===== */
 .ghost{border:1.5px dashed var(--tint2);border-radius:22px;padding:24px 26px;color:var(--mute);display:flex;align-items:center;gap:16px}
 .ghost svg{flex:none;width:44px;height:44px}
@@ -202,6 +207,32 @@ footer .fm svg{color:var(--accent)}
           <div class="step"><h4>교실 TV를 엽니다</h4><p>TV 화면에서 방 번호를 정하면 학생 입장 QR이 나와요.</p></div>
           <div class="step"><h4>모둠이 QR로 들어옵니다</h4><p>모둠마다 기기 하나로 입장해 함께 문제를 풀어요.</p></div>
           <div class="step"><h4>TV로 함께 지켜봅니다</h4><p>모둠별 단계·남은 시간·의심도가 실시간으로 올라오고, 학생이 쓴 글을 TV에서 바로 판정해요.</p></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="feature soon">
+      <div class="shot"><img src="img/war.webp" alt="2030 현대문학사 데이터 점령전 첫 화면: 연도별 기록실이 이어진 데이터센터 맵" width="1000" height="600"></div>
+      <div class="info">
+        <div class="tags"><span class="tag hot">점령전</span><span class="tag">현대문학사</span><span class="tag">팀 대항</span><span class="tag wip">제작 중</span></div>
+        <h3>2030 현대문학사 데이터 점령전</h3>
+        <p>2030년 데이터센터의 기록 복원 요원이 되어 1920~1950년대 기록실을 돌아다니며 작가와 작품, 시대의 키워드를 이어 붙입니다. 청팀과 홍팀으로 나뉘어 시대를 점령하고, 상대 팀의 복원은 방해해요.</p>
+        <div class="facts">
+          <div class="fact"><b>30명</b><small>한 방에 동시에</small></div>
+          <div class="fact"><b>청·홍</b><small>두 팀 대항</small></div>
+          <div class="fact"><b>4시대</b><small>1920~1950년대</small></div>
+        </div>
+        <button class="howbtn" type="button" aria-expanded="false" aria-controls="how-war">진행 방법 보기 <i>▾</i></button>
+        <div class="cta">
+          <span class="btn off" aria-disabled="true">곧 열려요</span>
+        </div>
+      </div>
+      <div class="how" id="how-war" hidden>
+        <h4 class="ttl">진행 방법</h4>
+        <div class="steps">
+          <div class="step"><h4>같은 방 코드로 입장합니다</h4><p>입장한 순서대로 청팀과 홍팀으로 나뉘고, 학생마다 자기 기록실을 하나씩 받아요.</p></div>
+          <div class="step"><h4>시대별 단말기를 복구합니다</h4><p>1920~1950년대 기록실의 단말기에서 작가↔작품 배선, 시대 키워드 맞추기 미션을 풀어 우리 팀 점수를 올려요.</p></div>
+          <div class="step"><h4>방해하고, 막아 냅니다</h4><p>미션을 쌓으면 상대 기록실을 막는 사보타주권과 실시간 공격권이 생겨요. 막힌 곳은 작품을 발표 순서대로 놓아 수리해요.</p></div>
         </div>
       </div>
     </article>
