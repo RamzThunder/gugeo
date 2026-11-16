@@ -41,8 +41,9 @@ nav a:hover{color:var(--ink)}
 .hero::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;
   background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:44px 44px;
   mask-image:radial-gradient(ellipse at 70% 30%,#000 10%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at 70% 30%,#000 10%,transparent 70%)}
-.wordmark{display:block;width:min(100%,760px);height:auto;margin:0 0 18px}
-.wordmark{color:#fff}
+.wordmark{display:block;width:min(100%,520px);height:auto;margin:0 0 22px;cursor:pointer;outline:none}
+.wordmark rect{fill:#fff}
+
 .under{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:clamp(36px,6vw,64px)}
 .domain{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:clamp(15px,2vw,20px);background:#fff;color:var(--blue);padding:4px 12px;border-radius:8px;font-weight:700;letter-spacing:.01em}
 .under .read{font-size:clamp(15px,1.8vw,18px);color:rgba(255,255,255,.75)}
@@ -146,7 +147,7 @@ footer .fm svg{color:var(--accent)}
   </header>
 
   <div class="hero">
-    <svg class="wordmark" viewBox="0 0 412 80" role="img" aria-label="구거"><use href="#gugeo"/></svg>
+    <svg class="wordmark" id="wm" viewBox="0 0 412 200" role="img" aria-label="구거" tabindex="0"><title>구거 (누르면 다시 모여요)</title><rect x="0" y="64" width="104" height="26" data-a="0,64,104,26" data-b="16,10,164,26" data-j="0"/><rect x="78" y="64" width="26" height="76" data-a="78,64,26,76" data-b="154,10,26,82" data-j="0"/><rect x="116" y="80" width="96" height="26" data-a="116,80,96,26" data-b="0,112,196,26" data-j="1"/><rect x="151" y="106" width="26" height="34" data-a="151,106,26,34" data-b="85,138,26,62" data-j="1"/><rect x="222" y="64" width="110" height="26" data-a="222,64,110,26" data-b="216,30,114,26" data-j="2"/><rect x="306" y="64" width="26" height="76" data-a="306,64,26,76" data-b="304,30,26,150" data-j="2"/><rect x="386" y="60" width="26" height="80" data-a="386,60,26,80" data-b="386,0,26,200" data-j="3"/><rect x="344" y="87" width="42" height="26" data-a="344,87,42,26" data-b="344,87,42,26" data-j="3"/></svg>
     <div class="under"><span class="domain">gugeo.party</span><span class="read">‘국어’를 그대로 읽으면, 구거.</span></div>
     <div class="hero-row">
       <p class="lead">읽고, 쓰고, 풀고, <span>탈출하는</span> 국어 시간.<br>모둠이 함께 움직이는 수업 활동을 모아 둡니다.</p>
@@ -207,5 +208,31 @@ footer .fm svg{color:var(--accent)}
     <span>수업 시간에 함께 쓰는 국어 활동</span>
   </footer>
 </div>
+<script>
+/* ㄱㅜㄱㅓ(파비콘처럼 풀어쓴 자모)가 움직여 '구거'로 모임. 누르면 다시 흩어졌다 모임.
+   rect마다 data-a = 풀어쓴 자리, data-b = 모인 자리 (x,y,너비,높이), data-j = 몇 번째 자모 */
+(function(){
+  const svg=document.getElementById("wm"); if(!svg) return;
+  const R=[...svg.querySelectorAll("rect")].map(r=>({el:r,a:r.dataset.a.split(",").map(Number),b:r.dataset.b.split(",").map(Number),j:+r.dataset.j}));
+  const put=(r,v)=>{ r.el.setAttribute("x",v[0]); r.el.setAttribute("y",v[1]); r.el.setAttribute("width",v[2]); r.el.setAttribute("height",v[3]); };
+  const ease=t=>{ const c=1.4; t-=1; return 1+(c+1)*t*t*t+c*t*t; };   // 살짝 지나쳤다 돌아오는 움직임
+  const calm=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let busy=false, joined=false;
+  const run=(from,to,delay,done)=>{
+    const D=900, gap=110, t0=performance.now()+delay;
+    const step=now=>{ let all=true;
+      R.forEach(r=>{ let t=(now-t0-r.j*gap)/D; t=Math.max(0,Math.min(1,t)); if(t<1) all=false;
+        const k=from==="a"?ease(t):1-Math.pow(1-t,3);
+        put(r,r[from].map((v,i)=>v+(r[to][i]-v)*k)); });
+      if(all){ done&&done(); } else requestAnimationFrame(step); };
+    requestAnimationFrame(step); };
+  const join=d=>{ busy=true; run("a","b",d,()=>{busy=false;joined=true;}); };
+  if(calm){ R.forEach(r=>put(r,r.b)); joined=true; }
+  else join(700);
+  const again=()=>{ if(busy||calm) return; busy=true; run("b","a",0,()=>{ joined=false; join(350); }); };
+  svg.addEventListener("click",again);
+  svg.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); again(); } });
+})();
+</script>
 </body>
 </html>
