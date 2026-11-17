@@ -5,139 +5,165 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>구거 · gugeo.party</title>
 <meta name="description" content="읽고, 쓰고, 풀고, 탈출하는 국어 수업 활동 모음">
-<meta name="theme-color" content="#002b96">
+<meta name="theme-color" content="#0e100f">
+<meta name="color-scheme" content="dark">
 <meta property="og:title" content="구거 · gugeo.party">
 <meta property="og:description" content="읽고, 쓰고, 풀고, 탈출하는 국어 수업 활동 모음">
 <meta property="og:image" content="https://gugeo.party/icon-512.png">
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
-/* ===== 색: 파비콘의 파란색(#002b96)이 테마 색 ===== */
+/* ===== 색: 검은 칠판 + 크림색 분필 + 활동 갈래마다 형광펜 한 색 =====
+   읽고=분홍, 쓰고=보라, 풀고=파랑, 탈출=주황, 들어가기(주 버튼)=초록 */
 :root{
-  --blue:#002b96; --blue2:#1a45b3; --sky:#7c93ca; --tint:#e6ecf8; --tint2:#d3ddf3;
-  --bg:#f6f8fc; --card:#ffffff; --ink:#0b1533; --mute:#5b6683; --line:#dfe5f1; --shadow:rgba(0,43,150,.14);
-  --accent:var(--blue); --on-accent:#fff;
-}
-@media (prefers-color-scheme:dark){
-  :root{ --tint:#16204a; --tint2:#1c2a5e; --bg:#080d1d; --card:#0f1630; --ink:#e9edf8; --mute:#9aa6c4; --line:#1f2a4d; --shadow:rgba(0,0,0,.5);
-    --accent:#9fb3ea; --on-accent:#081033; }
+  --bg:#0e100f; --panel:#191919; --cream:#fffce1; --mute:#7c7c6f; --line:#42433d;
+  --green:#0ae448; --green2:#abff84; --grad:linear-gradient(114.41deg,#0ae448 20.74%,#abff84 65.5%);
+  --orange:#ff8709; --pink:#fec5fb; --lilac:#9d95ff; --blue:#00bae2; --lipstick:#f100cb;
+  --c:var(--green);
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.65;letter-spacing:-.01em;word-break:keep-all;overflow-wrap:anywhere}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--cream);font-family:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:19px;line-height:1.5;letter-spacing:-.01em;word-break:keep-all;overflow-wrap:anywhere;overflow-x:hidden}
 a{color:inherit}
-.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+::selection{background:var(--cream);color:var(--bg)}
+.wrap{max-width:1280px;margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+
+/* ===== 중괄호 머리말: 모든 구역은 { } 로 시작 ===== */
+.brace{display:inline-block;font-size:17px;font-weight:400;color:var(--cream);letter-spacing:0}
+.brace::before{content:"{ "}.brace::after{content:" }"}
+
+/* ===== 테두리만 있는 알약 버튼 ===== */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:15px 24px;border-radius:100px;text-decoration:none;font-size:17px;font-weight:600;line-height:1.05;color:var(--cream);background:transparent;border:1px solid var(--cream);transition:color .2s ease,border-color .2s ease}
+.btn:hover{color:var(--c);border-color:var(--c)}
+/* 주 버튼: 초록 그라데이션 테두리 (색이 있는 유일한 버튼) */
+.btn.go{border:1.5px solid transparent;background:linear-gradient(var(--bg),var(--bg)) padding-box,var(--grad) border-box}
+.btn.go:hover{color:var(--green2)}
+.btn.off{border-style:dashed;border-color:var(--line);color:var(--mute);cursor:default}
+.btn.off:hover{color:var(--mute);border-color:var(--line)}
+.btn i{font-style:normal;transition:transform .2s ease}
+.btn:hover i{transform:translateX(3px)}
 
 /* ===== 위쪽 줄 ===== */
-header{display:flex;align-items:center;justify-content:space-between;padding:20px 0}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;font-size:17px}
-.logo img{width:32px;height:32px;display:block}
-.logo small{color:var(--mute);font-weight:500;font-size:14px}
-nav a{text-decoration:none;color:var(--mute);font-size:15px;font-weight:500;margin-left:20px}
-nav a:hover{color:var(--ink)}
+header{display:flex;align-items:center;justify-content:space-between;padding:22px 0;position:relative;z-index:2}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-size:16px;font-weight:600}
+.logo svg{width:58px;height:auto;display:block}
+.logo small{color:var(--mute);font-weight:400;font-size:15px}
+nav{display:flex;gap:6px}
+nav a{text-decoration:none;font-size:16px;padding:10px 14px;color:var(--cream)}
+nav a.k-esc{color:var(--orange)}
+nav a.k-solve{color:var(--blue)}
+nav a:hover{text-decoration:underline;text-underline-offset:5px}
 
-/* ===== 첫 화면: 파비콘처럼 파란 둥근 판 + 하얀 ㄱㅜㄱㅓ ===== */
-.hero{position:relative;background:var(--blue);color:#fff;border-radius:clamp(28px,5vw,56px);padding:clamp(40px,7vw,88px) clamp(24px,6vw,80px) clamp(32px,5vw,56px);overflow:hidden;isolation:isolate}
-.hero::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;
-  background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:44px 44px;
-  mask-image:radial-gradient(ellipse at 70% 30%,#000 10%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at 70% 30%,#000 10%,transparent 70%)}
-.wordmark{display:block;width:min(100%,460px);height:auto;margin:0 0 26px;overflow:visible}
+/* ===== 첫 화면: 아주 큰 '구거' + 겹쳐 떠 있는 둥근 덩어리 ===== */
+.hero{position:relative;padding:clamp(28px,6vw,72px) 0 clamp(40px,6vw,76px);isolation:isolate}
+.wordmark{display:block;width:clamp(260px,72vw,980px);height:auto;margin-left:clamp(-18px,-1.5vw,-6px);overflow:visible}
+.blob{position:absolute;z-index:-1;pointer-events:none;border-radius:58% 42% 55% 45%/48% 56% 44% 52%}
+.blob.b1{width:clamp(180px,34vw,460px);aspect-ratio:1;right:clamp(-60px,-2vw,0px);top:clamp(10px,2vw,30px);
+  background:radial-gradient(circle at 34% 30%,#fff3fd 0%,var(--pink) 22%,#c99af0 48%,var(--blue) 82%,#0089a8 100%);animation:float1 11s ease-in-out infinite}
+.blob.b2{width:clamp(110px,17vw,230px);aspect-ratio:1.25;left:clamp(30%,38vw,46%);top:clamp(120px,24vw,330px);border-radius:999px;transform:rotate(-24deg);
+  background:radial-gradient(ellipse at 30% 30%,#ffe2b0 0%,#ffb347 30%,var(--orange) 62%,#c94f00 100%);animation:float2 9s ease-in-out infinite}
+.blob.b3{width:clamp(60px,8vw,110px);aspect-ratio:1;left:clamp(56%,64vw,70%);top:clamp(30px,4vw,60px);border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#e9e6ff 0%,var(--lilac) 45%,#5a4fe0 100%);animation:float1 13s ease-in-out infinite reverse}
+@keyframes float1{0%,100%{translate:0 0;rotate:0deg}50%{translate:0 -18px;rotate:6deg}}
+@keyframes float2{0%,100%{translate:0 0}50%{translate:14px -12px}}
 
-.under{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:clamp(36px,6vw,64px)}
-.domain{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:clamp(15px,2vw,20px);background:#fff;color:var(--blue);padding:4px 12px;border-radius:8px;font-weight:700;letter-spacing:.01em}
-.under .read{font-size:clamp(15px,1.8vw,18px);color:rgba(255,255,255,.75)}
-.hero-row{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;flex-wrap:wrap}
-.lead{font-size:clamp(19px,2.4vw,26px);font-weight:600;line-height:1.5;margin:0;max-width:560px;letter-spacing:-.02em}
-.lead span{color:#b9c8f0}
-.cta{display:flex;gap:10px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:14px;text-decoration:none;font-size:16px;font-weight:600;border:1.5px solid currentColor;transition:transform .15s ease,background .15s ease,color .15s ease}
-.btn:hover{transform:translateY(-2px)}
-.hero .btn{color:#fff}
-.hero .btn.solid{background:#fff;color:var(--blue);border-color:#fff}
-.hero .btn:not(.solid):hover{background:rgba(255,255,255,.12)}
-@media (prefers-reduced-motion:reduce){.btn{transition:none}.btn:hover{transform:none}}
+.hero-row{display:grid;grid-template-columns:minmax(0,1.3fr) auto;align-items:end;gap:28px 40px;margin-top:clamp(28px,5vw,56px)}
+.lead{margin:14px 0 0;font-size:clamp(26px,3.6vw,44px);font-weight:600;line-height:1.2;letter-spacing:-.025em}
+.lead .k-read{color:var(--pink)}.lead .k-write{color:var(--lilac)}.lead .k-solve{color:var(--blue)}.lead .k-esc{color:var(--orange)}
+.lead small{display:block;margin-top:14px;font-size:clamp(17px,1.8vw,21px);font-weight:400;line-height:1.45;color:var(--mute);letter-spacing:-.01em}
+.domain{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;color:var(--mute);font-size:15px;margin-top:20px}
 
 /* ===== 구거 사전 띠 ===== */
-.dict{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px 28px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px 28px;margin:20px 0 0}
-.dict .word{font-size:30px;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--accent)}
-.dict .word sup{font-size:13px;margin-left:2px}
-.dict .word small{display:block;font-size:13px;font-weight:500;color:var(--mute);letter-spacing:0;margin-top:6px}
-.dict ol{margin:0;padding:0;list-style:none;display:grid;gap:4px;font-size:16px}
-.dict li b{color:var(--accent);margin-right:6px}
+.dict{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px 40px;align-items:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:28px 0}
+.dict .word{font-size:44px;font-weight:600;letter-spacing:-.03em;line-height:1}
+.dict .word sup{font-size:15px;margin-left:2px;color:var(--mute)}
+.dict .word small{display:block;font-size:14px;font-weight:400;color:var(--mute);letter-spacing:0;margin-top:8px}
+.dict ol{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:18px}
+.dict li b{color:var(--green2);font-weight:600;margin-right:8px}
 .dict li em{font-style:normal;color:var(--mute)}
-.dict .pos{font-size:13px;color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:2px 8px;white-space:nowrap}
+.dict .pos{font-size:14px;color:var(--cream);border:1px solid var(--line);border-radius:100px;padding:6px 14px;white-space:nowrap}
 
-/* ===== 구역 제목 ===== */
-section{padding:72px 0 8px}
-.sec-h{display:flex;align-items:baseline;gap:14px;margin-bottom:24px}
-.sec-h .num{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:14px;color:var(--on-accent);background:var(--accent);border-radius:6px;padding:1px 8px}
-.sec-h h2{font-size:30px;font-weight:800;margin:0;letter-spacing:-.04em}
+/* ===== 구역 ===== */
+section{padding:clamp(76px,9vw,108px) 0 0}
+.sec-h{display:grid;gap:14px;margin-bottom:clamp(32px,4vw,52px)}
+.sec-h h2{margin:0;font-size:clamp(44px,7vw,101px);font-weight:600;line-height:1;letter-spacing:-.035em}
+.sec-h h2 span{color:var(--mute)}
 
-/* ===== 대표 활동 ===== */
-.feature{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);background:var(--card);border:1px solid var(--line);border-radius:28px;overflow:hidden;box-shadow:0 18px 40px -18px var(--shadow)}
-.shot{position:relative;min-height:320px;background:#0e0f14}
-.shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
-.info{padding:32px 32px 30px;display:flex;flex-direction:column;gap:14px}
+/* ===== 활동 한 줄: 왼쪽 그림, 오른쪽 갈래 색 이름 + 제목 + 설명 + 버튼 =====
+   article에 style="--c:var(--orange)"처럼 갈래 색을 줍니다 */
+.feature{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(24px,4vw,64px);padding:clamp(32px,4vw,48px) 0;border-top:1px solid var(--line);cursor:pointer}
+.feature:last-of-type{border-bottom:1px solid var(--line)}
+.shot{position:relative;align-self:start;aspect-ratio:5/3;border-radius:8px;overflow:visible;isolation:isolate}
+.shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px;image-rendering:pixelated;background:var(--panel)}
+.shot::after{content:"";position:absolute;z-index:1;width:clamp(70px,10vw,130px);aspect-ratio:1;right:clamp(-28px,-2vw,-14px);bottom:clamp(-28px,-2vw,-14px);border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#fff 0%,color-mix(in srgb,var(--c) 55%,#fff) 18%,var(--c) 58%,color-mix(in srgb,var(--c) 60%,#000) 100%);transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
+.feature:hover .shot::after{transform:translate(-8px,-8px) scale(1.08)}
+.info{display:flex;flex-direction:column;gap:18px}
+.kind{font-size:21px;color:var(--c);line-height:1}
+.info h3{margin:0;font-size:clamp(34px,3.6vw,44px);font-weight:600;line-height:1.15;letter-spacing:-.03em}
+.info p{margin:0;font-size:clamp(18px,1.7vw,21px);line-height:1.5;color:var(--cream);opacity:.86}
 .tags{display:flex;gap:6px;flex-wrap:wrap}
-.tag{font-size:13px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--tint);color:var(--accent)}
-.tag.hot{background:var(--blue);color:#fff}
-.info h3{font-size:32px;font-weight:800;line-height:1.25;margin:0;letter-spacing:-.04em}
-.info p{margin:0;color:var(--mute)}
-.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:4px 0}
-.fact{border-radius:14px;padding:12px 14px;background:var(--tint)}
-.fact b{display:block;font-size:20px;font-weight:800;letter-spacing:-.03em;color:var(--accent)}
-.fact small{color:var(--mute);font-size:13px}
-.info .cta{margin-top:auto}
-.info .btn{color:var(--ink);border-color:var(--line)}
-.info .btn.solid{background:var(--blue);border-color:var(--blue);color:#fff}
-.info .btn:not(.solid):hover{border-color:var(--accent);color:var(--accent)}
+.tag{font-size:14px;padding:5px 12px;border-radius:100px;border:1px solid var(--line);color:var(--mute)}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line);margin:4px 0}
+.fact{padding:16px 12px 0 0}
+.fact+.fact{padding-left:16px;border-left:1px solid var(--line)}
+.fact b{display:block;font-size:clamp(22px,2.4vw,32px);font-weight:600;letter-spacing:-.03em;line-height:1.1}
+.fact small{color:var(--mute);font-size:14px}
+.cta{display:flex;gap:10px;flex-wrap:wrap}
+.info .cta{margin-top:6px}
 
-/* ===== 활동 카드를 누르면 펼쳐지는 진행 방법 ===== */
-.feature{cursor:pointer}
-.howbtn{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;background:none;border:0;padding:2px 0;font:inherit;font-size:15px;font-weight:600;color:var(--accent);cursor:pointer}
-.howbtn i{font-style:normal;display:inline-block;transition:transform .2s ease}
+/* ===== 카드를 누르면 펼쳐지는 진행 방법 ===== */
+.howbtn{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;background:none;border:0;padding:4px 0;font:inherit;font-size:16px;color:var(--c);cursor:pointer}
+.howbtn i{font-style:normal;display:inline-block;transition:transform .25s ease}
 .feature.open .howbtn i{transform:rotate(180deg)}
-.how{grid-column:1/-1;border-top:1px solid var(--line);padding:26px 32px 30px;background:var(--bg);cursor:default}
-.how h4.ttl{margin:0 0 14px;font-size:18px;font-weight:800;letter-spacing:-.03em}
-.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;counter-reset:s}
-.step{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px}
-.step::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--blue);color:#fff;font-weight:800;margin-bottom:14px}
-.step h4{margin:0 0 6px;font-size:18px;font-weight:700;letter-spacing:-.03em}
-.step p{margin:0;color:var(--mute);font-size:15px}
+.how{grid-column:1/-1;cursor:default;padding-top:8px}
+.how h4.ttl{margin:0 0 18px;font-size:17px;font-weight:400}
+.how h4.ttl::before{content:"{ "}.how h4.ttl::after{content:" }"}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;counter-reset:s}
+.step{background:var(--panel);border-radius:8px;padding:24px}
+.step::before{counter-increment:s;content:"0" counter(s);display:block;font-size:44px;font-weight:600;line-height:1;letter-spacing:-.03em;color:var(--c);margin-bottom:18px}
+.step h4{margin:0 0 8px;font-size:21px;font-weight:600;letter-spacing:-.02em;line-height:1.3}
+.step p{margin:0;color:var(--mute);font-size:16px;line-height:1.5}
+.how:not([hidden]) .step{animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
+.how .step:nth-child(2){animation-delay:.06s}.how .step:nth-child(3){animation-delay:.12s}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}}
 
-.feature+.feature{margin-top:24px}
 .feature.soon .shot img{image-rendering:auto;object-position:left top}
-.info .btn.off{border-style:dashed;color:var(--mute);cursor:default;transform:none}
 
+/* ===== 맨 아래 ===== */
+footer{margin-top:clamp(96px,10vw,140px);background:var(--panel);border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;padding-top:clamp(56px,7vw,80px);padding-bottom:clamp(56px,7vw,80px)}
+footer .fm svg{width:clamp(140px,22vw,240px);height:auto;display:block;color:var(--cream)}
+footer .fm .domain{margin-top:14px}
+footer .right{display:grid;gap:8px;text-align:right;font-size:16px;color:var(--mute)}
+footer .right a{text-decoration:none;color:var(--cream)}
+footer .right a:hover{color:var(--green2)}
 
-footer{margin-top:72px;border-top:1px solid var(--line);padding:26px 0 44px;color:var(--mute);font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-footer .fm{display:flex;align-items:center;gap:8px}
-footer .fm svg{width:64px;height:auto}
-footer .fm svg{color:var(--accent)}
+:focus-visible{outline:2px solid var(--green2);outline-offset:3px;border-radius:4px}
 
 /* ===== 좁은 화면 ===== */
 @media (max-width:860px){
+  .hero-row{grid-template-columns:minmax(0,1fr)}
   .feature{grid-template-columns:minmax(0,1fr)}
-  .shot{min-height:0;aspect-ratio:5/3}
   .steps{grid-template-columns:minmax(0,1fr)}
-  .how{padding:22px 18px 24px}
-  .dict{grid-template-columns:minmax(0,1fr);gap:12px;padding:20px 22px}
+  .dict{grid-template-columns:minmax(0,1fr);gap:14px}
   .dict .pos{justify-self:start}
   nav a:not(:last-child){display:none}
+  footer .right{text-align:left}
 }
 @media (max-width:420px){
-  .wrap{padding:0 16px}
-  .info{padding:22px 18px}
-  .info h3{font-size:26px}
-  .fact{padding:10px}
-  .fact b{font-size:16px}
-  .fact small{font-size:12px}
-  .sec-h h2{font-size:26px}
+  .facts .fact{padding-right:6px}
+  .fact+.fact{padding-left:10px}
+  .fact small{font-size:13px}
+  .btn{padding:14px 20px;font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
 }
 </style>
 </head>
 <body>
-<!-- 하얀 ㄱㅜㄱㅓ 글자: 파비콘의 획 비율을 그대로 옮긴 그림 (여러 곳에서 다시 씀) -->
+<!-- ㄱㅜㄱㅓ 글자: 파비콘의 획 비율을 그대로 옮긴 그림 (위쪽 줄·맨 아래에서 다시 씀) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="gugeo" viewBox="0 0 412 80">
     <rect fill="currentColor" x="0" y="4" width="104" height="26"/><rect fill="currentColor" x="78" y="4" width="26" height="76"/>
@@ -148,20 +174,27 @@ footer .fm svg{color:var(--accent)}
 </svg>
 <div class="wrap">
   <header>
-    <a class="logo" href="/"><img src="favicon-32.png" srcset="icon-192.png 2x" alt="" width="32" height="32">구거 <small>gugeo.party</small></a>
-    <nav><a href="#activities">활동</a></nav>
+    <a class="logo" href="/" aria-label="구거 첫 페이지"><svg viewBox="0 0 412 80" aria-hidden="true"><use href="#gugeo"/></svg><small>gugeo.party</small></a>
+    <nav><a class="k-esc" href="#activities">활동</a><a class="k-solve" href="#soon">개발 중</a></nav>
   </header>
 
   <div class="hero">
-    <svg class="wordmark" viewBox="0 0 400 200" role="img" aria-label="구거" fill="none" stroke="#fff" stroke-width="34" stroke-linejoin="miter">
+    <span class="blob b1" aria-hidden="true"></span>
+    <span class="blob b2" aria-hidden="true"></span>
+    <span class="blob b3" aria-hidden="true"></span>
+    <svg class="wordmark" viewBox="0 0 400 200" role="img" aria-label="구거" fill="none" stroke="#fffce1" stroke-width="34" stroke-linejoin="miter">
       <path d="M24 30 H172 V98"/><path d="M4 132 H196"/><path d="M100 132 V200"/>
       <path d="M212 46 H294 V188"/><path d="M370 0 V200"/><path d="M328 110 H370"/>
     </svg>
-    <div class="under"><span class="domain">gugeo.party</span><span class="read">‘국어’를 그대로 읽으면, 구거.</span></div>
     <div class="hero-row">
-      <p class="lead">읽고, 쓰고, 풀고, <span>탈출하는</span> 국어 시간.<br>모둠이 함께 움직이는 수업 활동을 모아 둡니다.</p>
+      <div>
+        <span class="brace">‘국어’를 그대로 읽으면, 구거</span>
+        <p class="lead"><span class="k-read">읽고</span>, <span class="k-write">쓰고</span>, <span class="k-solve">풀고</span>, <span class="k-esc">탈출하는</span> 국어 시간.
+          <small>모둠이 함께 움직이는 수업 활동을 모아 둡니다.</small></p>
+        <div class="domain">gugeo.party</div>
+      </div>
       <div class="cta">
-        <a class="btn solid" href="#activities">활동 보기 →</a>
+        <a class="btn go" href="#activities">활동 보기 <i>→</i></a>
       </div>
     </div>
   </div>
@@ -176,14 +209,16 @@ footer .fm svg{color:var(--accent)}
   </div>
 
   <section id="activities">
-    <div class="sec-h"><span class="num">01</span><h2>활동</h2></div>
-    <!-- 대표 활동. 새 활동을 더할 때는 이 article을 복사해서 고치면 됩니다 -->
-    <article class="feature">
+    <div class="sec-h"><span class="brace">01 · 지금 할 수 있는</span><h2>활동</h2></div>
+    <!-- 대표 활동. 새 활동을 더할 때는 이 article을 복사해서 고치면 됩니다.
+         --c 는 갈래 색: 읽기 var(--pink) · 쓰기 var(--lilac) · 풀기 var(--blue) · 탈출 var(--orange) -->
+    <article class="feature" style="--c:var(--orange)">
       <div class="shot"><img src="img/gate.webp" alt="밤의 검열국 건물 입구 그림" width="800" height="480"></div>
       <div class="info">
-        <div class="tags"><span class="tag hot">방탈출</span><span class="tag">일제강점기 문학</span><span class="tag">모둠 활동</span></div>
+        <span class="kind">방탈출</span>
         <h3>검열국을 탈출하라</h3>
         <p>검열관으로 위장해 도서과에 잠입한 독립운동가가 되어, 중요한 메시지를 ‘시’로 위장해 검열을 통과시키고 빠져나옵니다. 시대 배경과 상징·표현 방식을 활동으로 익혀요.</p>
+        <div class="tags"><span class="tag">일제강점기 문학</span><span class="tag">모둠 활동</span></div>
         <div class="facts">
           <div class="fact"><b>20분</b><small>기본 제한 시간</small></div>
           <div class="fact"><b>8모둠</b><small>한 방에 동시에</small></div>
@@ -191,7 +226,7 @@ footer .fm svg{color:var(--accent)}
         </div>
         <button class="howbtn" type="button" aria-expanded="false" aria-controls="how-censor">진행 방법 보기 <i>▾</i></button>
         <div class="cta">
-          <a class="btn solid" href="https://censor.gugeo.party/game/">학생 입장</a>
+          <a class="btn go" href="https://censor.gugeo.party/game/">학생 입장 <i>→</i></a>
           <a class="btn" href="https://censor.gugeo.party/tv/">교실 TV 열기</a>
         </div>
       </div>
@@ -207,15 +242,16 @@ footer .fm svg{color:var(--accent)}
     </article>
   </section>
 
-  <section>
-    <div class="sec-h"><span class="num">02</span><h2>개발 중</h2></div>
+  <section id="soon">
+    <div class="sec-h"><span class="brace">02 · 만들고 있는</span><h2>개발 중</h2></div>
     <!-- 아직 만들고 있는 활동. 다 만들면 이 article을 01 활동으로 옮기고 입장 링크를 넣으면 됩니다 -->
-    <article class="feature soon">
+    <article class="feature soon" style="--c:var(--blue)">
       <div class="shot"><img src="img/war.webp" alt="2030 현대문학사 데이터 점령전 첫 화면: 연도별 기록실이 이어진 데이터센터 맵" width="1000" height="600"></div>
       <div class="info">
-        <div class="tags"><span class="tag hot">점령전</span><span class="tag">현대문학사</span><span class="tag">팀 대항</span></div>
+        <span class="kind">점령전</span>
         <h3>2030 현대문학사 데이터 점령전</h3>
         <p>2030년 데이터센터의 기록 복원 요원이 되어 1920~1950년대 기록실을 돌아다니며 작가와 작품, 시대의 키워드를 이어 붙입니다. 청팀과 홍팀으로 나뉘어 시대를 점령하고, 상대 팀의 복원은 방해해요.</p>
+        <div class="tags"><span class="tag">현대문학사</span><span class="tag">팀 대항</span></div>
         <div class="facts">
           <div class="fact"><b>30명</b><small>한 방에 동시에</small></div>
           <div class="fact"><b>청·홍</b><small>두 팀 대항</small></div>
@@ -236,12 +272,18 @@ footer .fm svg{color:var(--accent)}
       </div>
     </article>
   </section>
-
-  <footer>
-    <span class="fm"><svg viewBox="0 0 412 80" role="img" aria-label="구거"><use href="#gugeo"/></svg> gugeo.party</span>
-    <span>수업 시간에 함께 쓰는 국어 활동</span>
-  </footer>
 </div>
+
+<footer>
+  <div class="wrap">
+    <div class="fm"><svg viewBox="0 0 412 80" role="img" aria-label="구거"><use href="#gugeo"/></svg><div class="domain">gugeo.party</div></div>
+    <div class="right">
+      <span class="brace">수업 시간에 함께 쓰는 국어 활동</span>
+      <a href="#activities">활동</a>
+      <a href="#soon">개발 중</a>
+    </div>
+  </div>
+</footer>
 <script>
 /* 활동 카드를 누르면 진행 방법이 펼쳐지고 접힘 (링크·버튼을 누른 건 그대로 둠) */
 document.querySelectorAll(".feature").forEach(card=>{
