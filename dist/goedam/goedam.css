@@ -329,3 +329,6 @@ footer a{text-decoration:none}
 /* 내 부서(성향 테스트 결과) 표시 */
 .pick.mine{border-color:var(--red);box-shadow:0 0 0 1px var(--red)}
 .pick.mine b::after{content:"내 부서";margin-left:8px;padding:1px 7px;border-radius:999px;background:var(--red-deep);color:#fff;font-size:11px;font-weight:700;vertical-align:3px}
+.qz-screen:focus{outline:none}
+.qz-opt.flip{animation:qz-flip .28s steps(2) 1;background:#7d0a10;color:#ffd5d5;letter-spacing:.08em;text-shadow:-1px 0 rgba(255,36,72,.7),1px 0 rgba(34,170,255,.6)}
+@keyframes qz-flip{0%{transform:translateX(-3px)}50%{transform:translateX(3px)}100%{transform:none}}
