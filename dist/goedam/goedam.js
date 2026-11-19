@@ -89,3 +89,41 @@
   };
   setTimeout(burst,6000+Math.random()*4000);
 })();
+
+/* ep.1 성향 테스트: 한 화면에 질문 하나(또는 이야기 장면 하나). 결과 부서는 이 기기에 저장(goedam-dept: rescue|explore) */
+(function(){
+  var box=document.getElementById("quiz"), Q=window.QUIZ; if(!box||!Q) return;
+  var KEY="goedam-dept", score={e:0,r:0}, door="", i=0, qn=0;
+  var RES={
+    explore:{org:"SG 주식회사",team:"전략탐사팀",body:'<p class="qz-b">괴담이 가득한 세계에 살게 된 당신.</p><p>당신은 괴담에서 다양한 아이템을 채집하여 다양한 상품을 만들어 판매하는 <em class="qz-red">회사</em>에 입사하였습니다.</p><p>이 회사에서 괴담은 <u>중요한 원료 수급처</u>입니다. 괴담 속에서 만나는 민간인들은.. 운이 좋지 않았나보네요. 어쩔 수 없죠?</p><p>당신이 알 바는 아닙니다.</p><p class="qz-b">당신의 가장 큰 목표는<br><mark>많은 아이템을 가지고<br>괴담을 성공적으로 탈출하는 것입니다.</mark></p>'},
+    rescue:{org:"재난복구지원국",team:"특수구조과",body:'<p class="qz-b">괴담이 가득한 세계에 살게 된 당신.</p><p>당신은 괴담으로 인한 인명 피해 등을 막기 위해 괴담 속에서 민간인을 구조하고, 가능하다면 괴담을 종결(없애는 것)시키는 것을 목표로 하는 <em class="qz-red">정부기관</em>에 입사하였습니다.</p><p>지진, 화재와 같은 재난에서 시민을 구해내듯, 당신은 괴담 속에서 <u>시민을 구출하는 데</u>에 사명감을 갖고 있습니다.</p><p class="qz-b">당신의 가장 큰 목표는<br><mark>가능한 많은 민간인을 구하고<br>괴담을 종결시키는 것입니다.</mark></p>'}
+  };
+  var screen=function(html,red,dark){ box.className="quiz"+(red?" red":"")+(dark?" dark":""); box.innerHTML='<div class="qz-screen">'+html+'</div>';
+    var f=box.querySelector("button"); if(f) f.focus({preventScroll:true}); scrollTo({top:0}); };
+  var show=function(){
+    if(i>=Q.length) return result();
+    var s=Q[i];
+    if(s.say){ screen('<p class="qz-say">'+s.say+'</p><button class="qz-btn" type="button">'+(s.next||"다음")+'</button>',s.red,s.dark);
+      box.querySelector("button").onclick=function(){i++;show();}; return; }
+    qn++;
+    screen('<p class="qz-no">Q'+qn+'.</p><p class="qz-q">'+s.q+'</p><div class="qz-opts">'+s.a.map(function(a,k){return '<button class="qz-opt" type="button" data-k="'+k+'">'+a[0]+'</button>'}).join("")+'</div>',s.red);
+    box.querySelectorAll(".qz-opt").forEach(function(b){ b.onclick=function(){ var t=s.a[+b.dataset.k][1];
+      if(t.indexOf("e")>=0) score.e++; if(t.indexOf("r")>=0) score.r++; if(s.door) door=t; i++; show(); }; });
+  };
+  var result=function(){
+    var d=score.e>score.r?"explore":score.r>score.e?"rescue":(door==="e"?"explore":"rescue"), R=RES[d];
+    try{localStorage.setItem(KEY,d)}catch(e){}
+    screen('<div class="qz-res-top" aria-hidden="true"></div><p class="qz-org">'+R.org+'</p><h2 class="qz-team">'+R.team+'</h2><div class="qz-body">'+R.body+'</div>'+
+      '<a class="qz-btn" href="items.html">지급물품 고르러 가기 →</a><button class="qz-again" type="button">다시 하기</button>',false);
+    box.querySelector(".qz-again").onclick=function(){ score={e:0,r:0}; door=""; i=0; qn=0; show(); };
+  };
+  document.getElementById("qz-start").onclick=show;
+})();
+
+/* 성향 테스트 결과로 정해진 부서를 목차·ep.2·ep.3의 고르기 칸에 '내 부서'로 표시 */
+(function(){
+  var d; try{d=localStorage.getItem("goedam-dept")}catch(e){} if(!d) return;
+  var name=d==="rescue"?"특수구조과":"전략탐사팀";
+  document.querySelectorAll("a.pick").forEach(function(a){ if((a.getAttribute("href")||"").indexOf(d)>=0) a.classList.add("mine"); });
+  var t=document.querySelector("[data-mydept]"); if(t) t.textContent="내 부서: "+name+" ✓";
+})();

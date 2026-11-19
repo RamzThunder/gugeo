@@ -284,3 +284,41 @@ footer a{text-decoration:none}
 .notice h2{margin:0 0 8px;font-size:15px;color:var(--soft)}
 .notice ul{margin:0;padding-left:1.1em}
 .notice li+li{margin-top:6px}
+
+/* ep.1 성향 테스트(스모어에서 옮김): 한 화면에 하나씩, 갈무리 픽셀 글꼴. 붉은 장면(.red)과 불 꺼진 장면(.dark) */
+.quiz{margin:8px 0 10px;padding:30px 22px 34px;min-height:58vh;display:flex;align-items:center;justify-content:center;border-radius:18px;
+  background:var(--card);border:1px solid var(--line);text-align:center;font-family:"Galmuri14",var(--sans);transition:background .4s,border-color .4s}
+.quiz.red{background:#170708;border-color:#4a1015}
+.quiz.dark{background:#000;border-color:#000}
+.qz-screen{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;gap:18px}
+.qz-screen p{margin:0}
+.qz-kick{font-family:"Galmuri11",var(--sans);font-size:14px;color:var(--red)}
+.qz-title{margin:0;font-family:"Galmuri11",var(--sans);font-weight:700;font-size:clamp(24px,6vw,32px);line-height:1.45;color:var(--ink)}
+.qz-lead{color:var(--soft);font-size:15px;line-height:1.8}
+.qz-no{font-family:"Galmuri11",var(--sans);font-weight:700;font-size:30px;color:#a594ff}
+.quiz.red .qz-no{color:var(--red)}
+.qz-q,.qz-say{font-size:17px;line-height:1.85;color:var(--ink)}
+.qz-red{font-style:normal;color:var(--red)}
+.qz-pa{font-family:"Galmuri11",var(--sans);font-weight:700;font-style:italic;color:#ff4d4d}
+.quiz .x{color:#ff4d4d}
+.qz-opts{width:100%;display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.qz-opt,.qz-btn{display:block;width:100%;padding:15px 18px;border-radius:999px;border:0;cursor:pointer;font:inherit;font-size:15.5px;line-height:1.65;color:#fff;text-decoration:none;
+  background:#6f5ce0;box-shadow:0 8px 22px -12px rgba(111,92,224,.9);transition:transform .12s,filter .12s}
+.quiz.red .qz-opt,.quiz.red .qz-btn{background:#b3121b;box-shadow:0 8px 22px -12px rgba(255,40,40,.8)}
+.qz-opt:hover,.qz-btn:hover{filter:brightness(1.15);transform:translateY(-1px)}
+.qz-opt:focus-visible,.qz-btn:focus-visible,.qz-again:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.qz-btn{max-width:320px;font-family:"Galmuri11",var(--sans);font-weight:700}
+.quiz.dark .qz-say{color:#9a9aa3}
+.qz-res-top{width:calc(100% + 44px);margin:-30px -22px 4px;height:110px;border-radius:18px 18px 0 0;
+  background:linear-gradient(180deg,rgba(0,0,0,.2),var(--card)),repeating-linear-gradient(90deg,#2a0608 0 38px,#450b10 38px 44px,#1a0405 44px 90px)}
+.qz-org{font-family:"Galmuri11",var(--sans);font-weight:700;font-size:18px;color:var(--ink)}
+.qz-team{margin:-6px 0 0;font-family:"Galmuri11",var(--sans);font-weight:700;font-size:clamp(30px,8vw,40px);color:var(--red)}
+.qz-body{text-align:left;font-size:15.5px;line-height:1.9;color:var(--soft);display:flex;flex-direction:column;gap:12px}
+.qz-body .qz-b{color:var(--ink);font-family:"Galmuri11",var(--sans);font-weight:700;font-size:17px}
+.qz-body u{text-underline-offset:3px}
+.qz-body mark{background:#b3121b;color:#fff;padding:0 .2em;line-height:2}
+.qz-again{background:none;border:0;color:var(--mute);font:inherit;font-size:14px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+/* 내 부서(성향 테스트 결과) 표시 */
+.pick.mine{border-color:var(--red);box-shadow:0 0 0 1px var(--red)}
+.pick.mine b::after{content:"내 부서";margin-left:8px;padding:1px 7px;border-radius:999px;background:var(--red-deep);color:#fff;font-size:11px;font-weight:700;vertical-align:3px}
