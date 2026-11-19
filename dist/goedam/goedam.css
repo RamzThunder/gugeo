@@ -225,17 +225,14 @@ footer a{text-decoration:none}
 .story .pen .x{color:#2a2a2a}
 
 /* ep.1 지급물품 고르기: PPT의 픽셀 그림 카드 여섯 장. 고른 카드에는 '지급' 도장 */
-.item-notice{margin:1.4em auto 1em;text-align:center;font-size:1em;transform:rotate(-.3deg)}
+.item-notice{margin:1.4em auto 1.4em;text-align:center;font-size:1em;transform:rotate(-.3deg)}
 .item-notice p{margin:0}
 .item-notice .item-q{margin-top:.5em;font-weight:700;font-size:1.1em}
-.item-tip{color:var(--soft);font-size:15px;margin:0 0 18px}
 .items{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
 .item{position:relative;display:flex;flex-direction:column;gap:8px;padding:16px 16px 14px;border-radius:14px;background:var(--card);border:1px solid var(--line);transition:border-color .15s,box-shadow .15s}
 .item img{display:block;width:120px;height:120px;object-fit:contain;margin:0 auto 4px;image-rendering:pixelated;filter:drop-shadow(0 6px 10px rgba(0,0,0,.6))}
 .item h3{margin:0;font-size:19px;letter-spacing:-.02em;color:var(--ink)}
 .item p{margin:0;font-size:14.5px;line-height:1.65;color:var(--soft)}
-.item .item-but{padding:8px 10px;border-radius:8px;background:rgba(179,18,27,.12);border:1px solid rgba(255,69,69,.22);color:#f1c7c7}
-.item .item-but b{color:var(--red)}
 .item-go{margin-top:auto;padding:10px 12px;border-radius:10px;border:1px solid #3a3a42;background:var(--card2);color:var(--ink);font:inherit;font-size:15px;font-weight:700;cursor:pointer}
 .item-go:hover{border-color:var(--red)}
 .item.on{border-color:var(--red);box-shadow:0 0 0 1px var(--red),0 10px 30px -12px rgba(255,69,69,.5)}
@@ -243,3 +240,43 @@ footer a{text-decoration:none}
 .item.on::after{content:"지급";position:absolute;right:12px;top:12px;padding:2px 10px;border:3px double var(--red);border-radius:6px;color:var(--red);font-weight:800;font-size:15px;letter-spacing:.2em;transform:rotate(12deg)}
 .item-mine{margin:18px 0 0;padding:14px 16px;border-radius:12px;background:var(--card2);border:1px dashed var(--red-deep);color:var(--ink);text-align:center}
 .item-mine b{color:var(--red)}
+
+/* 픽셀 글꼴 갈무리: 제목은 Galmuri11(굵게), 본문은 읽기 쉬운 Galmuri14. 실제로 쓰는 쪽에서만 받아짐 */
+@font-face{font-family:"Galmuri11";src:url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Galmuri11";src:url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Galmuri14";src:url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri14.woff2") format("woff2");font-weight:400;font-display:swap}
+.item h3{font-family:"Galmuri11",var(--sans);font-weight:700;font-size:22px;letter-spacing:0}
+.item p{font-family:"Galmuri14",var(--sans);font-size:14px;line-height:1.75;letter-spacing:0}
+.item-go{font-family:"Galmuri11",var(--sans);font-weight:700;font-size:15px}
+.item.on::after{font-family:"Galmuri11",var(--sans);font-weight:700}
+
+/* 이야기 속 지급물품 이름: 점선 밑줄만. 카드(.itm-card)는 올리거나 누를 때만 */
+.story .itm{border-bottom:1px dotted rgba(255,255,255,.45);cursor:help;outline:none}
+.story .itm:hover,.story .itm:focus-visible{border-bottom-color:var(--red);color:#fff}
+.itm-card{position:fixed;z-index:50;display:flex;gap:12px;align-items:flex-start;width:min(320px,calc(100vw - 20px));padding:12px 14px;
+  border-radius:12px;background:#121216;border:1px solid #2c2c33;box-shadow:0 14px 34px -10px rgba(0,0,0,.9);pointer-events:none}
+.itm-card[hidden]{display:none}
+.itm-card img{flex:none;width:56px;height:56px;object-fit:contain;image-rendering:pixelated}
+.itm-card b{display:block;margin-bottom:4px;font-family:"Galmuri11",var(--sans);font-weight:700;font-size:16px;color:var(--ink)}
+.itm-card p{margin:0;font-family:"Galmuri14",var(--sans);font-size:13px;line-height:1.7;color:var(--soft)}
+
+/* ep.1 근무수칙: 공문 종이 + '없는 4번' */
+.rules{margin:1.4em auto 1.2em;font-size:.95em}
+.rules-h{font-weight:700;font-size:1.2em;text-align:center;margin-bottom:.6em!important}
+.rules-lead{margin-bottom:1em!important}
+.rules-list{list-style:none;margin:0;padding:0}
+.rules-list li{margin:.45em 0;padding-left:1.6em;text-indent:-1.6em}
+.rules-list li b{display:inline-block;width:1.6em;text-indent:0}
+.rule4{position:relative;min-height:1.8em;text-indent:0!important;padding-left:0!important}
+.rule4 .g{position:absolute;left:0;top:0;opacity:0;white-space:nowrap;color:#8f1018;font-weight:700;text-shadow:-1.5px 0 rgba(255,36,72,.55),1.5px 0 rgba(34,170,255,.5)}
+.rule4 .g.enc{white-space:normal;word-break:break-all;font-family:ui-monospace,Menlo,monospace;font-size:.82em;font-weight:400;color:#3a2222;right:0}
+.rule4 .g2{left:.35em;top:.2em}
+.rule4 .g3{top:-.45em}
+.rule4 .g4{left:-1.4em;top:-.7em}
+.rule4 .g.on{opacity:1}
+
+/* 목차 맨 아래: 수행평가 첫 안내(허구·패러디·원작 연령) */
+.notice{margin-top:34px;padding:18px 20px;border-radius:14px;background:var(--card);border:1px solid var(--line);color:var(--mute);font-size:14px;line-height:1.75}
+.notice h2{margin:0 0 8px;font-size:15px;color:var(--soft)}
+.notice ul{margin:0;padding-left:1.1em}
+.notice li+li{margin-top:6px}

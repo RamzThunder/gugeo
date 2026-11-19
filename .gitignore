@@ -6,3 +6,6 @@ fonts/*.otf
 !fonts/ChosunCentennial_ttf.ttf
 !fonts/Shilla_Culture(B).ttf
 !fonts/Shilla_Culture(M).ttf
+# 수업 자료(PPT)는 레포에 올리지 않음
+*.pptx
+*.ppt

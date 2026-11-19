@@ -48,3 +48,44 @@
   var slot=document.querySelector("[data-myitem]"), names={stamp:"참 잘했어요 도장",blanket:"절대안전 담요",shoes:"불운 신발",mirror:"거울 노리개",lantern:"도깨비 등불",flag:"신장군 깃발"};
   if(slot&&names[get()]) slot.textContent="내 지급물품: "+names[get()]+" ✓";
 })();
+
+/* 이야기 속 지급물품 이름(.itm)에 마우스를 올리거나(손가락으로 누르거나 Tab으로 가면) 작은 물품 카드를 띄움. 평소에는 안 보임 */
+(function(){
+  var D={
+    stamp:["참 잘했어요 도장","도장을 찍은 상대에게 신뢰를 얻는다. 효과는 중첩되지 않으며, 약 1시간 정도 지속된다. 단, 도장 자국이 번지는 경우 효과가 반전되어 불신을 얻게 된다. 지속시간 동일."],
+    blanket:["절대안전 담요","90*150 사이즈의 담요. 가벼운 천으로 이루어져 있다. 담요에 덮힌 부분은 괴담에게 인식되지 않는다. 단, 움직이면 효과가 해제된다."],
+    shoes:["불운 신발","착용자에게 불운을 불러오는 신발. 신발을 신고 있는 동안은 괴담 속 존재들에게 공격받지 않는다. 신발 끈이 풀리면 효과가 반대로 적용되어 행운을 불러오지만 괴담 속 존재들이 유인된다."],
+    mirror:["거울 노리개","거울을 통해 보면 괴담이 만들어낸 환영이나 착각이 사라진 본질을 볼 수 있다. 단, 거울에 비친 괴담 역시 거울을 통해 당신의 생각을 읽어낼 수 있다."],
+    lantern:["도깨비 등불","등불 안에 깃든 도깨비에게 조언을 얻을 수 있다. 단, 도깨비는 장난기가 많아 3번 중 1번의 확률로 조언을 반대로 말한다."],
+    flag:["신장군 깃발","땅에 꽂으면 약 10분간 주변 2m 반경(깃발을 중심으로 반지름 2m)은 괴담의 영향을 받지 않는다. 한 번 땅에 꽂은 깃발은 다시 뽑을 수 없다."]
+  };
+  var words=document.querySelectorAll(".itm[data-item]"); if(!words.length) return;
+  var card=document.createElement("div"); card.className="itm-card"; card.id="itm-card"; card.setAttribute("role","tooltip"); card.hidden=true;
+  document.body.appendChild(card);
+  var show=function(w){ var d=D[w.dataset.item]; if(!d) return;
+    card.innerHTML='<img src="img/items/'+w.dataset.item+'.webp" alt=""><div><b>'+d[0]+'</b><p>'+d[1]+'</p></div>';
+    card.hidden=false; w.setAttribute("aria-describedby","itm-card");
+    var r=w.getBoundingClientRect(), cw=card.offsetWidth, ch=card.offsetHeight, m=10;
+    var x=Math.min(Math.max(m,r.left+r.width/2-cw/2),innerWidth-cw-m), y=r.bottom+8;
+    if(y+ch>innerHeight-m) y=Math.max(m,r.top-ch-8);
+    card.style.left=x+"px"; card.style.top=y+"px"; };
+  var hide=function(w){ card.hidden=true; if(w) w.removeAttribute("aria-describedby"); };
+  words.forEach(function(w){
+    w.addEventListener("mouseenter",function(){show(w)}); w.addEventListener("mouseleave",function(){ if(document.activeElement!==w) hide(w); });
+    w.addEventListener("focus",function(){show(w)}); w.addEventListener("blur",function(){hide(w)});
+  });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&!card.hidden){ hide(document.activeElement); if(document.activeElement&&document.activeElement.blur) document.activeElement.blur(); }});
+  addEventListener("scroll",function(){ if(!card.hidden) hide(); },{passive:true});
+})();
+
+/* 근무수칙의 '없는 4번': PPT처럼 4번이 0.1초 간격으로 어긋난 채 여러 겹(깨진 글자 포함) 번쩍였다가 한꺼번에 사라짐. 몇 초마다 불규칙하게 되풀이 */
+(function(){
+  var r4=document.querySelector(".rule4"); if(!r4) return;
+  var gs=r4.querySelectorAll(".g");
+  var burst=function(){
+    gs.forEach(function(g,i){ setTimeout(function(){ g.classList.add("on"); },i*100); });
+    setTimeout(function(){ gs.forEach(function(g){ g.classList.remove("on"); }); },gs.length*100+250+Math.random()*350);
+    setTimeout(burst,2600+Math.random()*5200);
+  };
+  setTimeout(burst,1400);
+})();
