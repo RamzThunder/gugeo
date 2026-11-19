@@ -25,7 +25,7 @@ PREFIX = {"bot": "[점원] ", "pen": "[필담] ", "say": "[강조] ",
           "dok": "[도깨비] ", "dok angry": "[도깨비:화남] ", "dok loud": "[도깨비:외침] ",
           "don": "[후원] ", "whisper": "[속삭임] ", "shake": "[흔들림] ", "freeze": "[정지] ",
           "monline": "[모니터] ", "radio": "[무전] ", "radio out": "[무전:송신] ", "pa": "[방송] ", "voice": "[목소리] ", "voice angry": "[목소리:화남] ", "call": "[통화] ", "call tense": "[통화:날섬] "}
-BOX = {"라이브": "live", "채팅": "chat", "원문": "live-orig", "문자": "sms", "모니터": "monitor", "알림": "noti"}
+BOX = {"라이브": "live", "채팅": "chat", "원문": "live-orig", "문자": "sms", "모니터": "monitor", "알림": "noti", "면접": "interview", "보고서": "report", "거울": "mirror"}
 CHAT = re.compile(r"([^\s\[\]:]{1,12}): (.+)$")   # 라이브·채팅 상자 안의 '닉네임: 채팅' 줄
 RAW = re.compile(r"</?(div|ul|ol|aside|details|summary|figure|section|table|h[1-6])\b|<p[ >]")
 def stamp_svg(half):
@@ -113,6 +113,9 @@ HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
     :::문자 백운 선배                 ← 메신저 말풍선 (상대 이름). 안쪽 '나: 글'은 오른쪽, '다른이름: 글'은 왼쪽
     :::모니터                        ← 병상 모니터에 한 글자씩 찍히는 글
     :::알림 백운 선배                 ← 휴대폰 잠금화면 알림 (보낸 사람). 안쪽은 알림 글
+    :::면접 재난복구지원국            ← 면접 질문지 (기관 이름). 안쪽 '- 질문' 줄
+    :::보고서 구조 3팀 · 수색 보고서   ← 보고서 발췌 종이 (제목). 안쪽 '- 내용' 줄
+    :::거울                          ← 노리개 거울로 들여다본 모습 (허수아비 인형 속)
     :::
 · {666■}            금액 (호박색)
 · [[칭찬 도장|도장]]  지급물품 이름 (누르면 설명 카드). | 뒤: 도장·담요·신발·노리개·등불·깃발
@@ -143,7 +146,7 @@ def article_to_md(body):
         if l.startswith('<figure class="stampmark'): out.append("[도장자국:반]" if 'stampmark half' in l else "[도장자국]"); i += 1; continue
         m = re.match(r'<div class="stampcount" data-from="(\d+)"(?: data-to="(\d+)")?', l)
         if m: out.append("[남은횟수] %s%s" % (m.group(1), "→" + m.group(2) if m.group(2) else "")); i += 1; continue
-        m = re.match(r'<div class="(live|chat|live-orig|sms|monitor|noti)" ', l)
+        m = re.match(r'<div class="(live|chat|live-orig|sms|monitor|noti|interview|report|mirror)" ', l)
         if m:
             kind = m.group(1); j = i + 1
             while lines[j] != "</div><!--/%s-->" % kind: j += 1
@@ -161,6 +164,12 @@ def article_to_md(body):
             elif kind == "noti":
                 out.append(":::알림 " + html.unescape(re.search(r'aria-label="휴대폰 알림: (.*?)"', l).group(1)))
                 out += article_to_md("\n".join(body_lines[1:]))
+            elif kind in ("interview", "report"):
+                out.append(":::%s %s" % ("면접" if kind == "interview" else "보고서", html.unescape(re.search(r'aria-label="[^:]+: (.*?)"', l).group(1))))
+                out += ["- " + inline_to_md(x) for x in re.findall(r"<li>(.*?)</li>", body_lines[1])]
+            elif kind == "mirror":
+                out.append(":::거울")
+                out += article_to_md("\n".join(body_lines))
             elif kind == "monitor":
                 out.append(":::모니터")
                 out += article_to_md("\n".join(body_lines))
@@ -241,6 +250,15 @@ def md_to_article(lines, live=False):
             elif kind == "noti":
                 out.append('<div class="noti" role="group" aria-label="휴대폰 알림: %s">' % html.escape(arg))
                 out.append('<div class="noti-head" aria-hidden="true"><span class="noti-app"></span><b>%s</b><span class="noti-time">지금</span></div>' % md_to_inline(arg))
+                out.append(md_to_article(inner).rstrip("\n"))
+            elif kind in ("interview", "report"):
+                label = "면접 질문" if kind == "interview" else "보고서"
+                out.append('<div class="%s" role="group" aria-label="%s: %s">' % (kind, label, html.escape(arg)))
+                out.append('<div class="%s-head" aria-hidden="true"><span>%s</span><b>%s</b></div>' % (kind[:2] if kind == "interview" else "rp", label, md_to_inline(arg)))
+                tag = "ol" if kind == "interview" else "ul"
+                out.append("<%s>%s</%s>" % (tag, "".join("<li>%s</li>" % md_to_inline(c[2:]) for c in inner if c.startswith("- ")), tag))
+            elif kind == "mirror":
+                out.append('<div class="mirror" role="group" aria-label="노리개 거울에 비친 모습">')
                 out.append(md_to_article(inner).rstrip("\n"))
             elif kind == "monitor":
                 out.append('<div class="monitor" role="group" aria-label="병상 모니터">')

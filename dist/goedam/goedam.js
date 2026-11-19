@@ -328,3 +328,18 @@ window.goedamChars=function(el){
     var io=new IntersectionObserver(function(es){ if(es[0].isIntersecting){ io.disconnect(); f.classList.add("seen"); } },{threshold:.7}); io.observe(f);
   });
 })();
+
+/* 면접 질문지: 화면에 들어오면 질문이 하나씩. 거울: 글을 한 겹 더 흐리게 겹쳐(반대로 흘러가는 잔상) 오염된 느낌 */
+(function(){
+  var io=("IntersectionObserver" in window);
+  document.querySelectorAll(".story .interview").forEach(function(b){
+    if(!io) return; var li=b.querySelectorAll("li"); b.classList.add("wait");
+    var o=new IntersectionObserver(function(es){ if(!es[0].isIntersecting) return; o.disconnect(); b.classList.remove("wait");
+      li.forEach(function(x,k){ x.style.opacity=0; setTimeout(function(){ x.style.opacity=""; x.classList.add("in"); },300+k*900); }); },{threshold:.5});
+    o.observe(b);
+  });
+  document.querySelectorAll(".story .mirror").forEach(function(m){
+    var p=m.querySelector("p"); if(!p) return;
+    var g=p.cloneNode(true); g.classList.add("mir-ghost"); g.setAttribute("aria-hidden","true"); m.appendChild(g);
+  });
+})();
