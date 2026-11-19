@@ -196,25 +196,37 @@
         t+=700; });
     });
   });
-  /* 모니터 상자(.monitor) 안의 여러 줄, 또는 모니터 한 줄(.monline)을 한 글자씩 찍음 */
-  var typeOut=function(box,ps){
-    var full=ps.map(function(p){return p.innerHTML});
+  /* 모니터 상자(.monitor)와 모니터 한 줄(.monline)을 문서 순서대로 줄 세워, 앞 글이 다 찍혀야 다음 글이 찍히기 시작함.
+     화면에 들어온 글부터 차례가 되고, 보지 않고 지나친 앞 글은 바로 다 보여 줘서 뒤 글이 기다리지 않게 함 */
+  var Q=[], busy=false;
+  var finish=function(it){ it.ps.forEach(function(p,n){ p.innerHTML=it.full[n]; }); it.state="done"; };
+  var run=function(it){
+    busy=true; it.state="typing";
+    var ps=it.ps, full=it.full, box=it.box, i=0, k=0, caret=document.createElement("span"); caret.className="caret";
+    var src=full.map(function(h){var d=document.createElement("div");d.innerHTML=h;return d.textContent;});
+    var tick=function(){
+      if(i>=ps.length){ finish(it); ps[ps.length-1].appendChild(caret);
+        if(box.classList.contains("monline")) setTimeout(function(){ caret.remove(); },1600);
+        setTimeout(function(){ busy=false; pump(); },450); return; }
+      k++; ps[i].textContent=src[i].slice(0,k); ps[i].appendChild(caret);
+      if(k>=src[i].length){ ps[i].innerHTML=full[i]; i++; k=0; setTimeout(tick,520); } else setTimeout(tick,src[i][k-1]==="."?260:55);
+    };
+    tick();
+  };
+  var pump=function(){ if(busy) return; for(var n=0;n<Q.length;n++){ var it=Q[n]; if(it.state==="done") continue; if(it.state==="ready") run(it); return; } };
+  document.querySelectorAll(".story .monitor, .story .monline").forEach(function(box){
+    var ps=box.classList.contains("monline")?[box]:[].slice.call(box.querySelectorAll("p"));
+    var it={box:box,ps:ps,full:ps.map(function(p){return p.innerHTML}),state:"wait"}; Q.push(it);
     box.setAttribute("aria-label","병상 모니터: "+box.textContent.trim());
-    box.style.minHeight=box.offsetHeight+"px";   // 다 찍힌 높이를 미리 잡아 둬서 글이 찍히는 동안 아래 글이 밀리지 않게
+    box.style.minHeight=box.offsetHeight+"px";   // 다 찍힌 크기를 미리 잡아 둬서 글이 찍히는 동안 아래 글이 밀리지 않게
     if(box.classList.contains("monline")) box.style.minWidth=box.offsetWidth+"px";
     ps.forEach(function(p){ if(p!==box) p.setAttribute("aria-hidden","true"); p.textContent=""; });
-    var caret=document.createElement("span"); caret.className="caret";
-    watch(box,function(){ var i=0, k=0, src=full.map(function(h){var d=document.createElement("div");d.innerHTML=h;return d.textContent;});
-      var tick=function(){
-        if(i>=ps.length){ ps.forEach(function(p,n){ p.innerHTML=full[n]; }); ps[ps.length-1].appendChild(caret); if(box.classList.contains("monline")) setTimeout(function(){ caret.remove(); },1600); return; }
-        k++; ps[i].textContent=src[i].slice(0,k); ps[i].appendChild(caret);
-        if(k>=src[i].length){ ps[i].innerHTML=full[i]; i++; k=0; setTimeout(tick,520); } else setTimeout(tick,src[i][k-1]==="."?260:55);
-      };
-      tick();
+    watch(box,function(){
+      var me=Q.indexOf(it);
+      for(var n=0;n<me;n++) if(Q[n].state==="wait") finish(Q[n]);   // 보지 않고 지나친 앞 글
+      it.state="ready"; pump();
     });
-  };
-  document.querySelectorAll(".story .monitor").forEach(function(box){ typeOut(box,[].slice.call(box.querySelectorAll("p"))); });
-  document.querySelectorAll(".story .monline").forEach(function(p){ typeOut(p,[p]); });
+  });
 })();
 
 /* 휴대폰 알림(.noti): 화면에 들어오면 위에서 내려오며 두 번 진동 */
