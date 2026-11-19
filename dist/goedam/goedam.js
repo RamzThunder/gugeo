@@ -30,25 +30,6 @@
     addEventListener("resize",upd); upd();
   }
 })();
-
-/* ep.1 지급물품 고르기: 고른 물건은 이 기기에만 저장(goedam-item). 목차의 [data-myitem]에도 보여 줌 */
-(function(){
-  var KEY="goedam-item", get=function(){try{return localStorage.getItem(KEY)||""}catch(e){return ""}};
-  var set=function(v){try{v?localStorage.setItem(KEY,v):localStorage.removeItem(KEY)}catch(e){}};
-  var nameOf=function(card){return card.querySelector("h3").textContent};
-  var cards=document.querySelectorAll(".item"), mine=document.getElementById("item-mine");
-  var paint=function(){
-    var cur=get(), picked=null;
-    cards.forEach(function(c){var on=c.dataset.item===cur; if(on) picked=c; c.classList.toggle("on",on);
-      var b=c.querySelector(".item-go"); b.setAttribute("aria-pressed",on); b.textContent=on?"지급 완료 · 취소하기":"이걸로 정하기";});
-    if(mine){ mine.hidden=!picked; if(picked) mine.innerHTML="<b>"+nameOf(picked)+"</b>을(를) 지급받았습니다. 이제 괴담으로 들어갈 차례예요."; }
-  };
-  cards.forEach(function(c){ c.querySelector(".item-go").addEventListener("click",function(){ set(get()===c.dataset.item?"":c.dataset.item); paint(); }); });
-  if(cards.length) paint();
-  var slot=document.querySelector("[data-myitem]"), names={stamp:"참 잘했어요 도장",blanket:"절대안전 담요",shoes:"불운 신발",mirror:"거울 노리개",lantern:"도깨비 등불",flag:"신장군 깃발"};
-  if(slot&&names[get()]) slot.textContent="내 지급물품: "+names[get()]+" ✓";
-})();
-
 /* 이야기 속 지급물품 이름(.itm)에 마우스를 올리거나(손가락으로 누르거나 Tab으로 가면) 작은 물품 카드를 띄움. 평소에는 안 보임 */
 (function(){
   var D={
@@ -120,7 +101,7 @@
     var d=score.e>score.r?"explore":score.r>score.e?"rescue":(door==="e"?"explore":"rescue"), R=RES[d];
     try{localStorage.setItem(KEY,d)}catch(e){}
     screen('<div class="qz-res-top" aria-hidden="true"></div><p class="qz-org">'+R.org+'</p><h2 class="qz-team">'+R.team+'</h2><div class="qz-body">'+R.body+'</div>'+
-      '<a class="qz-btn" href="items.html">지급물품 고르러 가기 →</a><button class="qz-again" type="button">다시 하기</button>',false);
+      '<a class="qz-btn" href="items.html">지급물품 살펴보러 가기 →</a><button class="qz-again" type="button">다시 하기</button>',false);
     box.classList.add("res");
     box.querySelector(".qz-again").onclick=function(){ score={e:0,r:0}; door=""; i=0; qn=0; show(); };
   };
