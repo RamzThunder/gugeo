@@ -9,3 +9,4 @@ fonts/*.otf
 # 수업 자료(PPT)는 레포에 올리지 않음
 *.pptx
 *.ppt
+__pycache__/
