@@ -332,3 +332,13 @@ footer a{text-decoration:none}
 .qz-screen:focus{outline:none}
 .qz-opt.flip{animation:qz-flip .28s steps(2) 1;background:#7d0a10;color:#ffd5d5;letter-spacing:.08em;text-shadow:-1px 0 rgba(255,36,72,.7),1px 0 rgba(34,170,255,.6)}
 @keyframes qz-flip{0%{transform:translateX(-3px)}50%{transform:translateX(3px)}100%{transform:none}}
+
+/* 성향 테스트 '모든 불이 꺼집니다': 두어 번 깜빡이고 페이지 전체(머리줄·바탕·이동 링크까지)가 까매짐. 글과 '다음'만 아주 흐리게 */
+html.lights-out,html.lights-out body{background:#000!important}
+html.lights-out body::before,html.lights-out body::after{display:none!important}
+html.lights-out .bar,html.lights-out .pn,html.lights-out footer{opacity:0;pointer-events:none;transition:opacity .2s}
+html.lights-out .quiz{background:#000!important;border-color:#000!important;box-shadow:none}
+html.lights-out .qz-say{color:#3a3a40!important}
+html.lights-out .qz-btn{background:#0d0d0f!important;color:#3a3a40!important;box-shadow:none!important}
+html.lights-out body{animation:lights-out .7s steps(1) 1}
+@keyframes lights-out{0%{filter:brightness(1)}15%{filter:brightness(.15)}30%{filter:brightness(1.1)}45%{filter:brightness(.05)}60%{filter:brightness(.8)}75%,100%{filter:brightness(1)}}

@@ -99,6 +99,7 @@
     rescue:{org:"재난복구지원국",team:"특수구조과",body:'<p class="qz-b">괴담이 가득한 세계에 살게 된 당신.</p><p>당신은 괴담으로 인한 인명 피해 등을 막기 위해 괴담 속에서 민간인을 구조하고, 가능하다면 괴담을 종결(없애는 것)시키는 것을 목표로 하는 <em class="qz-red">정부기관</em>에 입사하였습니다.</p><p>지진, 화재와 같은 재난에서 시민을 구해내듯, 당신은 괴담 속에서 <u>시민을 구출하는 데</u>에 사명감을 갖고 있습니다.</p><p class="qz-b">당신의 가장 큰 목표는<br><mark>가능한 많은 민간인을 구하고<br>괴담을 종결시키는 것입니다.</mark></p>'}
   };
   var screen=function(html,red,dark){ box.className="quiz"+(red?" red":"")+(dark?" dark":""); box.innerHTML='<div class="qz-screen" tabindex="-1">'+html+'</div>';
+    document.documentElement.classList.toggle("lights-out",!!dark);   // '모든 불이 꺼집니다': 페이지 전체를 깜빡인 뒤 까맣게
     box.firstChild.focus({preventScroll:true}); scrollTo({top:0}); };
   var show=function(){
     if(i>=Q.length) return result();
