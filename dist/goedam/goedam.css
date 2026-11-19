@@ -339,7 +339,7 @@ html.lights-out body::before,html.lights-out body::after{display:none!important}
 html.lights-out .bar,html.lights-out .pn,html.lights-out footer{opacity:0;pointer-events:none;transition:opacity .2s}
 html.lights-out .quiz{background:#000!important;border-color:#000!important;box-shadow:none}
 html.lights-out .qz-say{color:#3a3a40!important}
-html.lights-out .qz-btn{background:#0d0d0f!important;color:#3a3a40!important;box-shadow:none!important}
+html.lights-out .quiz .qz-btn{background:#0d0d0f;color:#3a3a40;box-shadow:none}
 html.lights-out body{animation:lights-out .7s steps(1) 1}
 @keyframes lights-out{0%{filter:brightness(1)}15%{filter:brightness(.15)}30%{filter:brightness(1.1)}45%{filter:brightness(.05)}60%{filter:brightness(.8)}75%,100%{filter:brightness(1)}}
 
@@ -356,3 +356,10 @@ html.lights-out .quiz.dark .qz-opt{background:#2a0508;color:#d9b8b8;box-shadow:n
 @keyframes qz-dawn{0%{background:#000;border-color:#000}35%{background:#000}45%{background:#2a0306}50%{background:#000}100%{}}
 @keyframes qz-dawn-txt{0%,40%{opacity:0}100%{opacity:1}}
 html:not(.lights-out) .bar,html:not(.lights-out) .pn{transition:opacity 2s}
+
+/* '모든 불이 꺼집니다'의 흐린 '다음' 버튼: 3.2초마다 한 번씩 고장 난 전등처럼 반짝 */
+html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
+@keyframes qz-blink{0%,88%,100%{background:#0d0d0f;color:#3a3a40;box-shadow:none}
+  90%{background:#7d0a10;color:#ffd5d5;box-shadow:0 0 24px rgba(255,40,40,.55)}
+  92%{background:#0d0d0f;color:#3a3a40;box-shadow:none}
+  94%{background:#9a0e16;color:#fff;box-shadow:0 0 30px rgba(255,40,40,.7)}}
