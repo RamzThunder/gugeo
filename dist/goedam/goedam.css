@@ -200,7 +200,7 @@ footer a{text-decoration:none}
   background:linear-gradient(rgba(255,255,255,.28),rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.3);border-top:0;
   clip-path:polygon(4% 0,96% 0,100% 100%,0 100%)}
 
-/* 특수구조과 보고서(ep.2 서점): 실제 공문처럼. 누런 종이, 명조, 표로 된 머리, 가·나·다 항목, '끝.', 직인과 '대외비' 도장 */
+/* 특수구조과 보고서(ep.2 서점): 실제 공문처럼. 누런 종이, 명조, 정부 상징을 본뜬 로고, 표로 된 머리(일시는 가림), 가·나·다 항목, 두 타 띄운 '끝.', 직인 */
 .memo{position:relative;margin:1.6em auto;max-width:34em;padding:1.6em 1.5em 1.3em;background:#f1ece0;color:#1f1c16;
   background-image:linear-gradient(rgba(120,90,40,.06),transparent 30%,rgba(120,90,40,.05));
   font-family:var(--serif);font-size:.9em;line-height:1.75;border-radius:2px;transform:rotate(-.4deg);
@@ -209,7 +209,9 @@ footer a{text-decoration:none}
 .memo .x{color:#111}
 .memo .won{color:#a3121b}
 .memo .won .x{color:#a3121b}
-.memo-org{text-align:center;font-weight:700;font-size:1.45em;letter-spacing:.45em;margin-right:-.45em!important;padding-bottom:.35em;border-bottom:3px double #1f1c16}
+.memo-org{display:flex;align-items:center;justify-content:center;gap:.55em;font-weight:700;font-size:1.45em;padding-bottom:.35em;border-bottom:3px double #1f1c16}
+.memo-org span{letter-spacing:.45em;margin-right:-.45em}
+.memo-logo{width:1.35em;height:1.35em;flex:none}
 .memo-meta{width:100%;border-collapse:collapse;margin:.9em 0 1em;font-size:.95em}
 .memo-meta th,.memo-meta td{border:1px solid #6c6656;padding:.3em .6em;text-align:left;vertical-align:top}
 .memo-meta th{width:7.2em;background:#e3dccb;font-weight:700;white-space:nowrap}
@@ -217,10 +219,8 @@ footer a{text-decoration:none}
 .memo-body li{position:relative;padding-left:1.9em;counter-increment:memo}
 .memo-body li+li{margin-top:.35em}
 .memo-body li::before{content:counter(memo,hangul) ".";position:absolute;left:0;font-weight:700}
-.memo-end{text-align:right;margin-top:.6em!important;font-weight:700}
+.memo-end{margin-left:2ch;white-space:nowrap}   /* 공문 맺음: 마지막 말 뒤 두 타 띄우고 '끝.' */
 .memo-sign{position:relative;margin-top:1.1em!important;text-align:center;font-weight:700;letter-spacing:.12em}
 .memo-seal{display:inline-grid;place-items:center;vertical-align:middle;margin-left:.5em;width:4.8em;height:4.8em;
   border:2px solid rgba(190,25,30,.85);border-radius:3px;color:rgba(190,25,30,.85);font-size:.62em;line-height:1.15;letter-spacing:0;text-align:center;
   transform:rotate(-7deg);box-shadow:inset 0 0 0 2px rgba(190,25,30,.25)}
-.memo-stamp{position:absolute;right:1em;top:.9em;padding:.05em .45em;border:3px double rgba(190,25,30,.8);color:rgba(190,25,30,.8);
-  font-family:var(--sans);font-weight:800;font-size:1.05em;letter-spacing:.25em;transform:rotate(9deg);mix-blend-mode:multiply}
