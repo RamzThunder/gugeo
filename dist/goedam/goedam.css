@@ -1,0 +1,74 @@
+/* 괴담에 떨어져도 수행평가를 해야 하는구나 — 원래 구글 사이트처럼 검정 바탕에 흰 글씨 (어둡게만 씀) */
+:root{
+  color-scheme:dark;
+  --bg:#000; --ink:#f4f4f4; --mute:#a3a3a8; --line:#26262b; --card:#111114; --card2:#18181d;
+  --red:#ff3b3b; --red-dim:#7a1414;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  line-height:1.85;letter-spacing:-.005em;word-break:keep-all;overflow-wrap:anywhere}
+a{color:inherit}
+img{max-width:100%;height:auto;display:block}
+
+/* 위 줄 */
+.top{display:flex;justify-content:space-between;max-width:760px;margin:0 auto;padding:16px 16px 0;font-size:15px}
+.top a{color:var(--mute);text-decoration:none;padding:6px 0}
+.top a:hover{color:var(--ink)}
+
+/* 목차 */
+.toc{max-width:760px;margin:0 auto;padding:8px 16px 40px}
+.banner{margin:0 -16px;overflow:hidden}
+.banner img{width:100%;min-height:150px;object-fit:cover}
+.intro{color:#d6d6da;font-size:17px;margin:4px 0 8px;text-align:center}
+.ep{border-top:1px solid var(--line);padding:28px 0 8px;margin-top:28px}
+.ep h2{margin:0 0 18px}
+.ep h2 img,.hand img{width:min(100%,420px)}
+.note{color:var(--mute);font-size:15px;margin:14px 0 10px}
+
+/* 고르기 버튼 */
+.picks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pick{display:flex;flex-direction:column;gap:2px;padding:16px 18px;border-radius:14px;background:var(--card);border:1px solid var(--line);
+  text-decoration:none;transition:border-color .15s ease,background .15s ease}
+.pick.wide{grid-column:1/-1}
+.pick b{font-size:18px}
+.pick small{color:var(--mute);font-size:14px}
+.pick:hover{border-color:var(--red);background:var(--card2)}
+.pick:focus-visible,.pn a:focus-visible,.opt:focus-visible,summary:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+@media (max-width:420px){.picks{grid-template-columns:minmax(0,1fr)}}
+
+/* 읽는 쪽 */
+.read{max-width:680px;margin:0 auto;padding:24px 16px 40px}
+.kick{margin:0;color:var(--red);font-size:14px;font-weight:600;letter-spacing:.02em}
+.read h1{margin:2px 0 28px;font-size:clamp(24px,5vw,30px);line-height:1.35;letter-spacing:-.02em}
+.read h1.hand{margin:8px 0 20px}
+.opt{display:inline-block;margin:-12px 0 24px;padding:8px 14px;border-radius:10px;border:1px dashed #4a4a52;color:var(--mute);font-size:15px;text-decoration:none}
+.opt:hover{color:var(--ink);border-color:var(--mute)}
+.story{font-size:17.5px}
+.story p{margin:0}
+.story .c{text-align:center}
+.story .gap{height:.95em}
+.story strong{font-weight:700}
+.ask{margin:40px 0 12px;font-weight:600;font-size:18px}
+
+/* 요약본 쪽의 [주의] 상자와 펼치기 */
+.warn{border:1px solid var(--red-dim);background:#140707;border-radius:16px;padding:18px 18px 16px;margin:0 0 20px;text-align:center}
+.warn h2{margin:0 0 6px;color:var(--red);font-size:20px}
+.warn p{margin:0}
+.warn .gap{height:.5em}
+details.sum{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:0 18px}
+details.sum summary{cursor:pointer;padding:16px 0;font-weight:700;font-size:18px;list-style:none}
+details.sum summary::-webkit-details-marker{display:none}
+details.sum summary::after{content:" ▾";color:var(--mute)}
+details.sum[open] summary::after{content:" ▴"}
+details.sum[open]{padding-bottom:18px}
+
+/* 이전·다음 */
+.pn{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line)}
+.pn a{display:flex;flex-direction:column;padding:14px 16px;border-radius:14px;background:var(--card);border:1px solid var(--line);text-decoration:none;font-weight:600;font-size:16px;line-height:1.45}
+.pn a small{color:var(--mute);font-weight:500;font-size:13px}
+.pn .nx{text-align:right;grid-column:2}
+.pn a:hover{border-color:var(--red)}
+
+footer{max-width:760px;margin:0 auto;padding:24px 16px 40px;color:#6b6b73;font-size:13px;text-align:center}
+@media (prefers-reduced-motion:reduce){.pick,.pn a{transition:none}}
