@@ -155,3 +155,10 @@ details.sum[open] summary::after{content:"접기 ▴"}
 footer{max-width:720px;margin:0 auto;padding:28px 16px 44px;color:#5c5c66;font-size:13px;text-align:center}
 footer a{text-decoration:none}
 @media (prefers-reduced-motion:reduce){.title img{animation:none}.pick,.next{transition:none}}
+
+/* 서점 점원(안드로이드)의 녹음 멘트: 기계 글꼴 Orbit, 고르게 띄운 자간, 차가운 화면 빛.
+   본문 글꼴 설정(고딕/명조)과 상관없이 늘 같은 기계 목소리로 보이게 함 */
+.story .bot{font-family:"Orbit",var(--sans);font-weight:400;letter-spacing:.06em;word-spacing:.08em;color:#c8eef5;
+  text-shadow:0 0 .35em rgba(120,220,255,.35),.03em 0 rgba(255,60,90,.25)}
+.story .bot em{font-style:normal;color:#ff9aa8;text-shadow:0 0 .4em rgba(255,70,100,.45)}   /* 점원만의 덧붙인 말 '언제든' */
+.story .bot strong{font-weight:400}
