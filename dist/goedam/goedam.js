@@ -375,13 +375,23 @@ window.goedamChars=function(el){
   addEventListener("scroll",on,{passive:true}); addEventListener("resize",on); upd();
 })();
 
-/* 도깨비불 빛무리용 왜곡 필터(#dok-flame): 빛 가장자리를 불꽃처럼 너울너울 찢고, 무늬가 계속 바뀜 */
+/* 도깨비불 빛무리: 왜곡 필터 다섯 가지(#dok-flame0~4, 씨앗·결·속도가 다름)를 만들고, 대사마다 무작위로 하나를 고름.
+   빛 덩어리 위치·크기, 너울대는 속도와 시작 박자도 대사마다 달리 해서 같은 모양이 되풀이되지 않게 함 */
 (function(){
-  if(!document.querySelector(".story .dok")) return;
-  var d=document.createElement("div"); d.setAttribute("aria-hidden","true"); d.style.cssText="position:absolute;width:0;height:0;overflow:hidden";
-  d.innerHTML='<svg width="0" height="0"><filter id="dok-flame" x="-30%" y="-60%" width="160%" height="220%">'+
-    '<feTurbulence type="fractalNoise" baseFrequency="0.035 0.09" numOctaves="2" seed="4" result="n">'+
-    '<animate attributeName="baseFrequency" dur="3.2s" values="0.035 0.09;0.05 0.13;0.03 0.08;0.035 0.09" repeatCount="indefinite"/></feTurbulence>'+
-    '<feDisplacementMap in="SourceGraphic" in2="n" scale="26" xChannelSelector="R" yChannelSelector="G"/></filter></svg>';
-  document.body.appendChild(d);
+  var ds=document.querySelectorAll(".story .dok"); if(!ds.length) return;
+  var F=[[3,"0.035 0.09","0.05 0.13",3.2,24],[11,"0.02 0.07","0.03 0.1",4.1,30],[27,"0.045 0.11","0.06 0.15",2.7,20],[41,"0.025 0.06","0.04 0.09",5,28],[58,"0.04 0.08","0.028 0.12",3.6,26]];
+  var svg='<svg width="0" height="0">'+F.map(function(f,i){ return '<filter id="dok-flame'+i+'" x="-30%" y="-60%" width="160%" height="220%">'+
+    '<feTurbulence type="fractalNoise" baseFrequency="'+f[1]+'" numOctaves="2" seed="'+f[0]+'" result="n">'+
+    '<animate attributeName="baseFrequency" dur="'+f[3]+'s" values="'+f[1]+';'+f[2]+';'+f[1]+'" repeatCount="indefinite"/></feTurbulence>'+
+    '<feDisplacementMap in="SourceGraphic" in2="n" scale="'+f[4]+'" xChannelSelector="R" yChannelSelector="G"/></filter>'; }).join("")+'</svg>';
+  var d=document.createElement("div"); d.setAttribute("aria-hidden","true"); d.style.cssText="position:absolute;width:0;height:0;overflow:hidden"; d.innerHTML=svg; document.body.appendChild(d);
+  var r=function(a,b){ return a+Math.random()*(b-a); }, last=-1;
+  ds.forEach(function(p){
+    var k; do{ k=Math.floor(Math.random()*F.length); }while(k===last&&F.length>1); last=k;
+    var s=p.style;
+    s.setProperty("--fl","url(#dok-flame"+k+")");
+    s.setProperty("--x1",r(10,30).toFixed(0)+"%"); s.setProperty("--x2",r(40,60).toFixed(0)+"%"); s.setProperty("--x3",r(70,90).toFixed(0)+"%");
+    s.setProperty("--y1",r(45,75).toFixed(0)+"%"); s.setProperty("--y2",r(25,55).toFixed(0)+"%"); s.setProperty("--y3",r(45,75).toFixed(0)+"%");
+    s.setProperty("--d1",r(2.2,3.6).toFixed(2)+"s"); s.setProperty("--d2",r(1.5,2.6).toFixed(2)+"s"); s.setProperty("--dl",(-r(0,3)).toFixed(2)+"s");
+  });
 })();

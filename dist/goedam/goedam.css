@@ -875,3 +875,21 @@ body{overflow-x:clip}
 .story .dok.angry::before{inset:-.9em -1em .1em;filter:url(#dok-flame) blur(4px);
   background:radial-gradient(22% 60% at 15% 70%,rgba(255,70,40,.55),transparent 72%),radial-gradient(20% 70% at 38% 55%,rgba(255,120,30,.5),transparent 72%),
     radial-gradient(22% 62% at 62% 65%,rgba(255,60,50,.55),transparent 72%),radial-gradient(20% 70% at 85% 55%,rgba(255,140,40,.48),transparent 72%),radial-gradient(18% 50% at 50% 25%,rgba(255,190,90,.35),transparent 72%)}
+/* 대사마다 다른 불꽃: 위치(--x·--y)·왜곡(--fl)·속도(--d)를 대사마다 무작위로 받음 */
+.story .dok::before{filter:var(--fl,url(#dok-flame0)) blur(5px);animation:dok-fire var(--d1,2.6s) ease-in-out var(--dl,0s) infinite;
+  background:radial-gradient(38% 68% at var(--x1,18%) var(--y1,62%),rgba(90,150,255,.5),transparent 72%),radial-gradient(30% 62% at var(--x2,50%) var(--y2,42%),rgba(150,120,245,.42),transparent 72%),
+    radial-gradient(34% 58% at var(--x3,80%) var(--y3,60%),rgba(100,170,255,.42),transparent 72%),radial-gradient(22% 48% at calc(var(--x1,18%) + 16%) 26%,rgba(180,205,255,.3),transparent 72%)}
+.story .dok::after{filter:var(--fl,url(#dok-flame0)) blur(3px);animation:dok-fire2 var(--d2,1.7s) ease-in-out var(--dl,0s) infinite;
+  background:radial-gradient(26% 55% at calc(var(--x1,18%) + 10%) 58%,rgba(170,215,255,.3),transparent 72%),radial-gradient(24% 50% at calc(var(--x3,80%) - 10%) 50%,rgba(190,180,255,.26),transparent 72%)}
+/* 화난 도깨비(가스레인지 불) 다시: 한 덩어리 불꽃 안에서 아래 파랑 → 보라 → 위 주황·빨강으로 이어짐. 움직임은 차분하게 */
+.story .dok.angry::before{inset:-.85em -1em -.3em;filter:var(--fl,url(#dok-flame0)) blur(5px);animation:dok-fire calc(var(--d1,2.6s) * 1.1) ease-in-out var(--dl,0s) infinite;
+  background:linear-gradient(to top,rgba(50,110,255,.7) 0%,rgba(80,110,255,.55) 22%,rgba(170,90,220,.45) 40%,rgba(255,90,50,.5) 58%,rgba(255,140,50,.38) 76%,transparent 96%);
+  -webkit-mask-image:radial-gradient(60% 80% at 50% 70%,#000 45%,transparent 100%);mask-image:radial-gradient(60% 80% at 50% 70%,#000 45%,transparent 100%)}
+.story .dok.angry::after{inset:.2em -.3em -.3em;filter:var(--fl,url(#dok-flame0)) blur(4px);animation:dok-fire2 calc(var(--d2,1.7s) * 1.2) ease-in-out var(--dl,0s) infinite;
+  background:radial-gradient(70% 60% at 50% 90%,rgba(90,160,255,.45),transparent 75%)}
+/* 화난 도깨비 불꽃 다시: 네모 띠 대신 둥근 빛을 겹겹이 — 아래 파랑(넓게) → 가운데 보라 → 위 주황·빨강 불끝(여러 갈래) */
+.story .dok.angry::before{-webkit-mask-image:none;mask-image:none;inset:-1em -1.1em -.4em;
+  background:radial-gradient(55% 34% at 50% 86%,rgba(50,115,255,.62),transparent 75%),radial-gradient(30% 30% at var(--x1,20%) 82%,rgba(70,130,255,.5),transparent 75%),
+    radial-gradient(30% 30% at var(--x3,80%) 82%,rgba(70,130,255,.5),transparent 75%),radial-gradient(45% 34% at 50% 62%,rgba(160,95,230,.42),transparent 75%),
+    radial-gradient(20% 46% at var(--x1,20%) 44%,rgba(255,80,45,.5),transparent 75%),radial-gradient(18% 52% at var(--x2,50%) 36%,rgba(255,125,40,.46),transparent 75%),
+    radial-gradient(20% 46% at var(--x3,80%) 44%,rgba(255,70,55,.5),transparent 75%),radial-gradient(14% 36% at calc(var(--x2,50%) + 14%) 24%,rgba(255,180,90,.32),transparent 75%)}
