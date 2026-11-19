@@ -108,7 +108,21 @@ section{padding:72px 0 8px}
 .feature+.feature{margin-top:24px}
 .feature.soon .shot img{image-rendering:auto;object-position:left top}
 .shot.story{background:#000}
-.shot.story img{image-rendering:auto;object-position:center}
+.shot.story img{image-rendering:auto;object-position:center;object-fit:contain}
+
+/* ===== 03 지난 활동: 접어 두었다가 누르면 펼침 ===== */
+.past{border:1px solid var(--line);border-radius:22px;background:var(--card)}
+.past>summary{list-style:none;display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:18px 22px;cursor:pointer;border-radius:22px}
+.past>summary::-webkit-details-marker{display:none}
+.past>summary:hover{background:var(--tint)}
+.past>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.past .yr{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:13px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--tint);color:var(--accent)}
+.past>summary b{font-size:17px;font-weight:700;letter-spacing:-.03em;min-width:0}
+.past .more{margin-left:auto;flex:none;color:var(--accent);font-size:14px;font-weight:600;display:inline-flex;gap:6px;align-items:center}
+.past .more i{font-style:normal;display:inline-block;transition:transform .2s ease}
+.past[open] .more i{transform:rotate(180deg)}
+.past[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}
+.past>.feature{margin:0 14px 14px}
 .info .btn.off{border-style:dashed;color:var(--mute);cursor:default;transform:none}
 .info .cta{display:flex;flex-wrap:wrap;gap:10px}
 .info button.btn{font:inherit;font-size:16px;font-weight:600;cursor:pointer}
@@ -233,31 +247,6 @@ footer .fm svg{color:var(--accent)}
       </div>
     </article>
 
-    <article class="feature">
-      <div class="shot story"><img src="goedam/img/card.jpg" alt="어두운 바탕에 거친 붓글씨: 괴담에 떨어져도 수행평가를 해야 하는구나" width="1000" height="600"></div>
-      <div class="info">
-        <div class="tags"><span class="tag hot">연재 이야기</span><span class="tag">괴담</span><span class="tag">갈래 선택</span></div>
-        <h3>괴담에 떨어져도 수행평가를 해야 하는구나</h3>
-        <p>괴담이 현실이 된 세계에 떨어진 ‘나’가 특수구조과 또는 전략탐사팀에 들어가 괴담 속 재난을 헤쳐 나가는 이야기예요. 성향 테스트로 부서를 정하고, 지급물품을 고른 뒤 부서별 이야기를 읽어요.</p>
-        <div class="facts">
-          <div class="fact"><b>3화</b><small>ep.1~ep.3</small></div>
-          <div class="fact"><b>2갈래</b><small>구조과·탐사팀</small></div>
-          <div class="fact"><b>요약본</b><small>긴 글이 힘들면</small></div>
-        </div>
-        <button class="howbtn" type="button" aria-expanded="false" aria-controls="how-goedam">진행 방법 보기 <i>▾</i></button>
-        <div class="cta">
-          <a class="btn solid" href="goedam/">이야기 읽기</a>
-        </div>
-      </div>
-      <div class="how" id="how-goedam" hidden>
-        <h4 class="ttl">진행 방법</h4>
-        <div class="steps">
-          <div class="step"><h4>성향 테스트로 부서를 정합니다</h4><p>테스트 결과에 따라 특수구조과 또는 전략탐사팀이 돼요.</p></div>
-          <div class="step"><h4>지급물품을 정합니다</h4><p>부서별 띵커벨 보드에서 괴담에 들고 갈 물품을 골라요.</p></div>
-          <div class="step"><h4>부서의 이야기를 읽습니다</h4><p>ep.2 공통 스토리 뒤 부서별 이야기로 갈라지고, ep.3는 부서 이야기를 읽은 뒤 3.3 공통 스토리에서 만나요.</p></div>
-        </div>
-      </div>
-    </article>
   </section>
 
   <section>
@@ -298,6 +287,39 @@ footer .fm svg{color:var(--accent)}
     </article>
   </section>
 
+  <section id="past">
+    <div class="sec-h"><span class="num">03</span><h2>지난 활동</h2></div>
+    <!-- 지난 해 활동은 접어 둠. 활동 article을 이 details 안에 넣으면 됩니다 -->
+    <details class="past">
+      <summary><span class="yr">2025</span><b>괴담에 떨어져도 수행평가를 해야 하는구나</b><span class="more"><span class="lbl">펼치기</span> <i>▾</i></span></summary>
+      <article class="feature">
+        <div class="shot story"><img src="goedam/img/card.jpg" alt="어두운 바탕에 거친 붓글씨: 괴담에 떨어져도 수행평가를 해야 하는구나" width="1000" height="600"></div>
+        <div class="info">
+          <div class="tags"><span class="tag hot">2025</span><span class="tag">연재 이야기</span><span class="tag">괴담</span><span class="tag">갈래 선택</span></div>
+          <h3>괴담에 떨어져도 수행평가를 해야 하는구나</h3>
+          <p>괴담이 현실이 된 세계에 떨어진 ‘나’가 특수구조과 또는 전략탐사팀에 들어가 괴담 속 재난을 헤쳐 나가는 이야기예요. 성향 테스트로 부서를 정하고, 지급물품을 고른 뒤 부서별 이야기를 읽어요.</p>
+          <div class="facts">
+            <div class="fact"><b>3화</b><small>ep.1~ep.3</small></div>
+            <div class="fact"><b>2갈래</b><small>구조과·탐사팀</small></div>
+            <div class="fact"><b>요약본</b><small>긴 글이 힘들면</small></div>
+          </div>
+          <button class="howbtn" type="button" aria-expanded="false" aria-controls="how-goedam">진행 방법 보기 <i>▾</i></button>
+          <div class="cta">
+            <a class="btn solid" href="goedam/">이야기 읽기</a>
+          </div>
+        </div>
+        <div class="how" id="how-goedam" hidden>
+          <h4 class="ttl">진행 방법</h4>
+          <div class="steps">
+            <div class="step"><h4>성향 테스트로 부서를 정합니다</h4><p>테스트 결과에 따라 특수구조과 또는 전략탐사팀이 돼요.</p></div>
+            <div class="step"><h4>지급물품을 정합니다</h4><p>부서별 띵커벨 보드에서 괴담에 들고 갈 물품을 골라요.</p></div>
+            <div class="step"><h4>부서의 이야기를 읽습니다</h4><p>ep.2 공통 스토리 뒤 부서별 이야기로 갈라지고, ep.3는 부서 이야기를 읽은 뒤 3.3 공통 스토리에서 만나요.</p></div>
+          </div>
+        </div>
+      </article>
+    </details>
+  </section>
+
   <dialog id="teaser-dlg" aria-label="2030 현대문학사 데이터 점령전 오프닝 영상">
     <div class="dlg-h"><b>2030 현대문학사 데이터 점령전 · 오프닝</b><span>소리 없음 · 자막 · 2분 8초</span>
       <button class="dlg-x" type="button" aria-label="닫기">✕</button></div>
@@ -318,6 +340,9 @@ document.querySelectorAll(".feature").forEach(card=>{
   btn.addEventListener("click",e=>{ e.stopPropagation(); toggle(); });
   card.addEventListener("click",e=>{ if(e.target.closest("a,button,.how")) return; toggle(); });
 });
+
+/* 지난 활동: 펼치기 ↔ 접기 글자 바꾸기 */
+document.querySelectorAll("details.past").forEach(d=>d.addEventListener("toggle",()=>{ const l=d.querySelector(".more .lbl"); if(l) l.textContent=d.open?"접기":"펼치기"; }));
 
 /* 개발 중 카드의 티저: 화면에 보일 때만 재생, 일시정지 버튼, 누르면 전체 영상 창 */
 (()=>{
