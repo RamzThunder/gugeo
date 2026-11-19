@@ -260,19 +260,23 @@ footer a{text-decoration:none}
 .itm-card b{display:block;margin-bottom:4px;font-family:"Galmuri11",var(--sans);font-weight:700;font-size:16px;color:var(--ink)}
 .itm-card p{margin:0;font-family:"Galmuri14",var(--sans);font-size:13px;line-height:1.7;color:var(--soft)}
 
-/* ep.1 근무수칙: 공문 종이 + '없는 4번' */
-.rules{margin:1.4em auto 1.2em;font-size:.95em}
-.rules-h{font-weight:700;font-size:1.2em;text-align:center;margin-bottom:.6em!important}
-.rules-lead{margin-bottom:1em!important}
+/* ep.1 근무수칙: 검은 화면에 고정폭 픽셀 글꼴(GalmuriMono11) + '없는 4번' */
+@font-face{font-family:"GalmuriMono11";src:url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/GalmuriMono11.woff2") format("woff2");font-weight:400;font-display:swap}
+.rules{margin:1.4em 0 1.2em;padding:22px 20px;background:#000;border:1px solid #1d1d22;border-radius:6px;
+  font-family:"GalmuriMono11",ui-monospace,Menlo,monospace;font-size:15px;line-height:1.85;color:#d8d8dc;letter-spacing:0;word-break:keep-all}
+.rules p{margin:0}
+.rules .x{color:#d8d8dc}
+.rules-h{margin-bottom:.8em!important;color:#fff}
+.rules-lead{margin-bottom:1.2em!important;color:#b9b9c0}
 .rules-list{list-style:none;margin:0;padding:0}
-.rules-list li{margin:.45em 0;padding-left:1.6em;text-indent:-1.6em}
-.rules-list li b{display:inline-block;width:1.6em;text-indent:0}
-.rule4{position:relative;min-height:1.8em;text-indent:0!important;padding-left:0!important}
-.rule4 .g{position:absolute;left:0;top:0;opacity:0;white-space:nowrap;color:#8f1018;font-weight:700;text-shadow:-1.5px 0 rgba(255,36,72,.55),1.5px 0 rgba(34,170,255,.5)}
-.rule4 .g.enc{white-space:normal;word-break:break-all;font-family:ui-monospace,Menlo,monospace;font-size:.82em;font-weight:400;color:#3a2222;right:0}
-.rule4 .g2{left:.35em;top:.2em}
-.rule4 .g3{top:-.45em}
-.rule4 .g4{left:-1.4em;top:-.7em}
+.rules-list li{margin:.5em 0;padding-left:2ch;text-indent:-2ch}
+.rules-list li b{font-weight:400;display:inline-block;width:2ch;text-indent:0}
+.rule4{position:relative;min-height:1.85em;text-indent:0!important;padding-left:0!important}
+.rule4 .g{position:absolute;left:0;top:0;opacity:0;white-space:nowrap;color:#ff3b4a;text-shadow:-1px 0 rgba(255,36,72,.6),1px 0 rgba(34,170,255,.55)}
+.rule4 .g.enc{white-space:normal;word-break:break-all;right:0;color:#9a2a33}
+.rule4 .g2{left:.5ch;top:.15em}
+.rule4 .g3{top:-.5em}
+.rule4 .g4{left:-1.5ch;top:-.75em}
 .rule4 .g.on{opacity:1}
 
 /* 목차 맨 아래: 수행평가 첫 안내(허구·패러디·원작 연령) */

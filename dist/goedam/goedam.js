@@ -78,14 +78,14 @@
   addEventListener("scroll",function(){ if(!card.hidden) hide(); },{passive:true});
 })();
 
-/* 근무수칙의 '없는 4번': PPT처럼 4번이 0.1초 간격으로 어긋난 채 여러 겹(깨진 글자 포함) 번쩍였다가 한꺼번에 사라짐. 몇 초마다 불규칙하게 되풀이 */
+/* 근무수칙의 '없는 4번': PPT처럼 4번이 0.1초 간격으로 어긋난 채 여러 겹(깨진 글자 포함) 번쩍였다가 한꺼번에 사라짐. 30초에 한 번쯤 불규칙하게 되풀이 */
 (function(){
   var r4=document.querySelector(".rule4"); if(!r4) return;
   var gs=r4.querySelectorAll(".g");
   var burst=function(){
     gs.forEach(function(g,i){ setTimeout(function(){ g.classList.add("on"); },i*100); });
     setTimeout(function(){ gs.forEach(function(g){ g.classList.remove("on"); }); },gs.length*100+250+Math.random()*350);
-    setTimeout(burst,2600+Math.random()*5200);
+    setTimeout(burst,25000+Math.random()*10000);   // 대략 30초에 한 번
   };
-  setTimeout(burst,1400);
+  setTimeout(burst,6000+Math.random()*4000);
 })();
