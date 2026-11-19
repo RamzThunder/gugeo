@@ -582,3 +582,10 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 .rd.dead .rd-sq{color:#ff6a5a}
 .rd-sq{white-space:nowrap}
 .rd-sq{font-size:.45em}
+
+/* 한 자씩 찍히는 글(모니터·무전): 글자는 처음부터 제자리에 있고 보이기만 함 → 줄바꿈이 바뀌지 않음 */
+.tc{visibility:hidden}
+.tc.on{visibility:visible}
+.tc.cur{position:relative}
+.story .monitor .tc.cur::after,.story .monline .tc.cur::after{content:"";position:absolute;left:100%;top:.15em;width:.55em;height:1.05em;margin-left:.08em;background:#8ef0b0;animation:mon-caret 1s steps(1) infinite}
+.tc.nz{color:#ff6a5a;animation:rd-nz .12s steps(2) infinite}

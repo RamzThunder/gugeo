@@ -181,6 +181,15 @@
   });
 })();
 
+/* 공용: 요소 안 글자를 한 자씩 <span class="tc">로 감쌈(구조·꾸밈은 그대로). 감싼 span 목록을 돌려줌 */
+window.goedamChars=function(el){
+  var out=[], ts=[], w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null,false), n; while((n=w.nextNode())) ts.push(n);
+  ts.forEach(function(t){ var f=document.createDocumentFragment();
+    Array.from(t.nodeValue).forEach(function(c){ var s=document.createElement("span"); s.className="tc"; s.textContent=c; f.appendChild(s); out.push(s); });
+    t.parentNode.replaceChild(f,t); });
+  return out;
+};
+
 /* 3.1 문자(.sms): 화면에 들어오면 내 말 → '…' 입력 중 → 백운 선배 답장 순서로 나타남.
    병상 모니터(.monitor): 화면에 들어오면 한 글자씩 찍힘(커서 깜빡임). 글 전체는 처음부터 문서에 있음 */
 (function(){
@@ -198,29 +207,28 @@
   });
   /* 모니터 상자(.monitor)와 모니터 한 줄(.monline)을 문서 순서대로 줄 세워, 앞 글이 다 찍혀야 다음 글이 찍히기 시작함.
      화면에 들어온 글부터 차례가 되고, 보지 않고 지나친 앞 글은 바로 다 보여 줘서 뒤 글이 기다리지 않게 함 */
+  /* 글자를 한 자씩 span(.tc)으로 감싸 처음부터 제자리에 투명하게 깔아 둠 → 보이게만 하므로 찍히는 동안 줄바꿈 위치가 바뀌지 않음 */
   var Q=[], busy=false;
-  var finish=function(it){ it.ps.forEach(function(p,n){ p.innerHTML=it.full[n]; }); it.state="done"; };
+  var finish=function(it){ it.cs.forEach(function(s){ s.classList.add("on"); s.classList.remove("cur"); }); it.state="done"; };
   var run=function(it){
-    busy=true; it.state="typing";
-    var ps=it.ps, full=it.full, box=it.box, i=0, k=0, caret=document.createElement("span"); caret.className="caret";
-    var src=full.map(function(h){var d=document.createElement("div");d.innerHTML=h;return d.textContent;});
+    busy=true; it.state="typing"; var cs=it.cs, k=0, prev=null;
     var tick=function(){
-      if(i>=ps.length){ finish(it); ps[ps.length-1].appendChild(caret);
-        if(box.classList.contains("monline")) setTimeout(function(){ caret.remove(); },1600);
-        setTimeout(function(){ busy=false; pump(); },450); return; }
-      k++; ps[i].textContent=src[i].slice(0,k); ps[i].appendChild(caret);
-      if(k>=src[i].length){ ps[i].innerHTML=full[i]; i++; k=0; setTimeout(tick,520); } else setTimeout(tick,src[i][k-1]==="."?260:55);
+      if(prev) prev.classList.remove("cur");
+      if(k>=cs.length){ var last=cs[cs.length-1]; if(last){ last.classList.add("cur");
+          if(it.box.classList.contains("monline")) setTimeout(function(){ last.classList.remove("cur"); },1600); }
+        it.state="done"; setTimeout(function(){ busy=false; pump(); },450); return; }
+      var s=cs[k++]; s.classList.add("on","cur"); prev=s;
+      var gap=s.dataset.end?520:(s.textContent==="."?260:55);   // 줄(문단) 끝에서는 조금 쉼
+      setTimeout(tick,gap);
     };
     tick();
   };
   var pump=function(){ if(busy) return; for(var n=0;n<Q.length;n++){ var it=Q[n]; if(it.state==="done") continue; if(it.state==="ready") run(it); return; } };
   document.querySelectorAll(".story .monitor, .story .monline").forEach(function(box){
     var ps=box.classList.contains("monline")?[box]:[].slice.call(box.querySelectorAll("p"));
-    var it={box:box,ps:ps,full:ps.map(function(p){return p.innerHTML}),state:"wait"}; Q.push(it);
     box.setAttribute("aria-label","병상 모니터: "+box.textContent.trim());
-    box.style.minHeight=box.offsetHeight+"px";   // 다 찍힌 크기를 미리 잡아 둬서 글이 찍히는 동안 아래 글이 밀리지 않게
-    if(box.classList.contains("monline")) box.style.minWidth=box.offsetWidth+"px";
-    ps.forEach(function(p){ if(p!==box) p.setAttribute("aria-hidden","true"); p.textContent=""; });
+    var cs=[]; ps.forEach(function(p){ if(p!==box) p.setAttribute("aria-hidden","true"); var a=window.goedamChars(p); if(a.length) a[a.length-1].dataset.end="1"; cs=cs.concat(a); });
+    var it={box:box,cs:cs,state:"wait"}; Q.push(it);
     watch(box,function(){
       var me=Q.indexOf(it);
       for(var n=0;n<me;n++) if(Q[n].state==="wait") finish(Q[n]);   // 보지 않고 지나친 앞 글
@@ -261,20 +269,16 @@
     wrap.innerHTML='<div class="rd-dev" aria-hidden="true"><i class="rd-ant"></i><div class="rd-lcd"><span class="rd-ch">'+ch+'</span><span class="rd-sq"></span></div><i class="rd-led"></i><i class="rd-grille"></i></div>';
     p.parentNode.insertBefore(wrap,p); wrap.appendChild(p); p.setAttribute("aria-hidden","true");
     if(!("IntersectionObserver" in window)) return;
-    p.style.minHeight=p.offsetHeight+"px";
-    var nodes=[], w=document.createTreeWalker(p,NodeFilter.SHOW_TEXT,null,false), n; while((n=w.nextNode())) nodes.push(n);
-    var full=nodes.map(function(t){return t.nodeValue}); nodes.forEach(function(t){t.nodeValue=""});
-    var sq=wrap.querySelector(".rd-sq");
+    var cs=window.goedamChars(p), sq=wrap.querySelector(".rd-sq");
     var io=new IntersectionObserver(function(es){ if(!es[0].isIntersecting) return; io.disconnect();
-      wrap.classList.add("on"); sq.textContent="연결 중"; var ni=0, ci=0, live=out?"송신 중":"수신 중";
+      wrap.classList.add("on"); sq.textContent="연결 중"; var k=0, live=out?"송신 중":"수신 중";
       var tick=function(){
-        if(ni>=nodes.length){ sq.textContent=cut?"신호 끊김":(out?"송신 종료":"수신 종료");
+        if(k>=cs.length){ sq.textContent=cut?"신호 끊김":(out?"송신 종료":"수신 종료");
           if(cut){ var lost=document.createElement("span"); lost.className="rd-lost"; lost.textContent=" ─ 신호 끊김 ─"; lost.setAttribute("aria-hidden","true"); p.appendChild(lost); }
           setTimeout(function(){ wrap.classList.remove("on"); wrap.classList.add(cut?"dead":"done"); sq.textContent=cut?"신호 끊김":""; },cut?900:700); return; }
-        var t=nodes[ni], c=full[ni].charAt(ci); t.nodeValue+=c; ci++;
-        if(ci>=full[ni].length){ ni++; ci=0; }
-        if(c==="…"){ var nz=document.createElement("span"); nz.className="rd-noise"; nz.textContent="▒▒▒"; t.parentNode.insertBefore(nz,t.nextSibling);
-          wrap.classList.add("static"); sq.textContent="신호 불안정"; setTimeout(function(){ nz.remove(); wrap.classList.remove("static"); sq.textContent=live; tick(); },520); return; }
+        var s=cs[k++], c=s.textContent; s.classList.add("on");
+        if(c==="…"){ s.classList.add("nz"); wrap.classList.add("static"); sq.textContent="신호 불안정";
+          setTimeout(function(){ s.classList.remove("nz"); wrap.classList.remove("static"); sq.textContent=live; tick(); },520); return; }
         setTimeout(tick,c===" "?20:45);
       };
       setTimeout(function(){ sq.textContent=live; tick(); },650);
