@@ -288,7 +288,7 @@ footer a{text-decoration:none}
 /* ep.1 성향 테스트(스모어에서 옮김): 한 화면에 하나씩, 갈무리 픽셀 글꼴. 붉은 장면(.red)과 불 꺼진 장면(.dark) */
 .quiz{margin:8px 0 10px;padding:30px 22px 34px;min-height:58vh;display:flex;align-items:center;justify-content:center;border-radius:18px;
   background:var(--card);border:1px solid var(--line);text-align:center;font-family:"Galmuri14",var(--sans);transition:background .4s,border-color .4s}
-.quiz.red{background:#170708;border-color:#4a1015}
+.quiz.red{border-color:#4a1015}
 .quiz.dark{background:#000;border-color:#000}
 .qz-screen{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;gap:18px}
 .qz-screen p{margin:0}
@@ -309,8 +309,15 @@ footer a{text-decoration:none}
 .qz-opt:focus-visible,.qz-btn:focus-visible,.qz-again:focus-visible{outline:2px solid #fff;outline-offset:3px}
 .qz-btn{max-width:320px;font-family:"Galmuri11",var(--sans);font-weight:700}
 .quiz.dark .qz-say{color:#9a9aa3}
-.qz-res-top{width:calc(100% + 44px);margin:-30px -22px 4px;height:110px;border-radius:18px 18px 0 0;
-  background:linear-gradient(180deg,rgba(0,0,0,.2),var(--card)),repeating-linear-gradient(90deg,#2a0608 0 38px,#450b10 38px 44px,#1a0405 44px 90px)}
+/* 스모어에서 쓰던 지하철 승강장 그림(img/station.webp): 시작 화면 배경, 붉은 장면의 옅은 배경, 결과 화면 위 띠 */
+.quiz.cover{align-items:flex-end;min-height:72vh;padding-bottom:40px;border-color:#2a1012;
+  background:linear-gradient(180deg,rgba(5,5,6,.05) 0%,rgba(5,5,6,.35) 45%,rgba(5,5,6,.92) 78%),url("img/station.webp") center 30%/cover #050506}
+.quiz.cover .qz-title{text-shadow:0 2px 12px #000}
+.quiz.cover .qz-btn{background:#b3121b;box-shadow:0 8px 22px -12px rgba(255,40,40,.8)}
+.quiz.red{background:linear-gradient(rgba(23,7,8,.88),rgba(23,7,8,.94)),url("img/station.webp") center/cover #170708}
+.quiz.res{align-items:flex-start;overflow:hidden}
+.qz-res-top{width:calc(100% + 44px);margin:-30px -22px 4px;height:200px;border-radius:18px 18px 0 0;
+  background:linear-gradient(180deg,rgba(15,15,18,0) 40%,var(--card) 100%),url("img/station.webp") center 62%/cover}
 .qz-org{font-family:"Galmuri11",var(--sans);font-weight:700;font-size:18px;color:var(--ink)}
 .qz-team{margin:-6px 0 0;font-family:"Galmuri11",var(--sans);font-weight:700;font-size:clamp(30px,8vw,40px);color:var(--red)}
 .qz-body{text-align:left;font-size:15.5px;line-height:1.9;color:var(--soft);display:flex;flex-direction:column;gap:12px}

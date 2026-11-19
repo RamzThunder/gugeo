@@ -115,6 +115,7 @@
     try{localStorage.setItem(KEY,d)}catch(e){}
     screen('<div class="qz-res-top" aria-hidden="true"></div><p class="qz-org">'+R.org+'</p><h2 class="qz-team">'+R.team+'</h2><div class="qz-body">'+R.body+'</div>'+
       '<a class="qz-btn" href="items.html">지급물품 고르러 가기 →</a><button class="qz-again" type="button">다시 하기</button>',false);
+    box.classList.add("res");
     box.querySelector(".qz-again").onclick=function(){ score={e:0,r:0}; door=""; i=0; qn=0; show(); };
   };
   document.getElementById("qz-start").onclick=show;
