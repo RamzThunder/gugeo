@@ -459,3 +459,14 @@ window.goedamChars=function(el){
     io.observe(b);
   });
 })();
+
+/* 포인트 알림: 화면에 들어오면 하나씩 도착 */
+(function(){
+  if(!("IntersectionObserver" in window)) return;
+  document.querySelectorAll(".story .points").forEach(function(b){
+    var ps=b.querySelectorAll("p"); b.classList.add("wait");
+    var io=new IntersectionObserver(function(es){ if(!es[0].isIntersecting) return; io.disconnect(); b.classList.remove("wait");
+      ps.forEach(function(p,k){ p.style.opacity=0; setTimeout(function(){ p.style.opacity=""; p.classList.add("in"); },300+k*900); }); },{threshold:.7});
+    io.observe(b);
+  });
+})();
