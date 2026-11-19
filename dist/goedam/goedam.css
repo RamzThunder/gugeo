@@ -1027,3 +1027,7 @@ html.sh-dark body::after{opacity:var(--shd,0)}
 @keyframes mir-throb3{0%,100%{box-shadow:inset 0 0 1.2em .4em #000,0 0 1em .2em rgba(220,20,30,.35)}50%{box-shadow:inset 0 0 .8em .2em #000,0 0 2.4em .8em rgba(240,20,30,.65)}}
 .mir-stage .mir-obj .mirror p{font-size:clamp(9px,1.7vw,12px)}
 .mir-swing::after{content:none}
+/* 노리개 그림을 붉은 번짐째(원본 1024×1536 그대로) 씀: 거울 면 중심 (49.9%, 42.0%), 지름 = 그림 폭의 25.5% */
+.mir-obj{width:min(100vw,38em);aspect-ratio:1024/1536;transform-origin:49.9% 41.99%}
+.mir-norigae{filter:drop-shadow(0 1em 1.4em rgba(0,0,0,.6))}
+.mir-stage .mir-obj .mirror{left:37.16%;top:33.5%;width:25.49%}
