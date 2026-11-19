@@ -785,3 +785,13 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 /* 거울이 글 칸(680px)에 갇히지 않고 화면 전체를 채우도록 칸 밖으로 펼침. 옆으로 생기는 스크롤은 잘라 냄 */
 body{overflow-x:clip}
 .mir-pin{width:100vw;margin-left:calc(50% - 50vw)}
+/* 화강 요원의 부름: 화면 한가운데 하얗게 번쩍이며 터지고, 거울은 0.25초 만에 '탁' 작아짐 */
+.mir-stage.snap .mirror{transition:transform .25s cubic-bezier(.2,.9,.3,1)}
+.mir-stage.snap .mir-pin::before{transition:background .25s}
+.mir-call{position:absolute;left:0;right:0;top:50%;z-index:3;transform:translateY(-50%);text-align:center;pointer-events:none;opacity:0;
+  font-family:var(--sans);font-weight:900;font-size:clamp(2.4em,9vw,5em);color:#fff;letter-spacing:.02em;text-shadow:0 0 .3em rgba(255,255,255,.6),0 .05em 0 #000}
+.mir-call .x{color:#bdbdc6}
+.mir-call.go{animation:mir-call 1.6s ease-out 1 forwards}
+@keyframes mir-call{0%{opacity:0;transform:translateY(-50%) scale(1.8)}8%{opacity:1;transform:translateY(-50%) scale(1)}12%{transform:translate(-6px,-50%)}16%{transform:translate(6px,-50%)}20%{transform:translate(0,-50%)}70%{opacity:1}100%{opacity:0;transform:translateY(-50%) scale(.96)}}
+.mir-stage.snap .mir-pin{animation:mir-flash .35s ease-out 1}
+@keyframes mir-flash{0%{background:rgba(255,255,255,.55)}100%{background:transparent}}
