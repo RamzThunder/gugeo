@@ -12,7 +12,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script>try{var s=JSON.parse(localStorage.getItem("goedam-read")||"{}");if(s.size)document.documentElement.dataset.size=s.size;if(s.font)document.documentElement.dataset.font=s.font}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="goedam.css?v=b6ef8523">
+<link rel="stylesheet" href="goedam.css?v=42ca093d">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="brush" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter></svg>
@@ -44,13 +44,10 @@
 <p>&quot;네, 복귀 준비 하겠습니다.&quot;</p>
 <p>나는 복귀를 위해 병동의 문이 닫히지 않게 괴어놓았던 도어 스토퍼를 조심스럽게 제거했다. 그래도 <em>가벼운</em> 탐사에 걸맞게, 탈출 방법이 지나치게 까다롭지는 않은 어둠이었다.</p>
 <div class="gap"></div>
-<p>1. 병동의 문을 모두 닫은 후에, 복도의 불을 모두 끈다.</p>
-<p>2. 복도 끝 쪽의 간호사 호출 벨을 눌러 어둠 속 존재들⎯ 간호사 호출 벨에 반응하는 것을 보았을 때, 대부분 간호사로 추측된다. ⎯  의 주의를 집중시킨 후, 반대쪽 복도 끝에 있는 식사 카트용 엘리베이터를 탑승한다.</p>
-<p>3. 엘리베이터를 탑승한 층을 기준으로 2층 아래의 버튼을 누른다.</p>
-<p>4.1. 문이 열렸을 때 불이 켜져 있는 경우, 해당 층에 탈출 가능한 출구가 있다. 대체로 엘리베이터 근처에 존재한다.</p>
-<p>4.2. 문이 열렸을 때 불이 꺼져 있는 경우, 문이 열린 시간이 5초를 넘기지 않도록 닫힘 버튼을 눌러야만 한다.</p>
-<p>5. 4.2.에서 문 닫기를 성공한 경우, 현재 층을 기준으로 3층 위의 버튼을 누른다. 이후 내용은 4.1.과 4.2.의 반복이다.</p>
-<p>6. 위에서 서술한 2층 아래, 3층 위 버튼을 누르는 것을 반복하며 불이 켜져 있는 층을 찾아 탈출한다.</p>
+<div class="manual" role="group" aria-label="매뉴얼: 어둠 탈출 매뉴얼 · 폐병원">
+<div class="mn-head" aria-hidden="true"><span>SG 주식회사</span><b>어둠 탈출 매뉴얼 · 폐병원</b></div>
+<ol><li data-n="1">병동의 문을 모두 닫은 후에, 복도의 불을 모두 끈다.</li><li data-n="2">복도 끝 쪽의 간호사 호출 벨을 눌러 어둠 속 존재들⎯ 간호사 호출 벨에 반응하는 것을 보았을 때, 대부분 간호사로 추측된다. ⎯  의 주의를 집중시킨 후, 반대쪽 복도 끝에 있는 식사 카트용 엘리베이터를 탑승한다.</li><li data-n="3">엘리베이터를 탑승한 층을 기준으로 2층 아래의 버튼을 누른다.</li><li data-n="4.1">문이 열렸을 때 불이 켜져 있는 경우, 해당 층에 탈출 가능한 출구가 있다. 대체로 엘리베이터 근처에 존재한다.</li><li data-n="4.2">문이 열렸을 때 불이 꺼져 있는 경우, 문이 열린 시간이 5초를 넘기지 않도록 닫힘 버튼을 눌러야만 한다.</li><li data-n="5">4.2.에서 문 닫기를 성공한 경우, 현재 층을 기준으로 3층 위의 버튼을 누른다. 이후 내용은 4.1.과 4.2.의 반복이다.</li><li data-n="6">위에서 서술한 2층 아래, 3층 위 버튼을 누르는 것을 반복하며 불이 켜져 있는 층을 찾아 탈출한다.</li></ol>
+</div><!--/manual-->
 <div class="gap"></div>
 <p>…안다. 이게 까다롭지 않은게 맞냐는 질문을 할 차례라는 걸.</p>
 <div class="gap"></div>
@@ -170,6 +167,6 @@
 <nav class="pn"><a href="ep2-explore-1.html">← 전략탐사팀 1/3</a><a href="./">목차</a></nav>
 </main>
 <footer><a href="/">gugeo.party</a> · 괴담에 떨어져도 수행평가를 해야 하는구나</footer>
-<script src="goedam.js?v=b6ef8523" defer></script>
+<script src="goedam.js?v=42ca093d" defer></script>
 </body>
 </html>

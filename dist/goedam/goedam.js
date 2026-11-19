@@ -449,3 +449,13 @@ window.goedamChars=function(el){
   var ticking=false, run=function(){ ticking=false; jobs.forEach(function(f){ f(); }); };
   addEventListener("scroll",function(){ if(!ticking){ ticking=true; requestAnimationFrame(run); } },{passive:true}); addEventListener("resize",run); run();
 })();
+
+/* 환자 팔찌: 화면에 들어오면 태그가 탁 붙고(data-to 없음), data-to가 있으면 잠시 뒤 태그가 다른 색으로 서서히 번짐 */
+(function(){
+  if(!("IntersectionObserver" in window)) { document.querySelectorAll(".story .wband[data-to]").forEach(function(b){ b.classList.add("spread"); }); return; }
+  document.querySelectorAll(".story .wband").forEach(function(b){
+    var io=new IntersectionObserver(function(es){ if(!es[0].isIntersecting) return; io.disconnect();
+      if(b.dataset.to) setTimeout(function(){ b.classList.add("spread"); },700); else b.classList.add("stick"); },{threshold:.8});
+    io.observe(b);
+  });
+})();

@@ -25,7 +25,7 @@ PREFIX = {"bot": "[점원] ", "pen": "[필담] ", "say": "[강조] ",
           "dok": "[도깨비] ", "dok angry": "[도깨비:화남] ", "dok loud": "[도깨비:외침] ",
           "don": "[후원] ", "whisper": "[속삭임] ", "shake": "[흔들림] ", "freeze": "[정지] ",
           "monline": "[모니터] ", "radio": "[무전] ", "radio out": "[무전:송신] ", "pa": "[방송] ", "voice": "[목소리] ", "voice angry": "[목소리:화남] ", "call": "[통화] ", "call tense": "[통화:날섬] "}
-BOX = {"라이브": "live", "채팅": "chat", "원문": "live-orig", "문자": "sms", "모니터": "monitor", "알림": "noti", "면접": "interview", "보고서": "report", "거울": "mirror", "얼어붙음": "freezeup"}
+BOX = {"라이브": "live", "채팅": "chat", "원문": "live-orig", "문자": "sms", "모니터": "monitor", "알림": "noti", "면접": "interview", "보고서": "report", "거울": "mirror", "얼어붙음": "freezeup", "매뉴얼": "manual"}
 CHAT = re.compile(r"([^\s\[\]:]{1,12}): (.+)$")   # 라이브·채팅 상자 안의 '닉네임: 채팅' 줄
 RAW = re.compile(r"</?(div|ul|ol|aside|details|summary|figure|section|table|h[1-6])\b|<p[ >]")
 def stamp_svg(half):
@@ -71,6 +71,20 @@ DOCS = {
           '<tr><td>전략탐사팀 A~D팀</td><td>20대 대표</td><td>사번 ■-■■번 ■ 주임</td></tr></table></figure>'),
 }
 
+TRIAGE = [("흰색", "#eeeeee"), ("초록색", "#2fb35a"), ("노란색", "#f2c230"), ("빨간색", "#d8322e"), ("파란색", "#2e62d8")]
+TRI = dict(TRIAGE)
+
+def band_fig(a, b):
+    """환자 팔찌 그림. b가 있으면 화면에 들어올 때 태그 색이 a에서 b로 번짐"""
+    lab = "환자 인식용 팔찌, %s 태그" % a + ("가 %s으로 물듦" % b if b else "")
+    return ('<figure class="wband" data-tag="%s"%s role="img" aria-label="%s"><span class="wb-paper"><span class="wb-no">환자 번호 <span class="x">■■■■■■</span></span>'
+            '<span class="wb-hosp"><span class="x">■■</span>병원</span></span><span class="wb-tag" style="--c1:%s;--c2:%s"></span></figure>') % (
+            a, ' data-to="%s"' % b if b else "", lab, TRI[a], TRI[b or a])
+
+def triage_fig():
+    chips = "".join('<li style="--c:%s">%s</li>' % (c, n) for n, c in TRIAGE)
+    return '<figure class="triage" role="img" aria-label="환자 분류 색: 흰색, 초록색, 노란색, 빨간색, 파란색 순으로 심각"><ol>%s</ol><span class="tri-arrow">심각</span></figure>' % chips
+
 ART = re.compile(r'(<article class="story">\n)(.*?)(</article>)', re.S)
 
 HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
@@ -105,6 +119,7 @@ HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
                              [남은횟수] 3  도장 뚜껑의 숫자,  [남은횟수] 3→2  화면에 들어오면 3에서 2로 바뀜
                              [휴대폰:메신저]  텅 빈 메신저 화면,  [휴대폰:연락처]  이름이 하나씩 사라지는 연락처 화면
                              [문서:규정]  휴대폰 PDF 구조 규정 13항,  [문서:위원회]  SG 주식회사 윤리규정위원회 공지
+                             [팔찌:흰색]  환자 팔찌(태그 색),  [팔찌:흰색→초록색]  태그 색이 번짐,  [분류색]  흰·초록·노랑·빨강·파랑 분류 색
 · 상자: 아래처럼 ::: 로 열고 ::: 로 닫아요. 안쪽은 보통 원고처럼 써요.
     :::라이브 팬텀 | 시청자 10명      ← 눌러서 재생하는 생방송 화면 (방송 이름 | 시청자 수).
                                        안쪽 한 줄씩 자막으로 흘러가고, '닉네임: 채팅' 줄은 그 자리에서 채팅창에 올라와요
@@ -117,6 +132,7 @@ HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
     :::보고서 구조 3팀 · 수색 보고서   ← 보고서 발췌 종이 (제목). 안쪽 '- 내용' 줄
     :::거울                          ← 노리개 거울로 들여다본 모습 (허수아비 인형 속)
     :::얼어붙음                      ← 줄마다 점점 느리게·작게·흐리게 굳어 가며 나타나고, 마지막 줄은 뚝 끊김
+    :::매뉴얼 어둠 탈출 매뉴얼 · 폐병원  ← 탐사 매뉴얼 카드. 안쪽 '1. 내용' 줄 (4.1·4.2처럼 갈래는 나란히)
     :::
 · {666■}            금액 (호박색)
 · {{이채|이상한 광채, 색다른 빛}}  낱말 풀이 (누르면 뜻 카드)
@@ -142,6 +158,9 @@ def article_to_md(body):
         if l == GAP: out.append(""); i += 1; continue
         if l == GAP2: out += ["", ""]; i += 1; continue
         if l == SCENE: out.append("* * *"); i += 1; continue
+        bm = re.match(r'<figure class="wband" data-tag="(\S+?)"(?: data-to="(\S+?)")?', l)
+        if bm: out.append("[팔찌:%s%s]" % (bm.group(1), "→" + bm.group(2) if bm.group(2) else "")); i += 1; continue
+        if l.startswith('<figure class="triage"'): out.append("[분류색]"); i += 1; continue
         dm = re.match(r'<figure class="(?:pdf|sgnote)" data-kind="(\S+?)"', l)
         if dm: out.append("[문서:%s]" % dm.group(1)); i += 1; continue
         pm = re.match(r'<figure class="phone" data-kind="(\S+?)"', l)
@@ -149,7 +168,7 @@ def article_to_md(body):
         if l.startswith('<figure class="stampmark'): out.append("[도장자국:반]" if 'stampmark half' in l else "[도장자국]"); i += 1; continue
         m = re.match(r'<div class="stampcount" data-from="(\d+)"(?: data-to="(\d+)")?', l)
         if m: out.append("[남은횟수] %s%s" % (m.group(1), "→" + m.group(2) if m.group(2) else "")); i += 1; continue
-        m = re.match(r'<div class="(live|chat|live-orig|sms|monitor|noti|interview|report|mirror)" ', l) or re.match(r'<div class="(freezeup)">', l)
+        m = re.match(r'<div class="(live|chat|live-orig|sms|monitor|noti|interview|report|mirror|manual)" ', l) or re.match(r'<div class="(freezeup)">', l)
         if m:
             kind = m.group(1); j = i + 1
             while lines[j] != "</div><!--/%s-->" % kind: j += 1
@@ -170,6 +189,9 @@ def article_to_md(body):
             elif kind in ("interview", "report"):
                 out.append(":::%s %s" % ("면접" if kind == "interview" else "보고서", html.unescape(re.search(r'aria-label="[^:]+: (.*?)"', l).group(1))))
                 out += ["- " + inline_to_md(x) for x in re.findall(r"<li>(.*?)</li>", body_lines[1])]
+            elif kind == "manual":
+                out.append(":::매뉴얼 " + html.unescape(re.search(r'aria-label="매뉴얼: (.*?)"', l).group(1)))
+                out += ["%s. %s" % (n, inline_to_md(x)) for n, x in re.findall(r'<li data-n="(.*?)">(.*?)</li>', body_lines[1])]
             elif kind == "freezeup":
                 out.append(":::얼어붙음")
                 out += article_to_md("\n".join(body_lines))
@@ -229,6 +251,9 @@ def md_to_article(lines, live=False):
             if out and i < n: out.append(GAP if k == 1 else GAP2)
             continue
         if l == "* * *": out.append(SCENE); i += 1; continue
+        bm = re.fullmatch(r"\[팔찌:(\S+?)(?:→(\S+))?\]", l)
+        if bm and bm.group(1) in TRI and (bm.group(2) is None or bm.group(2) in TRI): out.append(band_fig(bm.group(1), bm.group(2))); i += 1; continue
+        if l == "[분류색]": out.append(triage_fig()); i += 1; continue
         dm = re.fullmatch(r"\[문서:(\S+)\]", l)
         if dm and dm.group(1) in DOCS: out.append(DOCS[dm.group(1)]); i += 1; continue
         pm = re.fullmatch(r"\[휴대폰:(\S+)\]", l)
@@ -264,6 +289,14 @@ def md_to_article(lines, live=False):
                 out.append('<div class="%s-head" aria-hidden="true"><span>%s</span><b>%s</b></div>' % (kind[:2] if kind == "interview" else "rp", label, md_to_inline(arg)))
                 tag = "ol" if kind == "interview" else "ul"
                 out.append("<%s>%s</%s>" % (tag, "".join("<li>%s</li>" % md_to_inline(c[2:]) for c in inner if c.startswith("- ")), tag))
+            elif kind == "manual":
+                out.append('<div class="manual" role="group" aria-label="매뉴얼: %s">' % html.escape(arg))
+                out.append('<div class="mn-head" aria-hidden="true"><span>SG 주식회사</span><b>%s</b></div>' % md_to_inline(arg))
+                items = []
+                for c in inner:
+                    mm = re.match(r"(\d+(?:\.\d+)?)\. (.+)$", c)
+                    if mm: items.append('<li data-n="%s">%s</li>' % (mm.group(1), md_to_inline(mm.group(2))))
+                out.append("<ol>%s</ol>" % "".join(items))
             elif kind == "freezeup":
                 out.append('<div class="freezeup">')
                 out.append(md_to_article(inner).rstrip("\n"))
