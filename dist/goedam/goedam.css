@@ -172,30 +172,15 @@ footer a{text-decoration:none}
 .story .bot .won{font-weight:400}
 .story .tagp{font-family:"Tangba",var(--sans);font-size:1em;color:#ffe2a8}
 
-/* 서점 아크릴판 광고(특수구조과 ep.2): '애매한 미감'이 나도록 일부러 촌스럽게.
-   투명 아크릴 판 + 형광 그라데이션 포스터 + 무지개 외곽선 제목 + 반반 신발 + 삐뚤어진 붓글씨. 글자는 실제 글자로 둠 */
-.acryl{width:min(100%,25em);margin:2.4em auto 2.2em;transform:rotate(-1.4deg);font-size:var(--fs)}
-.acryl-plate{position:relative;padding:.75em;border-radius:.7em;
+/* 서점 아크릴판 광고(특수구조과 ep.2): 선생님이 만든 광고 그림(img/shoe-poster.webp)을 투명 아크릴 판에 꽂아 둠.
+   클래스·파일 이름에 'ad'를 쓰지 않음(광고 차단기가 숨김) */
+.acryl{width:min(100%,30em);margin:2.4em auto 2.2em;transform:rotate(-1.4deg);font-size:var(--fs)}
+.acryl-plate{position:relative;padding:.6em;border-radius:.7em;
   background:linear-gradient(125deg,rgba(255,255,255,.22),rgba(255,255,255,.05) 38%,rgba(255,255,255,.02) 60%,rgba(255,255,255,.14));
   border:1px solid rgba(255,255,255,.4);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.5),0 1.2em 2.2em -1em rgba(0,0,0,.9)}
 .acryl-plate::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.28) 34%,transparent 40%,transparent 62%,rgba(255,255,255,.12) 64%,transparent 68%)}
-.acryl-poster{position:relative;overflow:hidden;padding:1.1em .9em 1em;border-radius:.25em;text-align:center;
-  background:radial-gradient(circle at 18% 12%,#fff6 0 6%,transparent 7%),linear-gradient(160deg,#ff5fbf 0%,#ffe24a 48%,#38f59a 100%);
-  outline:3px dashed rgba(122,24,180,.55);outline-offset:-.5em;color:#3a0a52}
-.acryl-poster p{margin:0}
-.acryl-pre{font-family:"Black Han Sans",var(--sans);font-size:1.02em;letter-spacing:.01em;color:#5a0aa0;transform:rotate(1.5deg);text-shadow:2px 2px 0 #fff}
-.acryl-head{font-family:"Black Han Sans",var(--sans);font-size:2.6em;line-height:1.05;margin:.12em 0 .05em!important;letter-spacing:-.02em;
-  background:linear-gradient(90deg,#ff1f1f,#ff9b00,#f6ff00,#00e05a,#00b3ff,#7a2cff);-webkit-background-clip:text;background-clip:text;color:transparent;
-  -webkit-text-stroke:1.5px #2a0040;filter:drop-shadow(3px 3px 0 #fff) drop-shadow(5px 5px 0 #2a0040)}
-.acryl-burst{position:absolute;right:-.2em;top:-.1em;width:4.2em;height:4.2em;display:grid;place-items:center;transform:rotate(14deg);
-  font-family:"Black Han Sans",var(--sans);font-size:.82em;color:#fff;text-shadow:1px 1px 0 #a00;
-  background:#ff2b2b;clip-path:polygon(50% 0,61% 18%,82% 9%,80% 31%,100% 38%,85% 54%,98% 72%,76% 74%,72% 96%,54% 84%,36% 100%,30% 78%,8% 80%,15% 60%,0 44%,19% 34%,12% 13%,34% 18%)}
-.acryl-shoe{display:block;width:70%;margin:.3em auto .1em;transform:rotate(-2deg);filter:drop-shadow(0 4px 0 rgba(58,10,82,.35))}
-.acryl-lbl{font-family:"Black Han Sans",sans-serif;font-size:20px;text-anchor:middle}
-.acryl-lbl-l{fill:#7a4a00}.acryl-lbl-r{fill:#3a0a52}
-.acryl-tip{font-family:var(--hand);font-size:1.55em;line-height:1.15;color:#1d1d1d;transform:rotate(-3deg);margin-top:.2em!important;
-  background:linear-gradient(transparent 55%,rgba(255,255,255,.75) 55% 90%,transparent 90%);display:inline-block;padding:0 .2em}
+  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.22) 34%,transparent 40%,transparent 62%,rgba(255,255,255,.1) 64%,transparent 68%)}
+.acryl-img{display:block;width:100%;height:auto}
 .acryl-foot{width:62%;height:.9em;margin:-.15em auto 0;border-radius:0 0 .5em .5em;
   background:linear-gradient(rgba(255,255,255,.28),rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.3);border-top:0;
   clip-path:polygon(4% 0,96% 0,100% 100%,0 100%)}
