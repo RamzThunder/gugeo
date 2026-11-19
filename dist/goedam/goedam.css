@@ -436,3 +436,5 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 .live-script[hidden]{display:none}
 @media (max-width:600px){.story .live.player{grid-template-columns:minmax(0,1fr)}.lv-stage{border-right:0}.lv-chat{height:9.5em}}
 .lv-end[hidden],.lv-don[hidden]{display:none}
+.lv-sub{font-size:.9em}
+@media (max-width:600px){.lv-sub{font-size:.8em;left:3%;right:3%}}
