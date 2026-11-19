@@ -484,3 +484,21 @@ window.goedamChars=function(el){
     io.observe(b);
   });
 })();
+
+/* 징수 타이머(.timer3): 타이머가 화면 가운데를 지난 뒤부터 쪽 끝(이전/다음 링크)까지 내리는 만큼 data-from → data-to 초로 줄어듦.
+   큰 타이머가 위로 지나가면 오른쪽 위 작은 타이머(.tm-chip)가 같은 시간을 보여 줌. 끝 10초 남짓은 깜빡임 */
+(function(){
+  var t=document.querySelector(".story .timer3"); if(!t) return;
+  var from=+t.dataset.from, to=+t.dataset.to, num=t.querySelector(".tm-num"), end=document.querySelector(".pn")||t.closest(".story");
+  var chip=document.createElement("div"); chip.className="tm-chip"; chip.setAttribute("aria-hidden","true");
+  chip.innerHTML='<span class="tm-label">징수까지</span><span class="tm-num"></span>'; document.body.appendChild(chip);
+  var cnum=chip.querySelector(".tm-num"), last=-1;
+  var fmt=function(x){ return Math.floor(x/60)+":"+("0"+x%60).slice(-2); };
+  var upd=function(){ ticking=false;
+    var r=t.getBoundingClientRect(), e=end.getBoundingClientRect(), a=r.top+r.height/2-innerHeight/2, span=e.top-innerHeight-(r.top+r.height/2-innerHeight/2);
+    var p=span>0?Math.min(1,Math.max(0,-a/span)):(a<0?1:0), v=Math.round(from-(from-to)*p);
+    if(v!==last){ last=v; num.textContent=cnum.textContent=fmt(v); var low=v<=to+10; t.classList.toggle("tm-low",low); chip.classList.toggle("tm-low",low); }
+    chip.classList.toggle("on",r.bottom<52&&e.top>innerHeight*.6);
+  };
+  var ticking=false; addEventListener("scroll",function(){ if(!ticking){ ticking=true; requestAnimationFrame(upd); } },{passive:true}); addEventListener("resize",upd); upd();
+})();
