@@ -374,3 +374,12 @@ window.goedamChars=function(el){
   var on=function(){ if(!ticking){ ticking=true; requestAnimationFrame(upd); } };
   addEventListener("scroll",on,{passive:true}); addEventListener("resize",on); upd();
 })();
+
+/* 도깨비 말(.dok): 글자를 하나씩 나눠 서로 조금씩 엇갈린 박자로 일렁이게 함 */
+(function(){
+  document.querySelectorAll(".story .dok").forEach(function(p){
+    var cs=window.goedamChars(p);
+    cs.forEach(function(s,i){ s.classList.add("on"); s.style.animationDelay=(-i*0.13)+"s"; });
+    p.setAttribute("aria-label",p.textContent);
+  });
+})();

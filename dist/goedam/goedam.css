@@ -835,3 +835,12 @@ body{overflow-x:clip}
     radial-gradient(circle at 88% 70%,#fff 0 1.5px,transparent 3px),radial-gradient(circle at 25% 84%,#d8ffe6 0 1.5px,transparent 3px),radial-gradient(circle at 52% 6%,#fff 0 1.2px,transparent 2.5px);
   animation:mir-glint 2.4s steps(3) infinite}
 @keyframes mir-glint{0%{opacity:1}33%{opacity:.2}66%{opacity:.75}}
+
+/* 도깨비 말: 귀여운 손글씨(그리운 규원체)로, 글자 하나하나가 불꽃처럼 따로 일렁임(위아래로 통통·살짝 기울어짐·빛 깜빡) */
+@font-face{font-family:"MissedGyuwon";src:url("https://cdn.jsdelivr.net/gh/projectnoonnu/2510-1@1.0/Griun_Gyuwon-Rg.woff2") format("woff2");font-weight:normal;font-display:swap}
+.story .dok{font-family:"MissedGyuwon",var(--hand);font-weight:normal;font-size:1.32em;letter-spacing:.01em;animation:none}
+.story .dok.loud{font-size:1.75em}
+.story .dok .tc{display:inline-block;white-space:pre;animation:dok-bob 1.5s ease-in-out infinite}
+.story .dok.angry .tc{animation:dok-bob-angry .7s ease-in-out infinite}
+@keyframes dok-bob{0%,100%{transform:translateY(0) rotate(-3deg);opacity:1}25%{transform:translateY(-.14em) rotate(2deg)}50%{transform:translateY(.04em) rotate(4deg);opacity:.82}75%{transform:translateY(-.08em) rotate(-1deg)}}
+@keyframes dok-bob-angry{0%,100%{transform:translateY(0) rotate(-5deg) scale(1)}30%{transform:translateY(-.2em) rotate(5deg) scale(1.08)}60%{transform:translateY(.06em) rotate(-3deg) scale(.96)}}
