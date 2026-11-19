@@ -224,3 +224,7 @@ footer a{text-decoration:none}
 .memo-seal{display:inline-grid;place-items:center;vertical-align:middle;margin-left:.5em;width:4.8em;height:4.8em;
   border:2px solid rgba(190,25,30,.85);border-radius:3px;color:rgba(190,25,30,.85);font-size:.62em;line-height:1.15;letter-spacing:0;text-align:center;
   transform:rotate(-7deg);box-shadow:inset 0 0 0 2px rgba(190,25,30,.25)}
+
+/* 백운 요원의 필담(수첩에 휘갈긴 글): 그리운 김탕체. 읽기 설정(고딕/명조)과 상관없이 손글씨로 */
+@font-face{font-family:"NostalgicKimtang";src:url("https://cdn.jsdelivr.net/gh/Project-Noonnu/2609271756@griun-kimtang-rg/griun-kimtang-rg/Griun_KimTang-Rg.woff2") format("woff2");font-weight:400;font-display:swap}
+.story .pen{font-family:"NostalgicKimtang",var(--sans);font-weight:400;font-size:1.12em;letter-spacing:0;color:#e9e4d6}
