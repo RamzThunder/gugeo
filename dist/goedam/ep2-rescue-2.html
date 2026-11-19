@@ -11,7 +11,7 @@
 <meta property="og:image" content="https://gugeo.party/goedam/img/card.jpg">
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script>try{var s=JSON.parse(localStorage.getItem("goedam-read")||"{}");if(s.size)document.documentElement.dataset.size=s.size;if(s.font)document.documentElement.dataset.font=s.font}catch(e){}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Noto+Serif+KR:wght@400;700&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Brush+Script&family=Noto+Serif+KR:wght@400;700&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="goedam.css">
 </head>
 <body>
@@ -112,8 +112,25 @@
 <p>해당 자리에 남겨진 가격표에는 <span class="tagp">‘불운 신발, <span class="won">666<span class="x">■</span></span>’</span> 이 적혀있었고,</p>
 <p>근처에 놓인 아크릴판에는 애매한 미감의 광고가 부착되어 있었다.</p>
 <div class="gap2"></div>
-<p>불운과 행운을 선택할 수 있는 2in1 신발!</p>
-<p class="say"><strong><em> 필요에 따라 신발 끈의 상태를 조절해 보세요!</em></strong></p>
+<figure class="adboard" aria-label="아크릴판 광고: 불운과 행운을 선택할 수 있는 2in1 신발! 필요에 따라 신발 끈의 상태를 조절해 보세요!">
+  <div class="ad-plate"><div class="ad-poster">
+    <span class="ad-burst" aria-hidden="true">2in1</span>
+    <p class="ad-pre">불운과 행운을 선택할 수 있는</p>
+    <p class="ad-head">2in1 신발!</p>
+    <svg class="ad-shoe" viewBox="0 0 240 110" aria-hidden="true">
+      <defs><clipPath id="shoe-l"><rect x="0" y="0" width="120" height="110"/></clipPath><clipPath id="shoe-r"><rect x="120" y="0" width="120" height="110"/></clipPath>
+      <path id="shoe" d="M18 78 C18 58 30 38 52 30 L92 18 C104 34 120 40 142 42 C176 46 210 56 222 72 C228 80 226 90 214 92 L30 92 C22 92 18 86 18 78Z"/></defs>
+      <use href="#shoe" clip-path="url(#shoe-l)" fill="#2b1f3a" stroke="#0d0812" stroke-width="3"/>
+      <use href="#shoe" clip-path="url(#shoe-r)" fill="#ffd23f" stroke="#a5780a" stroke-width="3"/>
+      <path d="M18 84 L226 84 L222 98 L22 98Z" fill="#f4f1ea" stroke="#9b968a" stroke-width="2"/>
+      <path d="M70 34 L96 50 M80 28 L106 44 M90 24 L116 40" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+      <text x="58" y="70" class="ad-lbl ad-lbl-l">불운</text><text x="182" y="72" class="ad-lbl ad-lbl-r">행운</text>
+      <path d="M104 64 h32 M110 58 l-7 6 7 6 M130 58 l7 6 -7 6" stroke="#ff2e88" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <p class="ad-tip">필요에 따라 신발 끈의 상태를 조절해 보세요!</p>
+  </div></div>
+  <div class="ad-foot" aria-hidden="true"></div>
+</figure>
 <div class="scene" aria-hidden="true"><i></i><i></i><i></i></div>
 <p>그리고, 아무렇게나 놓인 빈 상자 안에는 종이 완충재만이 남아있었다.</p>
 <p>직감적으로 알 수 있었다. 누군가 이 신발을 가져간 것이다.</p>
