@@ -603,3 +603,11 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 @keyframes pa-ring{0%{letter-spacing:.45em;opacity:0;text-shadow:-2em 0 .5em rgba(246,227,173,.25),2em 0 .5em rgba(246,227,173,.25)}
   30%{opacity:1}100%{letter-spacing:.06em}}
 .story .pa-in{font-weight:700;color:#f6e3ad;letter-spacing:.04em;text-shadow:0 0 .6em rgba(255,200,90,.35),-.3em 0 .1em rgba(246,227,173,.18),.3em 0 .1em rgba(246,227,173,.18)}
+
+/* 병원 방송 다시: 밝은 띠 위 진한 글씨, 가운데. 아련한 효과(메아리·퍼짐) 대신 형광등 켜지듯 '탁' 켜짐 */
+.story p.pa{padding:.75em 1em;border-radius:6px;background:#eef1ea;color:#1d2420;font-weight:800;letter-spacing:.02em;text-shadow:none;
+  box-shadow:0 0 0 1px #d9ded3,0 0 1.6em rgba(230,240,225,.18)}
+.story p.pa::before,.story p.pa::after{display:none}
+.story p.pa.ring{animation:pa-on .5s steps(1) 1}
+@keyframes pa-on{0%{opacity:0}20%{opacity:1}35%{opacity:.25}50%,100%{opacity:1}}
+.story .pa-in{padding:.05em .3em;border-radius:4px;background:#eef1ea;color:#1d2420;font-weight:800;letter-spacing:0;text-shadow:none}
