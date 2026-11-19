@@ -1016,3 +1016,14 @@ html.sh-dark body::after{opacity:var(--shd,0)}
 .story .points em{font-style:normal;font-weight:900;color:#ffd166}
 .story .points.wait p{opacity:0;transform:translateY(-.4em)}
 .story .points p.in{opacity:1;transform:none;transition:opacity .4s,transform .4s}
+
+/* 선생님이 만든 노리개 그림(img/norigae.webp, 422×1513): 거울 면 중심 (49.8%, 41.8%), 지름 = 그림 폭의 61.9% */
+.mir-obj{width:min(46vw,15em);aspect-ratio:422/1513;transform-origin:49.76% 41.84%}
+.mir-swing{transform-origin:50% 1%;animation:mir-sway2 4.5s ease-in-out infinite}
+@keyframes mir-sway2{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.6deg)}}
+.mir-norigae{image-rendering:auto;filter:drop-shadow(0 0 1.4em rgba(200,30,40,.4)) drop-shadow(0 1em 1.4em rgba(0,0,0,.8))}
+.mir-stage .mir-obj .mirror{left:18.84%;top:33.21%;width:61.85%;box-shadow:inset 0 0 1.2em .4em #000}
+.mir-stage.full .mir-obj .mirror{animation:mir-throb3 1.4s ease-in-out infinite}
+@keyframes mir-throb3{0%,100%{box-shadow:inset 0 0 1.2em .4em #000,0 0 1em .2em rgba(220,20,30,.35)}50%{box-shadow:inset 0 0 .8em .2em #000,0 0 2.4em .8em rgba(240,20,30,.65)}}
+.mir-stage .mir-obj .mirror p{font-size:clamp(9px,1.7vw,12px)}
+.mir-swing::after{content:none}

@@ -354,10 +354,10 @@ window.goedamChars=function(el){
   var stage=document.createElement("div"); stage.className="mir-stage";
   var pin=document.createElement("div"); pin.className="mir-pin";
   m.parentNode.insertBefore(stage,m); stage.appendChild(pin);
-  /* 지급물품 '거울 노리개' 그림(img/items/mirror.webp)에 거울을 끼움: 그림의 거울 면 자리에 .mirror를 겹치고, 매듭에 매달려 살짝 흔들림 */
+  /* 선생님이 만든 거울 노리개 그림(img/norigae.webp, 422×1513 비율, 일자)에 거울을 끼움: 그림의 거울 면 자리에 .mirror를 겹치고, 손에 든 채 살짝 흔들림 */
   var obj=document.createElement("div"); obj.className="mir-obj";
   var swing=document.createElement("div"); swing.className="mir-swing";
-  var img=document.createElement("img"); img.className="mir-norigae"; img.src="img/items/mirror.webp"; img.alt=""; img.setAttribute("aria-hidden","true");
+  var img=document.createElement("img"); img.className="mir-norigae"; img.src="img/norigae.webp"; img.alt=""; img.setAttribute("aria-hidden","true");
   swing.appendChild(img); swing.appendChild(m); obj.appendChild(swing); pin.appendChild(obj);
   var call=null, n=stage.nextElementSibling;
   for(var k=0;k<3&&n;k++,n=n.nextElementSibling){ if(n.tagName==="P"&&/요원!!/.test(n.textContent)){ call=document.createElement("div"); call.className="mir-call"; call.setAttribute("aria-hidden","true"); call.innerHTML=n.innerHTML; pin.appendChild(call); break; } }
