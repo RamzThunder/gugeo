@@ -180,3 +180,35 @@
     $(".lv-txt").onclick=function(){ var open=orig.hidden; orig.hidden=!open; this.setAttribute("aria-expanded",open); this.textContent=open?"소설 원문 접기":"소설 원문으로 보기"; };
   });
 })();
+
+/* 3.1 문자(.sms): 화면에 들어오면 내 말 → '…' 입력 중 → 백운 선배 답장 순서로 나타남.
+   병상 모니터(.monitor): 화면에 들어오면 한 글자씩 찍힘(커서 깜빡임). 글 전체는 처음부터 문서에 있음 */
+(function(){
+  var watch=function(el,fn){ if(!("IntersectionObserver" in window)){fn();return;}
+    var io=new IntersectionObserver(function(es){ if(es[0].isIntersecting){ io.disconnect(); fn(); } },{threshold:.45}); io.observe(el); };
+  document.querySelectorAll(".story .sms").forEach(function(box){
+    var ps=box.querySelectorAll("p"); box.classList.add("wait");
+    watch(box,function(){ var t=300;
+      ps.forEach(function(p){
+        if(p.classList.contains("sms-you")){ var dots=document.createElement("div"); dots.className="sms-typing"; dots.innerHTML="<i></i><i></i><i></i>";
+          setTimeout(function(){ p.parentNode.insertBefore(dots,p); },t); t+=1600; setTimeout(function(){ dots.remove(); p.classList.add("in"); },t); }
+        else { setTimeout(function(){ p.classList.add("in"); },t); }
+        t+=700; });
+    });
+  });
+  document.querySelectorAll(".story .monitor").forEach(function(box){
+    var ps=[].slice.call(box.querySelectorAll("p")), full=ps.map(function(p){return p.innerHTML});
+    box.setAttribute("aria-label","병상 모니터: "+box.textContent.trim());
+    box.style.minHeight=box.offsetHeight+"px";   // 다 찍힌 높이를 미리 잡아 둬서 글이 찍히는 동안 아래 글이 밀리지 않게
+    ps.forEach(function(p){ p.setAttribute("aria-hidden","true"); p.textContent=""; });
+    var caret=document.createElement("span"); caret.className="caret";
+    watch(box,function(){ var i=0, k=0, src=ps.map(function(p,n){var d=document.createElement("div");d.innerHTML=full[n];return d.textContent;});
+      var tick=function(){
+        if(i>=ps.length){ ps.forEach(function(p,n){ p.innerHTML=full[n]; }); ps[ps.length-1].appendChild(caret); return; }
+        k++; ps[i].textContent=src[i].slice(0,k); ps[i].appendChild(caret);
+        if(k>=src[i].length){ ps[i].innerHTML=full[i]; i++; k=0; setTimeout(tick,520); } else setTimeout(tick,src[i][k-1]==="."?260:55);
+      };
+      tick();
+    });
+  });
+})();
