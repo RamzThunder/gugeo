@@ -950,3 +950,9 @@ html.sh-dark body::after{opacity:var(--shd,0)}
 .fz-stage-pin{position:sticky;top:0;height:100vh;display:flex;align-items:center}
 .story .freezeup{width:100%}
 .story .freezeup p{transition:opacity .5s,filter .5s,transform .5s}
+/* 얼어붙음 글씨 크게: 첫 줄 1.6배에서 점점 작아짐 */
+.story .freezeup p{font-size:calc(1.6em - var(--k,0) * .55em);line-height:1.6;margin:.15em 0!important}
+/* "저쪽! 저쪽!" 홀로 무대 */
+.solo-stage{position:relative}
+.solo-stage-pin{position:sticky;top:0;height:100vh;display:grid;place-items:center}
+.story .solo-stage .dok.loud{margin:0 auto!important;font-size:2.4em;transform:scale(calc(.8 + var(--pop,1) * .2))}

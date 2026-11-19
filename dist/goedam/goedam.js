@@ -438,6 +438,11 @@ window.goedamChars=function(el){
       ps.forEach(function(el,i){ var on=p>=th[i]-w[i]/tot*.85; el.classList.toggle("fz-in",on); if(i===n-1) el.classList.toggle("fz-cut",on); });
     });
   });
+  /* "저쪽! 저쪽!"(도깨비 외침): 화면 가운데에 홀로 떠 있다가, 더 내리면 고정이 풀리고 아래 글이 이어짐 */
+  document.querySelectorAll(".story .dok.loud").forEach(function(d){
+    var st=stage(d,"solo-stage",170);
+    jobs.push(function(){ var p=prog(st); d.style.opacity=sm(p/.18).toFixed(3); d.style.setProperty("--pop",sm(p/.25).toFixed(3)); });
+  });
   if(!jobs.length) return;
   var ticking=false, run=function(){ ticking=false; jobs.forEach(function(f){ f(); }); };
   addEventListener("scroll",function(){ if(!ticking){ ticking=true; requestAnimationFrame(run); } },{passive:true}); addEventListener("resize",run); run();
