@@ -21,7 +21,10 @@ ITEMS = {"도장": "stamp", "담요": "blanket", "신발": "shoes", "노리개":
 ITEMS_KO = {v: k for k, v in ITEMS.items()}
 GAP, GAP2 = '<div class="gap"></div>', '<div class="gap2"></div>'
 SCENE = '<div class="scene" aria-hidden="true"><i></i><i></i><i></i></div>'
-PREFIX = {"bot": "[점원] ", "pen": "[필담] ", "say": "[강조] "}
+PREFIX = {"bot": "[점원] ", "pen": "[필담] ", "say": "[강조] ",
+          "dok": "[도깨비] ", "dok angry": "[도깨비:화남] ", "dok loud": "[도깨비:외침] ",
+          "don": "[후원] ", "whisper": "[속삭임] ", "shake": "[흔들림] ", "freeze": "[정지] "}
+BOX = {"라이브": "live", "채팅": "chat"}
 RAW = re.compile(r"</?(div|ul|ol|aside|details|summary|figure|section|table|h[1-6])\b|<p[ >]")
 ART = re.compile(r'(<article class="story">\n)(.*?)(</article>)', re.S)
 
@@ -43,6 +46,14 @@ HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
     [점원] 서점 점원(안드로이드) 대사 — 픽셀 글꼴
     [필담] 백운 요원이 수첩에 쓴 글 — 손글씨 + 수첩 종이
     [강조] 굵게 따로 세운 한 줄
+    [도깨비] 도깨비 등불 속 도깨비의 말 — 여러 목소리가 겹친 푸른 불꽃 글자
+    [도깨비:화남] 화난 도깨비 (붉은 불꽃),  [도깨비:외침] 크게 외치는 도깨비
+    [후원] 라이브 방송·채팅의 후원·미션 알림,  [속삭임] 작게 속삭이는 말
+    [흔들림] 화면이 흔들리는 순간,  [정지] 멈춘 화면 표시
+· 상자: 아래처럼 ::: 로 열고 ::: 로 닫아요. 안쪽은 보통 원고처럼 써요.
+    :::라이브 팬텀 | 시청자 10명      ← 휴대폰 생방송 화면 (방송 이름 | 시청자 수)
+    :::채팅                          ← 채팅창. 안쪽 한 줄 = '닉네임: 채팅'
+    :::
 · {666■}            금액 (호박색)
 · [[칭찬 도장|도장]]  지급물품 이름 (누르면 설명 카드). | 뒤: 도장·담요·신발·노리개·등불·깃발
 · < 로 시작하는 줄과 ```html 상자 안은 HTML 그대로 들어가요 (공문·광고판·방송 같은 꾸밈). 글만 고치고 꺾쇠(< >)는 건드리지 마세요.
@@ -65,6 +76,21 @@ def article_to_md(body):
         if l == GAP: out.append(""); i += 1; continue
         if l == GAP2: out += ["", ""]; i += 1; continue
         if l == SCENE: out.append("* * *"); i += 1; continue
+        m = re.match(r'<div class="(live|chat)" ', l)
+        if m:
+            kind = m.group(1); j = i + 1
+            while lines[j] != "</div><!--/%s-->" % kind: j += 1
+            body_lines = lines[i + 1:j]; i = j + 1
+            if kind == "live":
+                h = re.search(r"<b>(.*?)</b><span class=\"live-view\">(.*?)</span>", body_lines[0])
+                out.append(":::라이브 %s | %s" % (inline_to_md(h.group(1)), inline_to_md(h.group(2))))
+                out += article_to_md("\n".join(body_lines[1:]))
+            else:
+                out.append(":::채팅")
+                for c in body_lines:
+                    cm = re.fullmatch(r'<p class="chat-msg"><b>(.*?)</b> (.*)</p>', c)
+                    out += ["%s: %s" % (inline_to_md(cm.group(1)), inline_to_md(cm.group(2)))] if cm else article_to_md(c)
+            out.append(":::"); continue
         if l.startswith("<figure"):
             j = i
             while not lines[j].startswith("</figure>"): j += 1
@@ -72,8 +98,8 @@ def article_to_md(body):
         m = re.fullmatch(r'<ul class="doc">((?:<li>.*?</li>)+)</ul>', l)
         if m:
             out += ["- " + inline_to_md(x) for x in re.findall(r"<li>(.*?)</li>", m.group(1))]; i += 1; continue
-        m = re.fullmatch(r'<p(?: class="(bot|pen|say)")?>(.*)</p>', l)
-        if m:
+        m = re.fullmatch(r'<p(?: class="([^"]+)")?>(.*)</p>', l)
+        if m and (m.group(1) is None or m.group(1) in PREFIX):
             out.append(PREFIX.get(m.group(1), "") + inline_to_md(m.group(2))); i += 1; continue
         out.append(l); i += 1   # 그 밖의 HTML 줄은 그대로
     return out
@@ -103,6 +129,23 @@ def md_to_article(lines):
             if out and i < n: out.append(GAP if k == 1 else GAP2)
             continue
         if l == "* * *": out.append(SCENE); i += 1; continue
+        if l.startswith(":::") and l[3:].split(" ")[0] in BOX:
+            kind = BOX[l[3:].split(" ")[0]]; arg = l[3:].partition(" ")[2]
+            j = i + 1
+            while lines[j] != ":::": j += 1
+            inner = lines[i + 1:j]; i = j + 1
+            if kind == "live":
+                name, _, view = [x.strip() for x in arg.partition("|")]
+                out.append('<div class="live" role="group" aria-label="라이브 방송 화면">')
+                out.append('<div class="live-top" aria-hidden="true"><span class="live-on">LIVE</span><b>%s</b><span class="live-view">%s</span></div>' % (md_to_inline(name), md_to_inline(view)))
+                out.append(md_to_article(inner).rstrip("\n"))
+            else:
+                out.append('<div class="chat" role="group" aria-label="채팅창">')
+                for c in inner:
+                    m = re.match(r"([^\[\]:]{1,20}): (.+)$", c)
+                    if m: out.append('<p class="chat-msg"><b>%s</b> %s</p>' % (md_to_inline(m.group(1)), md_to_inline(m.group(2))))
+                    elif c: out.append(md_to_article([c]).rstrip("\n"))
+            out.append('</div><!--/%s-->' % kind); continue
         if l == "```html":
             j = i + 1
             while lines[j] != "```": j += 1
@@ -113,7 +156,7 @@ def md_to_article(lines):
             out.append('<ul class="doc">%s</ul>' % "".join(items)); continue
         if RAW.match(l): out.append(l); i += 1; continue   # 문단이 <br>·<span> 같은 글 속 꾸밈으로 시작하면 그냥 문단
         cls = ""
-        for c, p in PREFIX.items():
+        for c, p in sorted(PREFIX.items(), key=lambda kv: -len(kv[1])):
             if l.startswith(p): cls, l = ' class="%s"' % c, l[len(p):]; break
         out.append("<p%s>%s</p>" % (cls, md_to_inline(l))); i += 1
     return "\n".join(out) + "\n"
