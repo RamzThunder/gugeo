@@ -354,12 +354,13 @@ window.goedamChars=function(el){
   m.parentNode.insertBefore(stage,m); stage.appendChild(pin); pin.appendChild(m);
   var call=null, n=stage.nextElementSibling;
   for(var k=0;k<3&&n;k++,n=n.nextElementSibling){ if(n.tagName==="P"&&/요원!!/.test(n.textContent)){ call=document.createElement("div"); call.className="mir-call"; call.setAttribute("aria-hidden","true"); call.innerHTML=n.innerHTML; pin.appendChild(call); break; } }
+  var flash=document.createElement("div"); flash.className="mir-flash"; flash.setAttribute("aria-hidden","true"); pin.appendChild(flash);
   var ease=function(t){ return t<0?0:t>1?1:t*t*(3-2*t); }, ticking=false, snapped=false, SNAP=.8;
   var upd=function(){ ticking=false;
     var r=stage.getBoundingClientRect(), span=r.height-innerHeight, p=span>0?Math.min(1,Math.max(0,-r.top/span)):0;
     var full=Math.max(innerWidth,innerHeight)*1.55/Math.max(1,m.offsetWidth);
-    if(p>=SNAP&&!snapped){ snapped=true; stage.classList.add("snap"); if(call){ call.classList.remove("go"); void call.offsetWidth; call.classList.add("go"); } }
-    if(p<SNAP-.06&&snapped){ snapped=false; stage.classList.remove("snap"); if(call) call.classList.remove("go"); }
+    if(p>=SNAP&&!snapped){ snapped=true; stage.classList.add("snap"); [call,flash,m,pin].forEach(function(e){ if(!e) return; e.classList.remove("go"); void e.offsetWidth; e.classList.add("go"); }); }
+    if(p<SNAP-.06&&snapped){ snapped=false; stage.classList.remove("snap"); [call,flash,m,pin].forEach(function(e){ if(e) e.classList.remove("go"); }); }
     var k=snapped?0:ease(p/.32);
     m.style.transform="scale("+(1+(full-1)*k)+")";
     pin.style.setProperty("--dark",(k*.92).toFixed(3));

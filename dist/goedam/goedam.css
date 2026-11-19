@@ -795,3 +795,25 @@ body{overflow-x:clip}
 @keyframes mir-call{0%{opacity:0;transform:translateY(-50%) scale(1.8)}8%{opacity:1;transform:translateY(-50%) scale(1)}12%{transform:translate(-6px,-50%)}16%{transform:translate(6px,-50%)}20%{transform:translate(0,-50%)}70%{opacity:1}100%{opacity:0;transform:translateY(-50%) scale(.96)}}
 .mir-stage.snap .mir-pin{animation:mir-flash .35s ease-out 1}
 @keyframes mir-flash{0%{background:rgba(255,255,255,.55)}100%{background:transparent}}
+
+/* 화강 요원의 부름 — 더 세게: 화면 전체 두 번 번쩍, 부름이 날아와 꽂히며 색이 갈라지고 크게 흔들림, 화면 덜컹, 거울에 금 */
+.mir-flash{position:fixed;inset:0;z-index:4;pointer-events:none;background:#fff;opacity:0}
+.mir-flash.go{animation:mir-flash2 .7s steps(1) 1}
+@keyframes mir-flash2{0%{opacity:1}12%{opacity:.15}20%{opacity:.95}34%{opacity:.35}50%{opacity:.12}100%{opacity:0}}
+.mir-call{z-index:5;font-size:clamp(3em,13vw,7.5em);color:#fff}
+.mir-call.go{animation:mir-call2 1.9s cubic-bezier(.2,.9,.2,1) 1 forwards}
+@keyframes mir-call2{
+  0%{opacity:0;transform:translateY(-50%) scale(4.5);filter:blur(10px)}
+  7%{opacity:1;transform:translateY(-50%) scale(.92);filter:blur(0);text-shadow:-.08em 0 #ff2448,.08em 0 #22d8ff,0 0 .4em #fff}
+  10%{transform:translate(-18px,-50%) scale(1.04)}13%{transform:translate(16px,-48%)}16%{transform:translate(-12px,-52%)}19%{transform:translate(9px,-50%)}
+  23%{transform:translate(-5px,-50%);text-shadow:-.04em 0 #ff2448,.04em 0 #22d8ff,0 0 .3em #fff}27%{transform:translate(0,-50%) scale(1);text-shadow:0 0 .3em rgba(255,255,255,.7),0 .05em 0 #000}
+  75%{opacity:1}100%{opacity:0;transform:translateY(-50%) scale(.97)}}
+.mir-pin.go{animation:mir-quake .55s linear 1!important}
+@keyframes mir-quake{0%{transform:translate(0,0)}10%{transform:translate(-22px,10px) rotate(-1deg)}20%{transform:translate(20px,-12px) rotate(1deg)}30%{transform:translate(-16px,-6px)}
+  40%{transform:translate(14px,8px)}55%{transform:translate(-8px,4px)}70%{transform:translate(5px,-3px)}100%{transform:none}}
+.mirror.go::before{content:"";position:absolute;inset:0;z-index:2;border-radius:50%;pointer-events:none;
+  background:no-repeat center/100% 100% url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='white' stroke-width='.9' stroke-linecap='round'%3E%3Cpath d='M52 48L20 12M52 48L88 20M52 48L94 62M52 48L64 96M52 48L14 78M52 48L6 44M30 26L22 34M70 34L80 30M74 56L84 52M58 72L50 84M32 64L24 70'/%3E%3C/g%3E%3C/svg%3E");
+  animation:mir-crack .9s ease-out 1 forwards}
+@keyframes mir-crack{0%{opacity:1}60%{opacity:.8}100%{opacity:0}}
+.mir-stage.snap .mirror p{visibility:hidden}
+.mir-stage.snap .mirror{transition:transform .18s cubic-bezier(.6,0,.2,1)}
