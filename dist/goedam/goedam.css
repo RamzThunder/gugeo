@@ -675,3 +675,7 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 .story .call.tense{background:rgba(140,50,50,.15);color:#efd4cf}
 .story .call.tense::before{filter:hue-rotate(250deg) saturate(1.6)}
 .story .call::after{content:none}
+/* 통화 다시: 수화기·띠 없이, 덤불 너머에서 들리는 강 대리 목소리 — 살짝 멀고 먹먹하게(흐린 번짐). 엄마=초록빛, 날섬=붉은빛 글씨만 */
+.story .call{padding:0;background:none;border-radius:0;opacity:1;color:#cfdcc8;text-shadow:0 0 .35em rgba(150,190,140,.35);filter:blur(.25px)}
+.story .call::before{content:none}
+.story .call.tense{background:none;color:#ecc9c2;text-shadow:0 0 .35em rgba(220,120,110,.35)}
