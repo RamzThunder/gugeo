@@ -573,3 +573,8 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 .rd-lost{color:#8d8a5c;font-weight:400;font-size:.85em;letter-spacing:.05em}
 .story .radio-in.decoding{color:#8d8a5c}
 .story .radio-in::before{content:"◉ ";font-size:.8em;color:#4cff7a;animation:rd-led .5s steps(2) 6}
+
+/* 무전 글꼴: 도스이야기(DosStory). 무전 안에 끼어든 점원 목소리(.bot)는 점원 글꼴(탕바) 그대로 */
+@font-face{font-family:"DosStory";src:url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/DOSIyagiMedium.woff2") format("woff2");font-weight:normal;font-display:swap}
+.story .radio,.story .radio-in{font-family:"DosStory",var(--sans);font-weight:normal;letter-spacing:0}
+.story .radio .bot{font-family:"Tangba",var(--sans)}
