@@ -351,7 +351,12 @@ window.goedamChars=function(el){
   var m=document.querySelector(".story .mirror"); if(!m) return;
   var stage=document.createElement("div"); stage.className="mir-stage";
   var pin=document.createElement("div"); pin.className="mir-pin";
-  m.parentNode.insertBefore(stage,m); stage.appendChild(pin); pin.appendChild(m);
+  m.parentNode.insertBefore(stage,m); stage.appendChild(pin);
+  /* 지급물품 '거울 노리개' 그림(img/items/mirror.webp)에 거울을 끼움: 그림의 거울 면 자리에 .mirror를 겹치고, 매듭에 매달려 살짝 흔들림 */
+  var obj=document.createElement("div"); obj.className="mir-obj";
+  var swing=document.createElement("div"); swing.className="mir-swing";
+  var img=document.createElement("img"); img.className="mir-norigae"; img.src="img/items/mirror.webp"; img.alt=""; img.setAttribute("aria-hidden","true");
+  swing.appendChild(img); swing.appendChild(m); obj.appendChild(swing); pin.appendChild(obj);
   var call=null, n=stage.nextElementSibling;
   for(var k=0;k<3&&n;k++,n=n.nextElementSibling){ if(n.tagName==="P"&&/요원!!/.test(n.textContent)){ call=document.createElement("div"); call.className="mir-call"; call.setAttribute("aria-hidden","true"); call.innerHTML=n.innerHTML; pin.appendChild(call); break; } }
   var flash=document.createElement("div"); flash.className="mir-flash"; flash.setAttribute("aria-hidden","true"); pin.appendChild(flash);
@@ -362,7 +367,7 @@ window.goedamChars=function(el){
     if(p>=SNAP&&!snapped){ snapped=true; stage.classList.add("snap"); [call,flash,m,pin].forEach(function(e){ if(!e) return; e.classList.remove("go"); void e.offsetWidth; e.classList.add("go"); }); }
     if(p<SNAP-.06&&snapped){ snapped=false; stage.classList.remove("snap"); [call,flash,m,pin].forEach(function(e){ if(e) e.classList.remove("go"); }); }
     var k=snapped?0:ease(p/.32);
-    m.style.transform="scale("+(1+(full-1)*k)+")";
+    obj.style.transform="scale("+(1+(full-1)*k)+")";
     pin.style.setProperty("--dark",(k*.92).toFixed(3));
     stage.classList.toggle("full",k>.97);
   };

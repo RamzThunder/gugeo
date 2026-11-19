@@ -817,3 +817,21 @@ body{overflow-x:clip}
 @keyframes mir-crack{0%{opacity:1}60%{opacity:.8}100%{opacity:0}}
 .mir-stage.snap .mirror p{visibility:hidden}
 .mir-stage.snap .mirror{transition:transform .18s cubic-bezier(.6,0,.2,1)}
+
+/* 거울 노리개 그림 위의 거울: 그림(305×360)에서 거울 면은 가운데 (145,165), 지름 86. 그 자리에 .mirror를 정확히 겹침 */
+.mir-obj{position:relative;z-index:1;width:min(96vw,38em);aspect-ratio:305/360;transform-origin:47.5% 45.8%;will-change:transform}
+.mir-swing{position:absolute;inset:0;transform-origin:92% 3%;animation:mir-sway 5s ease-in-out infinite}
+@keyframes mir-sway{0%,100%{transform:rotate(-2.2deg)}50%{transform:rotate(2.2deg)}}
+.mir-norigae{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;filter:drop-shadow(0 0 1.2em rgba(200,30,40,.45)) drop-shadow(0 1em 1.4em rgba(0,0,0,.8))}
+.mir-stage .mir-obj .mirror{position:absolute;left:33.4%;top:33.9%;width:28.2%;height:auto;aspect-ratio:1;margin:0;
+  box-shadow:0 0 1.6em .3em rgba(220,20,30,.45),inset 0 0 1.2em .4em #000;transform:none;will-change:auto}
+.mir-stage .mir-obj .mirror p{font-size:clamp(9px,1.6vw,12px);left:8%;right:8%}
+.mir-stage.full .mir-obj .mirror{animation:mir-throb2 1.4s ease-in-out infinite}
+@keyframes mir-throb2{0%,100%{box-shadow:0 0 1.6em .3em rgba(220,20,30,.45),inset 0 0 1.2em .4em #000}50%{box-shadow:0 0 3em 1em rgba(240,20,30,.7),inset 0 0 .8em .2em #000}}
+.mir-stage.full .mir-swing,.mir-stage.snap .mir-swing{animation-play-state:paused}
+/* 옥 테두리에서 이는 반짝임 */
+.mir-swing::after{content:"";position:absolute;left:28%;top:28%;width:39%;aspect-ratio:1;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 18% 30%,#fff 0 1.5px,transparent 3px),radial-gradient(circle at 80% 22%,#d8ffe6 0 1.5px,transparent 3px),
+    radial-gradient(circle at 88% 70%,#fff 0 1.5px,transparent 3px),radial-gradient(circle at 25% 84%,#d8ffe6 0 1.5px,transparent 3px),radial-gradient(circle at 52% 6%,#fff 0 1.2px,transparent 2.5px);
+  animation:mir-glint 2.4s steps(3) infinite}
+@keyframes mir-glint{0%{opacity:1}33%{opacity:.2}66%{opacity:.75}}
