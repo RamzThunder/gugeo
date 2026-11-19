@@ -1035,5 +1035,6 @@ html.sh-dark body::after{opacity:var(--shd,0)}
 .mir-obj{transform-origin:49.85% 41.99%}
 .mir-stage .mir-obj .mirror{left:37.13%;top:33.51%;width:25.44%}
 .mir-norigae{filter:drop-shadow(0 0 1.4em rgba(200,30,40,.4)) drop-shadow(0 1em 1.4em rgba(0,0,0,.8))}
-/* 노리개가 화면보다 길면 술이 잘리므로, 높이를 화면 높이(92%)에 맞춤 */
-.mir-obj{width:auto;height:min(92vh,57em);max-width:96vw}
+/* 노리개가 화면보다 길면 술이 잘리므로 화면 높이(92%)에 맞추되, 폭에서 계산해 그림 비율(2:3)이 늘어나지 않게 함 */
+.mir-obj{height:auto;width:min(96vw,61.33vh,38em)}
+@supports (height:1svh){.mir-obj{width:min(96vw,61.33svh,38em)}}
