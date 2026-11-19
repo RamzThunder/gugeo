@@ -393,5 +393,12 @@ window.goedamChars=function(el){
     s.setProperty("--x1",r(10,30).toFixed(0)+"%"); s.setProperty("--x2",r(40,60).toFixed(0)+"%"); s.setProperty("--x3",r(70,90).toFixed(0)+"%");
     s.setProperty("--y1",r(45,75).toFixed(0)+"%"); s.setProperty("--y2",r(25,55).toFixed(0)+"%"); s.setProperty("--y3",r(45,75).toFixed(0)+"%");
     s.setProperty("--d1",r(2.2,3.6).toFixed(2)+"s"); s.setProperty("--d2",r(1.5,2.6).toFixed(2)+"s"); s.setProperty("--dl",(-r(0,3)).toFixed(2)+"s");
+    if(p.classList.contains("angry")){   // 화난 불: 파랑·보라·빨강·주황 덩어리를 높이·위치·크기 모두 무작위로 섞어 흩뿌림(층이 생기지 않게)
+      var C=["55,120,255","80,140,255","150,95,240","255,70,45","255,120,40","255,150,60","255,60,70"], g=[], n=Math.max(18,Math.round(p.textContent.length/1.4));
+      for(var i=0;i<n;i++){ var c=C[i%C.length], x=r(0,100), y=r(25,85), w=r(9,17), h=r(30,56), a=(c.charAt(0)==="2"?r(.34,.52):r(.4,.62)).toFixed(2);
+        g.push("radial-gradient("+w.toFixed(0)+"% "+h.toFixed(0)+"% at "+x.toFixed(0)+"% "+y.toFixed(0)+"%,rgba("+c+","+a+"),transparent 80%)"); }
+      for(var q=g.length-1;q>0;q--){ var z=Math.floor(Math.random()*(q+1)), t=g[q]; g[q]=g[z]; g[z]=t; }
+      s.setProperty("--abg",g.join(","));
+    }
   });
 })();
