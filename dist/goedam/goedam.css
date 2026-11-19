@@ -771,3 +771,17 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 @keyframes mir-scroll{0%{transform:translateY(100%)}100%{transform:translateY(-100%)}}
 .story .mirror p:not(.mir-ghost){animation:mir-scroll 26s linear infinite,mir-jitter 2.3s steps(1) infinite}
 @keyframes mir-jitter{0%,90%,100%{filter:none}92%{filter:blur(1px)}95%{filter:none;opacity:.6}}
+
+/* 거울 무대: 앞 글과 넉넉히 띄우고(위 여백), 화면 높이의 몇 배를 스크롤하는 동안 거울이 화면 가운데 붙어 커졌다 작아짐 */
+.mir-stage{position:relative;height:320vh;margin:26vh 0 6vh}
+.mir-pin{position:sticky;top:0;height:100vh;display:grid;place-items:center;overflow:hidden;--dark:0}
+.mir-pin::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(circle,rgba(40,0,4,calc(var(--dark)*.6)),rgba(0,0,0,var(--dark)) 70%)}
+.mir-stage .mirror{position:relative;z-index:1;margin:0;will-change:transform;transform-origin:50% 50%}
+.mir-stage.full .mirror{animation:mir-throb 1.4s ease-in-out infinite}
+.mir-stage.full .mir-pin{animation:mir-shake 3.2s steps(1) infinite}
+@keyframes mir-throb{0%,100%{box-shadow:0 0 0 .5em #2c4a3f,0 0 0 .7em #b89a55,0 0 0 1.05em #1d3129,0 0 2.5em .6em rgba(200,20,30,.35),inset 0 0 3em 1em #000}
+  50%{box-shadow:0 0 0 .5em #2c4a3f,0 0 0 .7em #b89a55,0 0 0 1.05em #1d3129,0 0 4em 1.4em rgba(230,20,30,.6),inset 0 0 2em .5em #000}}
+@keyframes mir-shake{0%,86%,100%{transform:none}88%{transform:translate(-3px,2px)}90%{transform:translate(3px,-2px)}92%{transform:translate(-2px,-1px)}94%{transform:none}}
+/* 거울이 글 칸(680px)에 갇히지 않고 화면 전체를 채우도록 칸 밖으로 펼침. 옆으로 생기는 스크롤은 잘라 냄 */
+body{overflow-x:clip}
+.mir-pin{width:100vw;margin-left:calc(50% - 50vw)}

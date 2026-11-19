@@ -343,3 +343,23 @@ window.goedamChars=function(el){
     var g=p.cloneNode(true); g.classList.add("mir-ghost"); g.setAttribute("aria-hidden","true"); m.appendChild(g);
   });
 })();
+
+/* 3.3 거울: 스크롤로 다가가면 거울이 커져 화면을 가득 채움(위압감) → 한동안 그 안에 갇혀 글이 흘러감 → 다시 작아지며 이야기로 돌아옴.
+   .mirror를 높은 무대(.mir-stage) 안 sticky 칸에 넣고, 무대를 지나가는 정도(0~1)에 따라 크기·어둠·떨림을 바꿈 */
+(function(){
+  var m=document.querySelector(".story .mirror"); if(!m) return;
+  var stage=document.createElement("div"); stage.className="mir-stage";
+  var pin=document.createElement("div"); pin.className="mir-pin";
+  m.parentNode.insertBefore(stage,m); stage.appendChild(pin); pin.appendChild(m);
+  var ease=function(t){ return t<0?0:t>1?1:t*t*(3-2*t); }, ticking=false;
+  var upd=function(){ ticking=false;
+    var r=stage.getBoundingClientRect(), span=r.height-innerHeight, p=span>0?Math.min(1,Math.max(0,-r.top/span)):0;
+    var full=Math.max(innerWidth,innerHeight)*1.55/Math.max(1,m.offsetWidth);
+    var grow=ease(p/.32), shrink=ease((p-.78)/.22), k=grow*(1-shrink);
+    m.style.transform="scale("+(1+(full-1)*k)+")";
+    pin.style.setProperty("--dark",(k*.92).toFixed(3));
+    stage.classList.toggle("full",k>.97);
+  };
+  var on=function(){ if(!ticking){ ticking=true; requestAnimationFrame(upd); } };
+  addEventListener("scroll",on,{passive:true}); addEventListener("resize",on); upd();
+})();
