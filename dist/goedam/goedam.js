@@ -306,3 +306,17 @@ window.goedamChars=function(el){
     io.observe(p);
   });
 })();
+
+/* ep.2 공통 연락처 화면: 화면에 들어오면 이름이 하나씩 지워지고 '저장된 연락처가 없습니다'만 남음 */
+(function(){
+  if(!("IntersectionObserver" in window)) { document.querySelectorAll('.story .phone[data-kind="연락처"]').forEach(function(f){ f.classList.add("emptied"); }); return; }
+  document.querySelectorAll('.story .phone[data-kind="연락처"]').forEach(function(f){
+    f.style.minHeight=f.offsetHeight+"px";   // 이름이 사라져도 화면 높이는 그대로
+    var io=new IntersectionObserver(function(es){ if(!es[0].isIntersecting) return; io.disconnect();
+      var li=f.querySelectorAll(".ph-list li"), t=900;
+      li.forEach(function(x){ setTimeout(function(){ x.classList.add("gone"); },t); t+=520; });
+      setTimeout(function(){ f.classList.add("emptied"); },t+400);
+    },{threshold:.7});
+    io.observe(f);
+  });
+})();

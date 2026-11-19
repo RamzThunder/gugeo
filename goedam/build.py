@@ -49,6 +49,16 @@ def stamp_count(a, b):
     return '<div class="stampcount" data-from="%s"%s role="img" aria-label="%s"><span class="sc-label">남은 횟수</span><span class="sc-num">%s</span></div>' % (
         a, ' data-to="%s"' % b if b else "", lab, a)
 
+PHONE = {
+  "메신저": ('<figure class="phone" data-kind="메신저" role="img" aria-label="휴대폰 화면: 메신저 친구 목록과 채팅창이 비어 있음">'
+           '<div class="ph-bar"><span>■■:■■</span><span>▂▄▆ ▮</span></div><div class="ph-head">■■■톡</div>'
+           '<div class="ph-tabs"><b>친구 0</b><span>채팅 0</span></div><div class="ph-empty"><i class="ph-ic ph-ic-chat"></i>대화 상대가 없습니다</div></figure>'),
+  "연락처": ('<figure class="phone" data-kind="연락처" role="img" aria-label="휴대폰 화면: 연락처의 가족과 친구들이 모두 사라짐">'
+           '<div class="ph-bar"><span>■■:■■</span><span>▂▄▆ ▮</span></div><div class="ph-head">연락처</div><div class="ph-search">검색</div>'
+           '<ul class="ph-list"><li>엄마</li><li>아빠</li><li>■■ (친구)</li><li>■■■</li><li>■■ 학원</li></ul>'
+           '<div class="ph-empty"><i class="ph-ic ph-ic-user"></i>저장된 연락처가 없습니다</div></figure>'),
+}
+
 ART = re.compile(r'(<article class="story">\n)(.*?)(</article>)', re.S)
 
 HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
@@ -81,6 +91,7 @@ HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
     [통화] 덤불 너머로 엿듣는 통화 목소리 (멀고 먹먹한 글씨),  [통화:날섬] 날이 선 통화 (지금은 [통화]와 같은 모양)
 · 그림 한 줄 (줄에 이것만):  [도장자국]  '참 잘했어요' 도장 자국,  [도장자국:반]  반만 찍혀 번진 자국,
                              [남은횟수] 3  도장 뚜껑의 숫자,  [남은횟수] 3→2  화면에 들어오면 3에서 2로 바뀜
+                             [휴대폰:메신저]  텅 빈 메신저 화면,  [휴대폰:연락처]  이름이 하나씩 사라지는 연락처 화면
 · 상자: 아래처럼 ::: 로 열고 ::: 로 닫아요. 안쪽은 보통 원고처럼 써요.
     :::라이브 팬텀 | 시청자 10명      ← 눌러서 재생하는 생방송 화면 (방송 이름 | 시청자 수).
                                        안쪽 한 줄씩 자막으로 흘러가고, '닉네임: 채팅' 줄은 그 자리에서 채팅창에 올라와요
@@ -112,6 +123,8 @@ def article_to_md(body):
         if l == GAP: out.append(""); i += 1; continue
         if l == GAP2: out += ["", ""]; i += 1; continue
         if l == SCENE: out.append("* * *"); i += 1; continue
+        pm = re.match(r'<figure class="phone" data-kind="(\S+?)"', l)
+        if pm: out.append("[휴대폰:%s]" % pm.group(1)); i += 1; continue
         if l.startswith('<figure class="stampmark'): out.append("[도장자국:반]" if 'stampmark half' in l else "[도장자국]"); i += 1; continue
         m = re.match(r'<div class="stampcount" data-from="(\d+)"(?: data-to="(\d+)")?', l)
         if m: out.append("[남은횟수] %s%s" % (m.group(1), "→" + m.group(2) if m.group(2) else "")); i += 1; continue
@@ -185,6 +198,8 @@ def md_to_article(lines, live=False):
             if out and i < n: out.append(GAP if k == 1 else GAP2)
             continue
         if l == "* * *": out.append(SCENE); i += 1; continue
+        pm = re.fullmatch(r"\[휴대폰:(\S+)\]", l)
+        if pm and pm.group(1) in PHONE: out.append(PHONE[pm.group(1)]); i += 1; continue
         if l in ("[도장자국]", "[도장자국:반]"): out.append(stamp_fig(l.endswith(":반]"))); i += 1; continue
         m = re.fullmatch(r"\[남은횟수\] (\d+)(?:→(\d+))?", l)
         if m: out.append(stamp_count(m.group(1), m.group(2))); i += 1; continue
