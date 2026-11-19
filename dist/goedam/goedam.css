@@ -223,3 +223,23 @@ footer a{text-decoration:none}
 .story .pen::before{content:"";position:absolute;left:1.3em;right:.8em;top:.35em;height:.4em;
   background:radial-gradient(circle,#0b0b0d 0 .16em,transparent .18em) 0 0/1.1em .4em repeat-x}   /* 스프링 구멍 */
 .story .pen .x{color:#2a2a2a}
+
+/* ep.1 지급물품 고르기: PPT의 픽셀 그림 카드 여섯 장. 고른 카드에는 '지급' 도장 */
+.item-notice{margin:1.4em auto 1em;text-align:center;font-size:1em;transform:rotate(-.3deg)}
+.item-notice p{margin:0}
+.item-notice .item-q{margin-top:.5em;font-weight:700;font-size:1.1em}
+.item-tip{color:var(--soft);font-size:15px;margin:0 0 18px}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.item{position:relative;display:flex;flex-direction:column;gap:8px;padding:16px 16px 14px;border-radius:14px;background:var(--card);border:1px solid var(--line);transition:border-color .15s,box-shadow .15s}
+.item img{display:block;width:120px;height:120px;object-fit:contain;margin:0 auto 4px;image-rendering:pixelated;filter:drop-shadow(0 6px 10px rgba(0,0,0,.6))}
+.item h3{margin:0;font-size:19px;letter-spacing:-.02em;color:var(--ink)}
+.item p{margin:0;font-size:14.5px;line-height:1.65;color:var(--soft)}
+.item .item-but{padding:8px 10px;border-radius:8px;background:rgba(179,18,27,.12);border:1px solid rgba(255,69,69,.22);color:#f1c7c7}
+.item .item-but b{color:var(--red)}
+.item-go{margin-top:auto;padding:10px 12px;border-radius:10px;border:1px solid #3a3a42;background:var(--card2);color:var(--ink);font:inherit;font-size:15px;font-weight:700;cursor:pointer}
+.item-go:hover{border-color:var(--red)}
+.item.on{border-color:var(--red);box-shadow:0 0 0 1px var(--red),0 10px 30px -12px rgba(255,69,69,.5)}
+.item.on .item-go{background:var(--red-deep);border-color:var(--red);color:#fff}
+.item.on::after{content:"지급";position:absolute;right:12px;top:12px;padding:2px 10px;border:3px double var(--red);border-radius:6px;color:var(--red);font-weight:800;font-size:15px;letter-spacing:.2em;transform:rotate(12deg)}
+.item-mine{margin:18px 0 0;padding:14px 16px;border-radius:12px;background:var(--card2);border:1px dashed var(--red-deep);color:var(--ink);text-align:center}
+.item-mine b{color:var(--red)}
