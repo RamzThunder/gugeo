@@ -851,3 +851,15 @@ body{overflow-x:clip}
 @keyframes dok-bob2{0%,100%{transform:none}30%{transform:translateY(-.07em) rotate(-1.5deg)}65%{transform:translateY(.03em) rotate(1.2deg)}}
 .story .dok{animation:dok-glow 4s ease-in-out infinite}
 @keyframes dok-glow{0%,100%{filter:brightness(1)}50%{filter:brightness(.82)}}
+/* 도깨비 말 최종: 글자는 가만히. 글자 뒤에서 도깨비불 빛무리가 일렁임(번지고 옮겨 다니며 밝아졌다 어두워짐). 화나면 붉은 불, 더 빠르게 */
+.story .dok,.story .dok.wob .tc,.story .dok.angry.wob .tc{animation:none}
+.story .dok{position:relative;isolation:isolate;width:fit-content;max-width:100%}
+.story .dok.loud{margin-left:auto!important;margin-right:auto!important}
+.story .dok::before,.story .dok::after{content:"";position:absolute;z-index:-1;pointer-events:none;border-radius:50%;filter:blur(10px)}
+.story .dok::before{inset:-.35em -.9em;background:radial-gradient(ellipse at 35% 60%,rgba(90,150,255,.42),transparent 62%),radial-gradient(ellipse at 70% 40%,rgba(160,120,240,.32),transparent 60%);
+  animation:dok-fire 2.6s ease-in-out infinite}
+.story .dok::after{inset:-.1em -.4em;background:radial-gradient(ellipse at 55% 55%,rgba(150,210,255,.28),transparent 65%);animation:dok-fire2 1.7s ease-in-out infinite}
+@keyframes dok-fire{0%,100%{transform:translate(0,0) scale(1);opacity:.85}30%{transform:translate(-4%,-6%) scale(1.06,1.12);opacity:1}55%{transform:translate(3%,2%) scale(.96,1.02);opacity:.7}80%{transform:translate(-2%,-3%) scale(1.04);opacity:.95}}
+@keyframes dok-fire2{0%,100%{transform:scale(1);opacity:.6}40%{transform:translate(4%,-8%) scale(1.1,1.18);opacity:1}70%{transform:translate(-3%,0) scale(.95);opacity:.5}}
+.story .dok.angry::before{background:radial-gradient(ellipse at 35% 60%,rgba(255,90,60,.45),transparent 62%),radial-gradient(ellipse at 70% 40%,rgba(255,140,40,.35),transparent 60%);animation-duration:1.3s}
+.story .dok.angry::after{background:radial-gradient(ellipse at 55% 55%,rgba(255,200,120,.3),transparent 65%);animation-duration:.9s}

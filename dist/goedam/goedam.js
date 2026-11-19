@@ -374,14 +374,3 @@ window.goedamChars=function(el){
   var on=function(){ if(!ticking){ ticking=true; requestAnimationFrame(upd); } };
   addEventListener("scroll",on,{passive:true}); addEventListener("resize",on); upd();
 })();
-
-/* 도깨비 말(.dok): 글자를 하나씩 나눠, 화면에 들어올 때 앞에서부터 차례로 한 번 일렁임 */
-(function(){
-  document.querySelectorAll(".story .dok").forEach(function(p){
-    var cs=window.goedamChars(p);
-    cs.forEach(function(s,i){ s.classList.add("on"); s.style.animationDelay=(i*0.05)+"s"; });
-    p.setAttribute("aria-label",p.textContent);
-    if(!("IntersectionObserver" in window)) return;   // 화면에 들어올 때 한 번만 일렁임
-    var io=new IntersectionObserver(function(es){ if(es[0].isIntersecting){ io.disconnect(); p.classList.add("wob"); } },{threshold:.8}); io.observe(p);
-  });
-})();
