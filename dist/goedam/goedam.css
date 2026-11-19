@@ -611,3 +611,32 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 .story p.pa.ring{animation:pa-on .5s steps(1) 1}
 @keyframes pa-on{0%{opacity:0}20%{opacity:1}35%{opacity:.25}50%,100%{opacity:1}}
 .story .pa-in{padding:.05em .3em;border-radius:4px;background:#eef1ea;color:#1d2420;font-weight:800;letter-spacing:0;text-shadow:none}
+
+/* 병원 방송 최종: 밝은 띠 + 천장 스피커 + 딩동댕동 차임 + 코드별 색 */
+.story p.pa{display:flex;align-items:center;gap:.9em;text-align:left;padding:.7em 1.1em;--pa:#5b6b62;--pa-bg:#eef1ea}
+.story p.pa{background:var(--pa-bg);box-shadow:0 0 0 1px color-mix(in srgb,var(--pa) 30%,transparent)}
+.story p.pa.pa-blue{--pa:#2459c9;--pa-bg:#e6edfb}
+.story p.pa.pa-yellow{--pa:#a67c00;--pa-bg:#fbf3d2}
+.story p.pa.pa-green{--pa:#2e8b4f;--pa-bg:#e3f4e7}
+.story p.pa.ring{animation:none}
+.pa-spk{position:relative;flex:none;width:2.2em;height:2.2em;border-radius:50%;background:radial-gradient(circle,#fff 0 18%,transparent 19%),repeating-radial-gradient(circle,#c9cfc6 0 1.5px,#f7f8f5 1.5px 3.5px);
+  box-shadow:0 0 0 2px #fff,0 0 0 3px #cfd5cc}
+.pa-spk i,.pa-spk::before,.pa-spk::after{content:"";position:absolute;inset:-.35em;border-radius:50%;border:2px solid var(--pa);opacity:0}
+.pa-spk::before{inset:-.75em}.pa-spk::after{inset:-1.15em}
+.story p.pa.play .pa-spk i,.story p.pa.play .pa-spk::before,.story p.pa.play .pa-spk::after{animation:pa-wave2 1s ease-out infinite}
+.story p.pa.play .pa-spk::before{animation-delay:.2s}.story p.pa.play .pa-spk::after{animation-delay:.4s}
+@keyframes pa-wave2{0%{opacity:.7;transform:scale(.8)}100%{opacity:0;transform:scale(1.1)}}
+.pa-body{flex:1;display:flex;flex-direction:column;align-items:center;gap:.2em;text-align:center}
+.pa-chime{display:flex;gap:.6em;font-size:.72em;font-weight:800;color:var(--pa);letter-spacing:.05em}
+.pa-chime::before{content:"♪";margin-right:-.2em}
+.pa-chime i{font-style:normal}
+.story p.pa.wait .pa-chime i,.story p.pa.play .pa-chime i:not(.on){opacity:.18}
+.pa-chime i.on{animation:pa-ding .32s ease-out 1}
+@keyframes pa-ding{0%{transform:translateY(-.25em) scale(1.25)}100%{transform:none}}
+.pa-text{color:#1d2420}
+.story p.pa.wait .pa-text,.story p.pa.play:not(.said) .pa-text{opacity:0}
+.story p.pa.said .pa-text{animation:pa-on .5s steps(1) 1}
+.story .pa-in.pa-blue{background:#e6edfb;box-shadow:inset 0 -2px 0 #2459c9}
+.story .pa-in.pa-yellow{background:#fbf3d2;box-shadow:inset 0 -2px 0 #a67c00}
+.story .pa-in.pa-green{background:#e3f4e7;box-shadow:inset 0 -2px 0 #2e8b4f}
+@media (max-width:440px){.story p.pa{gap:.6em;padding:.6em .7em}.pa-spk{width:1.8em;height:1.8em}}
