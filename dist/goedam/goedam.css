@@ -835,11 +835,3 @@ body{overflow-x:clip}
     radial-gradient(circle at 88% 70%,#fff 0 1.5px,transparent 3px),radial-gradient(circle at 25% 84%,#d8ffe6 0 1.5px,transparent 3px),radial-gradient(circle at 52% 6%,#fff 0 1.2px,transparent 2.5px);
   animation:mir-glint 2.4s steps(3) infinite}
 @keyframes mir-glint{0%{opacity:1}33%{opacity:.2}66%{opacity:.75}}
-/* 새로 그린 노리개(img/norigae.svg, 200×420, 일자): 거울 면 가운데 (100,190), 반지름 46 */
-.mir-obj{width:min(70vw,22em);aspect-ratio:200/420;transform-origin:50% 45.24%}
-.mir-swing{transform-origin:50% 1%;animation:mir-sway2 4.5s ease-in-out infinite}
-@keyframes mir-sway2{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.6deg)}}
-.mir-norigae{image-rendering:auto}
-.mir-stage .mir-obj .mirror{left:27%;top:34.29%;width:46%}
-.mir-stage .mir-obj .mirror p{font-size:clamp(10px,2vw,13px)}
-.mir-swing::after{left:21%;top:30.5%;width:58%}
