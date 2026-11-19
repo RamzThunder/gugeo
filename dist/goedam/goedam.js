@@ -196,21 +196,25 @@
         t+=700; });
     });
   });
-  document.querySelectorAll(".story .monitor").forEach(function(box){
-    var ps=[].slice.call(box.querySelectorAll("p")), full=ps.map(function(p){return p.innerHTML});
+  /* 모니터 상자(.monitor) 안의 여러 줄, 또는 모니터 한 줄(.monline)을 한 글자씩 찍음 */
+  var typeOut=function(box,ps){
+    var full=ps.map(function(p){return p.innerHTML});
     box.setAttribute("aria-label","병상 모니터: "+box.textContent.trim());
     box.style.minHeight=box.offsetHeight+"px";   // 다 찍힌 높이를 미리 잡아 둬서 글이 찍히는 동안 아래 글이 밀리지 않게
-    ps.forEach(function(p){ p.setAttribute("aria-hidden","true"); p.textContent=""; });
+    if(box.classList.contains("monline")) box.style.minWidth=box.offsetWidth+"px";
+    ps.forEach(function(p){ if(p!==box) p.setAttribute("aria-hidden","true"); p.textContent=""; });
     var caret=document.createElement("span"); caret.className="caret";
-    watch(box,function(){ var i=0, k=0, src=ps.map(function(p,n){var d=document.createElement("div");d.innerHTML=full[n];return d.textContent;});
+    watch(box,function(){ var i=0, k=0, src=full.map(function(h){var d=document.createElement("div");d.innerHTML=h;return d.textContent;});
       var tick=function(){
-        if(i>=ps.length){ ps.forEach(function(p,n){ p.innerHTML=full[n]; }); ps[ps.length-1].appendChild(caret); return; }
+        if(i>=ps.length){ ps.forEach(function(p,n){ p.innerHTML=full[n]; }); ps[ps.length-1].appendChild(caret); if(box.classList.contains("monline")) setTimeout(function(){ caret.remove(); },1600); return; }
         k++; ps[i].textContent=src[i].slice(0,k); ps[i].appendChild(caret);
         if(k>=src[i].length){ ps[i].innerHTML=full[i]; i++; k=0; setTimeout(tick,520); } else setTimeout(tick,src[i][k-1]==="."?260:55);
       };
       tick();
     });
-  });
+  };
+  document.querySelectorAll(".story .monitor").forEach(function(box){ typeOut(box,[].slice.call(box.querySelectorAll("p"))); });
+  document.querySelectorAll(".story .monline").forEach(function(p){ typeOut(p,[p]); });
 })();
 
 /* 휴대폰 알림(.noti): 화면에 들어오면 위에서 내려오며 두 번 진동 */
