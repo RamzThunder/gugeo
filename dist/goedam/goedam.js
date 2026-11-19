@@ -98,16 +98,16 @@
     explore:{org:"SG 주식회사",team:"전략탐사팀",body:'<p class="qz-b">괴담이 가득한 세계에 살게 된 당신.</p><p>당신은 괴담에서 다양한 아이템을 채집하여 다양한 상품을 만들어 판매하는 <em class="qz-red">회사</em>에 입사하였습니다.</p><p>이 회사에서 괴담은 <u>중요한 원료 수급처</u>입니다. 괴담 속에서 만나는 민간인들은.. 운이 좋지 않았나보네요. 어쩔 수 없죠?</p><p>당신이 알 바는 아닙니다.</p><p class="qz-b">당신의 가장 큰 목표는<br><mark>많은 아이템을 가지고<br>괴담을 성공적으로 탈출하는 것입니다.</mark></p>'},
     rescue:{org:"재난복구지원국",team:"특수구조과",body:'<p class="qz-b">괴담이 가득한 세계에 살게 된 당신.</p><p>당신은 괴담으로 인한 인명 피해 등을 막기 위해 괴담 속에서 민간인을 구조하고, 가능하다면 괴담을 종결(없애는 것)시키는 것을 목표로 하는 <em class="qz-red">정부기관</em>에 입사하였습니다.</p><p>지진, 화재와 같은 재난에서 시민을 구해내듯, 당신은 괴담 속에서 <u>시민을 구출하는 데</u>에 사명감을 갖고 있습니다.</p><p class="qz-b">당신의 가장 큰 목표는<br><mark>가능한 많은 민간인을 구하고<br>괴담을 종결시키는 것입니다.</mark></p>'}
   };
-  var screen=function(html,red,dark){ box.className="quiz"+(red?" red":"")+(dark?" dark":""); box.innerHTML='<div class="qz-screen" tabindex="-1">'+html+'</div>';
+  var screen=function(html,red,dark,dawn){ box.className="quiz"+(red?" red":"")+(dark?" dark":"")+(dawn?" dawn":""); box.innerHTML='<div class="qz-screen" tabindex="-1">'+html+'</div>';
     document.documentElement.classList.toggle("lights-out",!!dark);   // '모든 불이 꺼집니다': 페이지 전체를 깜빡인 뒤 까맣게
     box.firstChild.focus({preventScroll:true}); scrollTo({top:0}); };
   var show=function(){
     if(i>=Q.length) return result();
     var s=Q[i];
-    if(s.say){ screen('<p class="qz-say">'+s.say+'</p><button class="qz-btn" type="button">'+(s.next||"다음")+'</button>',s.red,s.dark);
+    if(s.say){ screen('<p class="qz-say">'+s.say+'</p><button class="qz-btn" type="button">'+(s.next||"다음")+'</button>',s.red,s.dark,s.dawn);
       box.querySelector("button").onclick=function(){i++;show();}; return; }
     qn++;
-    screen('<p class="qz-no">Q'+qn+'.</p><p class="qz-q">'+s.q+'</p><div class="qz-opts">'+s.a.map(function(a,k){return '<button class="qz-opt" type="button" data-k="'+k+'">'+a[0]+'</button>'}).join("")+'</div>',s.red);
+    screen('<p class="qz-no">Q'+qn+'.</p><p class="qz-q">'+s.q+'</p><div class="qz-opts">'+s.a.map(function(a,k){return '<button class="qz-opt" type="button" data-k="'+k+'">'+a[0]+'</button>'}).join("")+'</div>',s.red,s.dark);
     box.querySelectorAll(".qz-opt").forEach(function(b){ var A=s.a[+b.dataset.k], flipped=0;
       var flip=function(){ if(A[2]&&!flipped){ flipped=Date.now(); b.textContent=A[2]; b.classList.add("flip"); } };   // 한 번 바뀌면 되돌아가지 않음
       b.addEventListener("mouseenter",flip); b.addEventListener("pointerdown",flip); b.addEventListener("focus",flip);
@@ -124,6 +124,10 @@
     box.classList.add("res");
     box.querySelector(".qz-again").onclick=function(){ score={e:0,r:0}; door=""; i=0; qn=0; show(); };
   };
+  /* 불 꺼진 장면: 커서(손가락)가 있는 곳만 손전등처럼 밝힘 */
+  var light=function(e){ if(!box.classList.contains("dark")) return; var r=box.getBoundingClientRect();
+    box.style.setProperty("--mx",(e.clientX-r.left)+"px"); box.style.setProperty("--my",(e.clientY-r.top)+"px"); };
+  box.addEventListener("pointermove",light); box.addEventListener("pointerdown",light);
   document.getElementById("qz-start").onclick=show;
 })();
 

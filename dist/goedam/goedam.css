@@ -342,3 +342,17 @@ html.lights-out .qz-say{color:#3a3a40!important}
 html.lights-out .qz-btn{background:#0d0d0f!important;color:#3a3a40!important;box-shadow:none!important}
 html.lights-out body{animation:lights-out .7s steps(1) 1}
 @keyframes lights-out{0%{filter:brightness(1)}15%{filter:brightness(.15)}30%{filter:brightness(1.1)}45%{filter:brightness(.05)}60%{filter:brightness(.8)}75%,100%{filter:brightness(1)}}
+
+/* 불 꺼진 Q7: 까만 화면에 손전등 동그라미(커서 위치, 처음엔 가운데). 글과 버튼은 그 빛 안에서만 보임 */
+.quiz.dark{position:relative;overflow:hidden}
+.quiz.dark::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;
+  background:radial-gradient(circle 150px at var(--mx,50%) var(--my,45%),rgba(0,0,0,0) 0,rgba(0,0,0,.35) 55%,rgba(0,0,0,.94) 100%)}
+html.lights-out .quiz.dark .qz-q{color:#d6d6da}
+html.lights-out .quiz.dark .qz-no{color:#8a1a20}
+html.lights-out .quiz.dark .qz-opt{background:#2a0508;color:#d9b8b8;box-shadow:none}
+/* 그다음 '지하철 방송' 장면: 붉은 비상등이 들어오듯 2.4초에 걸쳐 밝아지고, 머리줄·이동 링크도 천천히 돌아옴 */
+.quiz.dawn{animation:qz-dawn 2.4s ease-out 1}
+.quiz.dawn .qz-screen{animation:qz-dawn-txt 2.4s ease-out 1}
+@keyframes qz-dawn{0%{background:#000;border-color:#000}35%{background:#000}45%{background:#2a0306}50%{background:#000}100%{}}
+@keyframes qz-dawn-txt{0%,40%{opacity:0}100%{opacity:1}}
+html:not(.lights-out) .bar,html:not(.lights-out) .pn{transition:opacity 2s}

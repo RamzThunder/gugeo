@@ -12,7 +12,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script>try{var s=JSON.parse(localStorage.getItem("goedam-read")||"{}");if(s.size)document.documentElement.dataset.size=s.size;if(s.font)document.documentElement.dataset.font=s.font}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Noto+Serif+KR:wght@400;700&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="goedam.css?v=f127e27a">
+<link rel="stylesheet" href="goedam.css?v=c65c495b">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="brush" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter></svg>
@@ -40,7 +40,7 @@
 </main>
 <script>
 /* 성향 테스트(스모어에서 옮김). 부서: e=전략탐사팀, r=특수구조과, ""=점수 없음, "er"=두 부서 모두. 세 번째 값이 있으면 커서를 올리거나 누르는 순간 그 글로 바뀜(Q8: 아니오→네).
-   red:true는 붉은 장면. 동점이면 Q9에서 고른 문의 부서로 감 */
+   red:true는 붉은 장면, dark:true는 불 꺼진 장면(손전등처럼 커서 주변만 밝음), dawn:true는 비상등처럼 서서히 밝아지는 장면. 동점이면 Q9에서 고른 문의 부서로 감 */
 window.QUIZ=[
  {q:"돈과 명예 중 하나를 택한다면?",a:[["현실적인 안정이 먼저,<br>돈을 택한다.","e"],["남들에게 떳떳한 삶을 살고 싶다,<br>명예를 택한다.","r"]]},
  {q:"위기 상황에서 나는...",a:[["내 감과 판단을 믿고<br>이득을 볼 수 있는 기회를 찾는다.","e"],["지침과 규칙을 따라<br>최대한 안전한 해결방법을 찾는다.","r"]]},
@@ -54,13 +54,13 @@ window.QUIZ=[
  {say:"<span class=\"qz-pa\">[지금 <span class=\"x\">■■</span>행 열차가 들어오고 있습니다.]</span><br><br>열차가 진입하는 소리가 들립니다.<br><br>주변에 서있던 사람들이<br>모두 승강장을 향해 뛰어갑니다."},
  {say:"고민하던 당신 역시<br>열차에 올라탑니다.<br><br>열차가 출발하고,<br>조금은 여유가 생겨<br>주변을 살펴보려던 그때,"},
  {say:"모든 불이 꺼집니다.",red:true,dark:true},
- {q:"불이 꺼진 상황에서 당신은...",red:true,a:[["휴대폰 손전등을 켜고<br>주변을 탐색한다.","er"],["주변 사람들의 행동을<br>기다렸다가 함께 움직인다.","e"]]},
- {say:"그 때, 지하철 방송이 들립니다.",red:true},
+ {q:"불이 꺼진 상황에서 당신은...",red:true,dark:true,a:[["휴대폰 손전등을 켜고<br>주변을 탐색한다.","er"],["주변 사람들의 행동을<br>기다렸다가 함께 움직인다.","e"]]},
+ {say:"그 때, 지하철 방송이 들립니다.",red:true,dawn:true},
  {q:"<span class=\"qz-pa\">[이번 역은 <span class=\"x\">■■</span>역, <span class=\"x\">■■</span>역입니다.]</span><br><br>이번 역에서 내릴까?",red:true,a:[["아니오","","네"],["아니오","","네"],["아니오","","네"],["아니오","","네"],["아니오","","네"],["아니오","","네"],["아니오","","네"],["아니오","","네"],["아니오","",":)"],["아니오","",":)"]]},
  {q:"문 앞에 선 당신<br><br>당신 앞에 기다리고 있는 것은",red:true,door:true,a:[["연구실로 이어지는 문","e"],["출구로 이어지는 문","r"]]},
  {q:"문이 열리기 전,<br>당신은 하나의 소원을 빕니다.<br>당신의 소원은...",red:true,a:[["끔찍한 일이 일어나지 않게 해주세요","r"],[":D",""],["즐거운 일이 일어나게 해주세요","e"]]}
 ];
 </script>
-<script src="goedam.js?v=f127e27a" defer></script>
+<script src="goedam.js?v=c65c495b" defer></script>
 </body>
 </html>
