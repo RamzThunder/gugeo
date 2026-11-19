@@ -1031,3 +1031,7 @@ html.sh-dark body::after{opacity:var(--shd,0)}
 .mir-obj{width:min(100vw,38em);aspect-ratio:1024/1536;transform-origin:49.9% 41.99%}
 .mir-norigae{filter:drop-shadow(0 1em 1.4em rgba(0,0,0,.6))}
 .mir-stage .mir-obj .mirror{left:37.16%;top:33.5%;width:25.49%}
+/* 깔끔한 노리개 원본(img/norigae.png, 1024×1536): 거울 면 중심 (49.85%, 41.99%), 지름 25.44% */
+.mir-obj{transform-origin:49.85% 41.99%}
+.mir-stage .mir-obj .mirror{left:37.13%;top:33.51%;width:25.44%}
+.mir-norigae{filter:drop-shadow(0 0 1.4em rgba(200,30,40,.4)) drop-shadow(0 1em 1.4em rgba(0,0,0,.8))}
