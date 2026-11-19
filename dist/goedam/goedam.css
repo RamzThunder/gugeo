@@ -156,9 +156,15 @@ footer{max-width:720px;margin:0 auto;padding:28px 16px 44px;color:#5c5c66;font-s
 footer a{text-decoration:none}
 @media (prefers-reduced-motion:reduce){.title img{animation:none}.pick,.next{transition:none}}
 
-/* 서점 점원(안드로이드)의 녹음 멘트: 기계 글꼴 Orbit, 고르게 띄운 자간, 차가운 화면 빛.
+/* 서점 점원(안드로이드)의 녹음 멘트: 픽셀 글꼴 갈무리, 고른 자간, 차가운 화면 빛.
    본문 글꼴 설정(고딕/명조)과 상관없이 늘 같은 기계 목소리로 보이게 함 */
-.story .bot{font-family:"Orbit",var(--sans);font-weight:400;letter-spacing:.06em;word-spacing:.08em;color:#c8eef5;
-  text-shadow:0 0 .35em rgba(120,220,255,.35),.03em 0 rgba(255,60,90,.25)}
+.story .bot{font-family:"Galmuri11",var(--sans);font-weight:400;font-size:.94em;letter-spacing:.02em;color:#c8eef5;
+  -webkit-font-smoothing:none;text-shadow:0 0 .35em rgba(120,220,255,.35),.06em 0 rgba(255,60,90,.22)}
 .story .bot em{font-style:normal;color:#ff9aa8;text-shadow:0 0 .4em rgba(255,70,100,.45)}   /* 점원만의 덧붙인 말 '언제든' */
 .story .bot strong{font-weight:400}
+
+/* 서점의 돈 이야기: 금액(666■ 등)은 영수증 같은 호박색, 가격표 글은 픽셀 글꼴 */
+.story .won{color:#ffc65c;font-weight:700;font-variant-numeric:tabular-nums}
+.story .won .x{color:#b88a3a}
+.story .bot .won{font-weight:400}
+.story .tagp{font-family:"Galmuri11",var(--sans);font-size:.94em;color:#ffe2a8}
