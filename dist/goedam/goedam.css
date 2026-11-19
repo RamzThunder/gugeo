@@ -679,3 +679,5 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 .story .call{padding:0;background:none;border-radius:0;opacity:1;color:#cfdcc8;text-shadow:0 0 .35em rgba(150,190,140,.35);filter:blur(.25px)}
 .story .call::before{content:none}
 .story .call.tense{background:none;color:#ecc9c2;text-shadow:0 0 .35em rgba(220,120,110,.35)}
+/* 두 통화 모두 같은 사람(강 대리)의 목소리라 같은 색 */
+.story .call.tense{color:#cfdcc8;text-shadow:0 0 .35em rgba(150,190,140,.35)}
