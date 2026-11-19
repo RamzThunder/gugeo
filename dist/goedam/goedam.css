@@ -156,21 +156,21 @@ footer{max-width:720px;margin:0 auto;padding:28px 16px 44px;color:#5c5c66;font-s
 footer a{text-decoration:none}
 @media (prefers-reduced-motion:reduce){.title img{animation:none}.pick,.next{transition:none}}
 
-/* 점원·가격표 글꼴: 탕바(Tangba, SIL OFL 1.1, 눈누 projectnoonnu). 실제로 글자가 나오는 쪽에서만 받아짐 */
-@font-face{font-family:"Tangba";src:url("https://cdn.jsdelivr.net/gh/projectnoonnu/2601-4@1.1/Tangba12.woff2") format("woff2");font-weight:normal;font-display:swap}
+/* 점원·가격표 글꼴: 물마루(Mulmaru, 눈누 projectnoonnu). 실제로 글자가 나오는 쪽에서만 받아짐 */
+@font-face{font-family:"Mulmaru";src:url("https://cdn.jsdelivr.net/gh/projectnoonnu/2601-4@1.1/Mulmaru.woff2") format("woff2");font-weight:normal;font-display:swap}
 
-/* 서점 점원(안드로이드)의 녹음 멘트: 픽셀 글꼴 탕바, 고른 자간, 차가운 화면 빛.
+/* 서점 점원(안드로이드)의 녹음 멘트: 픽셀 글꼴 물마루, 고른 자간, 차가운 화면 빛.
    본문 글꼴 설정(고딕/명조)과 상관없이 늘 같은 기계 목소리로 보이게 함 */
-.story .bot{font-family:"Tangba",var(--sans);font-weight:400;font-size:1em;letter-spacing:.02em;color:#c8eef5;
+.story .bot{font-family:"Mulmaru",var(--sans);font-weight:400;font-size:1em;letter-spacing:.02em;color:#c8eef5;
   -webkit-font-smoothing:none;text-shadow:0 0 .35em rgba(120,220,255,.35),.06em 0 rgba(255,60,90,.22)}
 .story .bot em{font-style:normal;color:#ff9aa8;text-shadow:0 0 .4em rgba(255,70,100,.45)}   /* 점원만의 덧붙인 말 '언제든' */
 .story .bot strong{font-weight:400}
 
-/* 서점의 돈 이야기: 금액(666■ 등)은 영수증 같은 호박색, 가격표 글은 점원과 같은 픽셀 글꼴(탕바) */
+/* 서점의 돈 이야기: 금액(666■ 등)은 영수증 같은 호박색, 가격표 글은 점원과 같은 픽셀 글꼴(물마루) */
 .story .won{color:#ffc65c;font-weight:700;font-variant-numeric:tabular-nums}
 .story .won .x{color:#b88a3a}
 .story .bot .won{font-weight:400}
-.story .tagp{font-family:"Tangba",var(--sans);font-size:1em;color:#ffe2a8}
+.story .tagp{font-family:"Mulmaru",var(--sans);font-size:1em;color:#ffe2a8}
 
 /* 서점 아크릴판 광고(특수구조과 ep.2): 선생님이 만든 광고 그림(img/shoe-poster.webp)을 투명 아크릴 판에 꽂아 둠.
    클래스·파일 이름에 'ad'를 쓰지 않음(광고 차단기가 숨김) */
@@ -574,10 +574,10 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 .story .radio-in.decoding{color:#8d8a5c}
 .story .radio-in::before{content:"◉ ";font-size:.8em;color:#4cff7a;animation:rd-led .5s steps(2) 6}
 
-/* 무전 글꼴: 도스이야기(DosStory). 무전 안에 끼어든 점원 목소리(.bot)는 점원 글꼴(탕바) 그대로 */
+/* 무전 글꼴: 도스이야기(DosStory). 무전 안에 끼어든 점원 목소리(.bot)는 점원 글꼴(물마루) 그대로 */
 @font-face{font-family:"DosStory";src:url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/DOSIyagiMedium.woff2") format("woff2");font-weight:normal;font-display:swap}
 .story .radio,.story .radio-in{font-family:"DosStory",var(--sans);font-weight:normal;letter-spacing:0}
-.story .radio .bot{font-family:"Tangba",var(--sans)}
+.story .radio .bot{font-family:"Mulmaru",var(--sans)}
 .rd.static .rd-sq{color:#ff6a5a;animation:rd-led .25s steps(2) infinite}
 .rd.dead .rd-sq{color:#ff6a5a}
 .rd-sq{white-space:nowrap}
