@@ -445,6 +445,20 @@ window.goedamChars=function(el){
     var st=stage(d,"solo-stage",170);
     jobs.push(function(){ var p=prog(st); d.style.opacity=sm(p/.18).toFixed(3); d.style.setProperty("--pop",sm(p/.25).toFixed(3)); });
   });
+  /* "같이 가자면서요.": 내리면 조금 어두워지고 → 한 글자씩 번지듯 떠오름 → 다 나오면 숨 쉬듯 가만히 → 지나가면 어둠이 걷힘 */
+  document.querySelectorAll(".story .cx.clutch").forEach(function(box){
+    var p0=box.querySelector("p"); if(!p0) return;
+    var txt=p0.textContent; p0.setAttribute("aria-label",txt); p0.textContent="";
+    var cs=Array.from(txt).map(function(ch){ var sp=document.createElement("span"); sp.className="cl-c"; sp.setAttribute("aria-hidden","true"); sp.textContent=ch; p0.appendChild(sp); return sp; });
+    var n=cs.length, st=stage(box,"cl-stage",240);
+    jobs.push(function(){
+      var p=prog(st), dark=.72*sm(p/.2)*(1-sm((p-.84)/.16));
+      document.documentElement.style.setProperty("--shd",dark.toFixed(3));
+      cs.forEach(function(c,i){ var a=.16+i/n*.42; c.style.setProperty("--o",sm((p-a)/.07).toFixed(3)); });
+      box.style.setProperty("--near",sm((p-.6)/.3).toFixed(3));
+      box.classList.toggle("cl-still",p>.62&&p<.95);
+    });
+  });
   if(!jobs.length) return;
   var ticking=false, run=function(){ ticking=false; jobs.forEach(function(f){ f(); }); };
   addEventListener("scroll",function(){ if(!ticking){ ticking=true; requestAnimationFrame(run); } },{passive:true}); addEventListener("resize",run); run();

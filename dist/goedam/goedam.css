@@ -1038,3 +1038,12 @@ html.sh-dark body::after{opacity:var(--shd,0)}
 /* 노리개가 화면보다 길면 술이 잘리므로 화면 높이(92%)에 맞추되, 폭에서 계산해 그림 비율(2:3)이 늘어나지 않게 함 */
 .mir-obj{height:auto;width:min(96vw,61.33vh,38em)}
 @supports (height:1svh){.mir-obj{width:min(96vw,61.33svh,38em)}}
+/* 3.2 "같이 가자면서요.": 화면 가운데 고정, 내리는 만큼 한 글자씩 차갑게 떠오름(속삭임). 주변은 살짝 어두워짐 */
+.cl-stage{position:relative}
+.cl-stage-pin{position:sticky;top:0;z-index:51;height:100vh;display:grid;place-items:center}
+.story .cx.clutch{position:relative;z-index:51;margin:0;padding:0 .5em}
+.story .cx.clutch p{font-family:var(--serif,inherit);font-weight:400;font-size:1.7em;letter-spacing:.14em;color:#d7e1ea;
+  text-shadow:0 0 .6em rgba(150,190,230,.35),0 0 1.6em rgba(120,160,210,.18);transform:scale(calc(1 + var(--near,0) * .12))}
+.story .cx.clutch .cl-c{display:inline-block;white-space:pre;opacity:var(--o,0);filter:blur(calc((1 - var(--o,0)) * 6px));transform:translateY(calc((1 - var(--o,0)) * .25em))}
+.story .cx.clutch.cl-still p{animation:cl-breath 3.4s ease-in-out infinite}
+@keyframes cl-breath{0%,100%{opacity:1}50%{opacity:.82}}
