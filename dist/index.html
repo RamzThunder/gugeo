@@ -108,6 +108,30 @@ section{padding:72px 0 8px}
 .feature+.feature{margin-top:24px}
 .feature.soon .shot img{image-rendering:auto;object-position:left top}
 .info .btn.off{border-style:dashed;color:var(--mute);cursor:default;transform:none}
+.info .cta{display:flex;flex-wrap:wrap;gap:10px}
+.info button.btn{font:inherit;font-size:16px;font-weight:600;cursor:pointer}
+
+/* ===== 개발 중 카드의 티저 영상: 16:9 영상을 칸 안에 다 보이게(자막이 잘리지 않게) 두고, 남는 칸은 영상 배경색 ===== */
+.shot.teaser{background:#14202c;display:grid;place-items:center;cursor:pointer}
+.shot.teaser video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#14202c}
+.tz-badge{position:absolute;left:14px;top:14px;font-size:12px;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:999px;background:#ffd166;color:#1b1400}
+.tz-pause,.tz-full{position:absolute;border:0;cursor:pointer;font:inherit;color:#fff;background:rgba(8,13,29,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.tz-pause{right:12px;top:12px;width:36px;height:36px;border-radius:10px;font-size:12px;letter-spacing:-.1em;display:grid;place-items:center}
+.tz-pause[aria-pressed="true"] span{letter-spacing:0}
+.tz-full{left:12px;bottom:12px;display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:12px;font-size:14px;font-weight:600}
+.tz-full small{opacity:.7;font-weight:500}
+.tz-pause:hover,.tz-full:hover{background:var(--blue)}
+.tz-pause:focus-visible,.tz-full:focus-visible{outline:2px solid #fff;outline-offset:2px}
+
+/* 전체 보기 창 */
+#teaser-dlg{width:min(1040px,calc(100vw - 32px));max-height:calc(100vh - 32px);padding:0;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--ink);overflow:hidden;box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}
+#teaser-dlg::backdrop{background:rgba(5,9,22,.78)}
+.dlg-h{display:flex;align-items:center;gap:10px;padding:12px 12px 12px 20px;flex-wrap:wrap}
+.dlg-h b{font-size:16px;letter-spacing:-.03em}
+.dlg-h span{color:var(--mute);font-size:13px}
+.dlg-x{margin-left:auto;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:none;color:var(--ink);font-size:16px;cursor:pointer}
+.dlg-x:hover{border-color:var(--accent);color:var(--accent)}
+#war-full{display:block;width:100%;aspect-ratio:16/9;max-height:calc(100vh - 110px);background:#000}
 
 
 footer{margin-top:72px;border-top:1px solid var(--line);padding:26px 0 44px;color:var(--mute);font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
@@ -119,6 +143,7 @@ footer .fm svg{color:var(--accent)}
 @media (max-width:860px){
   .feature{grid-template-columns:minmax(0,1fr)}
   .shot{min-height:0;aspect-ratio:5/3}
+  .shot.teaser{aspect-ratio:16/9}
   .steps{grid-template-columns:minmax(0,1fr)}
   .how{padding:22px 18px 24px}
   .dict{grid-template-columns:minmax(0,1fr);gap:12px;padding:20px 22px}
@@ -211,7 +236,14 @@ footer .fm svg{color:var(--accent)}
     <div class="sec-h"><span class="num">02</span><h2>개발 중</h2></div>
     <!-- 아직 만들고 있는 활동. 다 만들면 이 article을 01 활동으로 옮기고 입장 링크를 넣으면 됩니다 -->
     <article class="feature soon">
-      <div class="shot"><img src="img/war.webp" alt="2030 현대문학사 데이터 점령전 첫 화면: 연도별 기록실이 이어진 데이터센터 맵" width="1000" height="600"></div>
+      <div class="shot teaser">
+        <!-- 티저(약 40초, 소리 없음): lit-war 레포 scripts/openings/make-teaser.sh 로 만든 파일을 video/ 에 복사 -->
+        <video id="war-teaser" src="video/war-teaser.mp4" poster="video/war-teaser.webp" muted loop playsinline autoplay preload="metadata"
+          aria-label="점령전 티저 영상(소리 없음, 자막 있음): 밝은 HUMAN 홍보 광고가 꺼진 뒤, 기록을 복구하는 보존관과 원래 기록을 지키는 러다이트가 나오고 게임 제목이 뜹니다"></video>
+        <span class="tz-badge">티저</span>
+        <button class="tz-pause" type="button" aria-label="티저 일시정지" aria-pressed="false"><span aria-hidden="true">❚❚</span></button>
+        <button class="tz-full" type="button" data-open-teaser><span aria-hidden="true">▶</span> 전체 영상 보기 <small>2:08</small></button>
+      </div>
       <div class="info">
         <div class="tags"><span class="tag hot">점령전</span><span class="tag">현대문학사</span><span class="tag">진영 대항</span></div>
         <h3>2030 현대문학사 데이터 점령전</h3>
@@ -223,6 +255,7 @@ footer .fm svg{color:var(--accent)}
         </div>
         <button class="howbtn" type="button" aria-expanded="false" aria-controls="how-war">진행 방법 보기 <i>▾</i></button>
         <div class="cta">
+          <button class="btn solid" type="button" data-open-teaser>▶ 오프닝 영상 보기</button>
           <span class="btn off" aria-disabled="true">곧 열려요</span>
         </div>
       </div>
@@ -236,6 +269,12 @@ footer .fm svg{color:var(--accent)}
       </div>
     </article>
   </section>
+
+  <dialog id="teaser-dlg" aria-label="2030 현대문학사 데이터 점령전 오프닝 영상">
+    <div class="dlg-h"><b>2030 현대문학사 데이터 점령전 · 오프닝</b><span>소리 없음 · 자막 · 2분 8초</span>
+      <button class="dlg-x" type="button" aria-label="닫기">✕</button></div>
+    <video id="war-full" poster="video/war-teaser.webp" controls playsinline preload="none" data-src="video/war-full.mp4"></video>
+  </dialog>
 
   <footer>
     <span class="fm"><svg viewBox="0 0 412 80" role="img" aria-label="구거"><use href="#gugeo"/></svg> gugeo.party</span>
@@ -251,6 +290,28 @@ document.querySelectorAll(".feature").forEach(card=>{
   btn.addEventListener("click",e=>{ e.stopPropagation(); toggle(); });
   card.addEventListener("click",e=>{ if(e.target.closest("a,button,.how")) return; toggle(); });
 });
+
+/* 개발 중 카드의 티저: 화면에 보일 때만 재생, 일시정지 버튼, 누르면 전체 영상 창 */
+(()=>{
+  const v=document.getElementById("war-teaser"), dlg=document.getElementById("teaser-dlg"), full=document.getElementById("war-full");
+  if(!v||!dlg||!full) return;
+  const pb=document.querySelector(".tz-pause"); let paused=false, seen=false;
+  const paint=()=>{ const off=v.paused; pb.setAttribute("aria-pressed",off); pb.setAttribute("aria-label",off?"티저 재생":"티저 일시정지"); pb.firstChild.textContent=off?"▶":"❚❚"; };
+  const play=()=>{ const p=v.play(); if(p&&p.catch) p.catch(()=>paint()); };
+  v.addEventListener("play",paint); v.addEventListener("pause",paint);
+  pb.addEventListener("click",e=>{ e.stopPropagation(); paused=!v.paused; paused?v.pause():play(); });
+  if("IntersectionObserver" in window){
+    new IntersectionObserver(es=>es.forEach(en=>{ seen=en.isIntersecting; if(seen&&!paused&&!dlg.open) play(); else v.pause(); }),{threshold:.35}).observe(v);
+  }
+  const open=e=>{ e.stopPropagation(); v.pause();
+    if(!full.src) full.src=full.dataset.src;
+    dlg.showModal(); full.currentTime=0; const p=full.play(); if(p&&p.catch) p.catch(()=>{}); };
+  document.querySelectorAll("[data-open-teaser]").forEach(b=>b.addEventListener("click",open));
+  v.addEventListener("click",open);
+  dlg.querySelector(".dlg-x").addEventListener("click",()=>dlg.close());
+  dlg.addEventListener("click",e=>{ if(e.target===dlg) dlg.close(); });   // 창 바깥(어두운 배경)을 누르면 닫힘
+  dlg.addEventListener("close",()=>{ full.pause(); if(!paused&&seen) play(); });
+})();
 </script>
 </body>
 </html>

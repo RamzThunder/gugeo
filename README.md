@@ -7,6 +7,7 @@
 |---|---|
 | `dist/index.html` | gugeo.party 첫 페이지. 브랜드 이름은 **구거**(gugeo를 그대로 읽은 말). 테마 색은 파비콘의 파란색 `#002b96`, 첫 화면 ㄱㅜㄱㅓ 글자는 파비콘 획 비율을 옮긴 SVG(`#gugeo`). 활동은 `<article class="feature">`를 복사해 더합니다. 진행 방법은 카드 안 `<div class="how">`에 적으면 카드를 눌렀을 때 펼쳐집니다 |
 | `dist/img/` | 첫 페이지에 쓰는 그림 (방탈출 게임 그림을 WebP로 옮겨 둠) |
+| `dist/video/` | 점령전 '개발 중' 카드의 티저(`war-teaser.mp4`, 약 40초 반복·무음), 전체 보기 창의 오프닝(`war-full.mp4`, 128초), 포스터(`war-teaser.webp`). lit-war 레포에서 `sh scripts/openings/make-teaser.sh` 로 만들어 `output/openings/common-propaganda-v3/teaser/`에 생긴 파일을 복사. Cloudflare Pages는 파일 하나에 25MB까지만 올라감 |
 | `dist/_redirects` | 예전 게임 주소(`/game/`, `/tv/`, `/dist/game/`)를 새 주소로 넘겨 줌 |
 | `dist/favicon.ico` 등 | 사이트 아이콘 |
 
