@@ -227,4 +227,14 @@ footer a{text-decoration:none}
 
 /* 백운 요원의 필담(수첩에 휘갈긴 글): 그리운 김탕체. 읽기 설정(고딕/명조)과 상관없이 손글씨로 */
 @font-face{font-family:"NostalgicKimtang";src:url("https://cdn.jsdelivr.net/gh/Project-Noonnu/2609271756@griun-kimtang-rg/griun-kimtang-rg/Griun_KimTang-Rg.woff2") format("woff2");font-weight:400;font-display:swap}
-.story .pen{font-family:"NostalgicKimtang",var(--sans);font-weight:400;font-size:1.12em;letter-spacing:0;color:#e9e4d6}
+/* 수첩 종이: 줄 공책(파란 줄, 빨간 여백선), 위쪽에 스프링 구멍, 살짝 기울여 붙임. 줄 간격과 글줄 높이를 같게(1.7em) 맞춤 */
+.story .pen{--ln:1.7em;position:relative;display:block;width:fit-content;max-width:100%;margin:1em 0 1em .3em!important;
+  padding:1.15em 1.1em .45em 1.9em;font-family:"NostalgicKimtang",var(--sans);font-weight:400;font-size:1.12em;line-height:var(--ln);letter-spacing:0;color:#1d2a4a;
+  background-color:#f3eedf;
+  background-image:linear-gradient(90deg,transparent 1.3em,rgba(214,60,60,.6) 1.3em,rgba(214,60,60,.6) calc(1.3em + 1.5px),transparent calc(1.3em + 1.5px)),
+    linear-gradient(to bottom,transparent calc(100% - 1px),rgba(60,105,185,.5) calc(100% - 1px));
+  background-size:100% 100%,100% var(--ln);background-position:0 0,0 1.15em;background-repeat:no-repeat,repeat-y;
+  border-radius:2px;transform:rotate(-1.2deg);box-shadow:0 .15em 0 #d9d2c0,0 .9em 1.4em -.6em rgba(0,0,0,.85)}
+.story .pen::before{content:"";position:absolute;left:1.3em;right:.8em;top:.35em;height:.4em;
+  background:radial-gradient(circle,#0b0b0d 0 .16em,transparent .18em) 0 0/1.1em .4em repeat-x}   /* 스프링 구멍 */
+.story .pen .x{color:#2a2a2a}
