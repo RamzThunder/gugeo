@@ -1,10 +1,11 @@
 /* 괴담에 떨어져도 수행평가를 해야 하는구나
-   원본 구글 사이트의 분위기(검정 바탕, 붉은 네온 제목, 분필 손글씨)를 살리고 긴 글 읽기에 맞춤. 어두운 화면만 씀. */
+   원작 표지 글씨(거친 붓 획, 창백한 흰빛, 빨강·하늘색으로 어긋나는 글리치)를 따라 하고 긴 글 읽기에 맞춤. 어두운 화면만 씀. */
 :root{
   color-scheme:dark;
   --bg:#050506; --ink:#ececef; --soft:#c9c9d0; --mute:#8d8d97; --line:#222228;
   --card:#0f0f12; --card2:#16161b; --red:#ff4545; --red-deep:#b3121b; --blue:#7aa7ff;
-  --hand:"Nanum Pen Script",cursive;
+  --hand:"Nanum Brush Script",cursive;
+  --glitch:-.045em 0 rgba(255,36,72,.6),.045em 0 rgba(34,216,255,.55);
   --sans:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --serif:"Noto Serif KR","Nanum Myeongjo","AppleMyungjo",serif;
   --fs:18px; --body:var(--sans);
@@ -16,24 +17,24 @@ html{-webkit-text-size-adjust:100%;scroll-padding-top:64px}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.7;word-break:keep-all;overflow-wrap:anywhere;
   background-image:radial-gradient(ellipse 120% 60% at 50% -10%,rgba(179,18,27,.16),transparent 60%);background-repeat:no-repeat;background-size:100% 640px}
 a{color:inherit}
+img{display:block;max-width:100%;height:auto}
 button{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--red);outline-offset:3px;border-radius:6px}
 
-/* ===== 손글씨 (원본 제목·에피소드 그림의 분필 글씨) ===== */
-.hand,.neon,.chap h1,.chap .kick{font-family:var(--hand);font-weight:400;letter-spacing:0}
+/* ===== 붓글씨 (원작 표지 글씨처럼): 거친 가장자리 + 빨강·하늘색 어긋남 ===== */
+.hand,.chap h1,.chap .kick{font-family:var(--hand);font-weight:400;letter-spacing:0}
+.hand,.chap h1,.ep h2,.cx.shout,.warn h2{color:#eef0ff;text-shadow:var(--glitch);filter:url(#brush)}
 
 /* ===== 목차 ===== */
 .toc{max-width:720px;margin:0 auto;padding:0 16px 32px}
-.hero{text-align:center;padding:clamp(56px,14vw,110px) 0 clamp(28px,6vw,48px)}
-.neon{margin:0;font-size:clamp(54px,15vw,96px);line-height:1.02;color:#ffe3e3;
-  text-shadow:0 0 2px #fff,0 0 8px var(--red),0 0 18px var(--red),0 0 38px var(--red-deep),0 0 70px var(--red-deep)}
-.neon span{display:block}
-.neon span+span{animation:flick 7s infinite}
-@keyframes flick{0%,91%,95%,100%{opacity:1}92%{opacity:.35}93%{opacity:.9}94%{opacity:.5}}
+.hero{text-align:center;padding:clamp(36px,9vw,72px) 0 clamp(24px,5vw,40px)}
+.title{margin:0 auto;max-width:620px}
+.title img{width:100%;animation:jolt 6s steps(1) infinite}
+@keyframes jolt{0%,93%,100%{transform:none;filter:none}94%{transform:translate(-4px,1px) skewX(-3deg);filter:hue-rotate(40deg)}95%{transform:translate(5px,-1px)}96%{transform:translate(-2px,0)}}
 .intro{max-width:30em;margin:28px auto 0;color:var(--soft);font-size:17px;line-height:1.8}
 .ep{margin-top:26px;padding-top:30px;border-top:1px dashed #2e2e35}
-.ep h2{margin:0 0 14px;font-size:clamp(38px,9vw,50px);line-height:1.1;color:#fafafa;text-shadow:0 0 1px rgba(255,255,255,.6)}
-.ep h2 .no{color:var(--red);margin-right:.15em;text-shadow:0 0 12px rgba(255,69,69,.45)}
+.ep h2{margin:0 0 14px;font-family:var(--hand);font-weight:400;font-size:clamp(42px,10vw,56px);line-height:1.1}
+.ep h2 .no{color:var(--red);margin-right:.15em;text-shadow:none}
 .steps{list-style:none;margin:0;padding:0;counter-reset:s}
 .steps li{position:relative;padding:0 0 22px 34px;counter-increment:s}
 .steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:22px;height:22px;border-radius:50%;border:1.5px solid #3a3a42;
@@ -72,8 +73,8 @@ button{font:inherit;color:inherit}
 /* ===== 읽는 쪽: 장 머리 ===== */
 .read{max-width:680px;margin:0 auto;padding:0 20px 32px}
 .chap{text-align:center;padding:clamp(48px,10vw,80px) 0 clamp(30px,6vw,44px)}
-.chap .kick{margin:0;color:var(--red);font-size:28px;line-height:1;text-shadow:0 0 12px rgba(255,69,69,.4)}
-.chap h1{margin:6px 0 0;font-size:clamp(50px,13vw,72px);line-height:1.05;color:#fafafa}
+.chap .kick{margin:0;color:var(--red);font-size:30px;line-height:1}
+.chap h1{margin:6px 0 0;font-size:clamp(54px,14vw,78px);line-height:1.05}
 .chap .meta{margin:14px 0 0;color:var(--mute);font-size:14px}
 .opt{display:flex;flex-direction:column;align-items:center;gap:2px;margin:0 auto 40px;max-width:360px;padding:12px 16px;border-radius:14px;
   border:1px dashed #3d3d46;text-decoration:none;text-align:center}
@@ -117,7 +118,7 @@ html[data-font="serif"] .story{letter-spacing:-.01em}
 .cx.band{width:fit-content;margin:1.6em auto;padding:.5em 1.6em;border-radius:999px;background:#f2efe6;color:#2a2a2a;font-family:var(--sans);font-size:.86em;line-height:1.6;
   box-shadow:inset 0 0 0 1px #d6d1c3}
 .cx.band .x{color:#9a968a}
-.cx.shout{margin:1.6em 0;font-family:var(--hand);font-size:2.6em;line-height:1.1;color:#fff;text-shadow:0 0 10px var(--red),0 0 30px var(--red-deep)}
+.cx.shout{margin:1.6em 0;font-family:var(--hand);font-size:3em;line-height:1.05}
 .cx.end{margin:3.2em 0 0;font-family:var(--hand);font-size:2.1em;line-height:1.2;color:var(--mute)}
 .cx.end::before,.cx.end::after{content:"— ";color:#3d3d45}
 .cx.end::after{content:" —"}
@@ -125,7 +126,7 @@ html[data-font="serif"] .story{letter-spacing:-.01em}
 /* 요약본 쪽: [주의]와 펼치기 */
 .warn{border:1px solid rgba(255,69,69,.4);background:linear-gradient(#170708,#0e0506);border-radius:18px;padding:20px 18px;margin:0 0 22px;text-align:center;
   font-family:var(--sans);font-size:.92em;line-height:1.8}
-.warn h2{margin:0 0 8px;font-family:var(--hand);font-weight:400;font-size:2.1em;line-height:1;color:var(--red);text-shadow:0 0 12px rgba(255,69,69,.45)}
+.warn h2{margin:0 0 8px;font-family:var(--hand);font-weight:400;font-size:2.3em;line-height:1}
 .warn p{margin:0}
 .warn .gap{height:.5em}
 details.sum{border:1px solid var(--line);border-radius:18px;background:var(--card)}
@@ -137,7 +138,7 @@ details.sum[open] summary::after{content:"접기 ▴"}
 
 /* ===== 끝: 고르기 / 다음 / 이전 ===== */
 .choose{margin-top:3em;text-align:center}
-.choose .hand{margin:0 0 14px;font-size:36px;line-height:1.1;color:#fafafa}
+.choose .hand{margin:0 0 14px;font-size:40px;line-height:1.1}
 .choose .hand:not(:first-child){margin-top:30px}
 .choose .pick{text-align:left}
 .hint{margin:12px 0 0;color:var(--mute);font-size:14px}
@@ -153,4 +154,4 @@ details.sum[open] summary::after{content:"접기 ▴"}
 
 footer{max-width:720px;margin:0 auto;padding:28px 16px 44px;color:#5c5c66;font-size:13px;text-align:center}
 footer a{text-decoration:none}
-@media (prefers-reduced-motion:reduce){.neon span+span{animation:none}.pick,.next{transition:none}}
+@media (prefers-reduced-motion:reduce){.title img{animation:none}.pick,.next{transition:none}}
