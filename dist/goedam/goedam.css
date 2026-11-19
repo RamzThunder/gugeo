@@ -1,10 +1,12 @@
 /* 괴담에 떨어져도 수행평가를 해야 하는구나
    원작 표지 글씨(거친 붓 획, 창백한 흰빛, 빨강·하늘색으로 어긋나는 글리치)를 따라 하고 긴 글 읽기에 맞춤. 어두운 화면만 씀. */
+/* 제목·외침·도장 등 손글씨 글꼴: 만세체(Manse, 눈누). 나눔손글씨 붓 대신 */
+@font-face{font-family:"Manse";src:url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.1/Manse.woff") format("woff");font-weight:normal;font-display:swap}
 :root{
   color-scheme:dark;
   --bg:#050506; --ink:#ececef; --soft:#c9c9d0; --mute:#8d8d97; --line:#222228;
   --card:#0f0f12; --card2:#16161b; --red:#ff4545; --red-deep:#b3121b; --blue:#7aa7ff;
-  --hand:"Nanum Brush Script",cursive;
+  --hand:"Manse",cursive;
   --glitch:-.045em 0 rgba(255,36,72,.6),.045em 0 rgba(34,216,255,.55);
   --sans:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --serif:"Noto Serif KR","Nanum Myeongjo","AppleMyungjo",serif;
