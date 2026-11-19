@@ -458,3 +458,7 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 .lv-stage.frozen .lv-flick{animation-duration:9s}
 .live-orig{grid-column:1/-1;padding:1em 1.1em;border-top:1px solid #1f1f25;font-family:var(--body);font-size:1.05em}
 .live-orig[hidden]{display:none}
+/* 채팅이 쌓여도 방송 상자 크기가 변하지 않게: 채팅 목록은 채팅 칸 안에 고정(넘치면 오래된 것부터 위로 잘림) */
+.lv-chat{position:relative;min-height:0}
+.lv-chat-list{position:absolute;left:.7em;right:.7em;top:2.1em;bottom:.6em;overflow:hidden}
+.lv-chat-list{-webkit-mask-image:linear-gradient(transparent 0,#000 2.2em);mask-image:linear-gradient(transparent 0,#000 2.2em)}
