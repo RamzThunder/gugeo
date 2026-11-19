@@ -247,3 +247,38 @@
   document.querySelectorAll(".story .stampcount[data-to]").forEach(function(c){ seen(c,function(){
     var n=c.querySelector(".sc-num"); setTimeout(function(){ n.classList.add("tick"); setTimeout(function(){ n.textContent=c.dataset.to; },500); },900); }); });
 })();
+
+/* 무전(.radio): 왼쪽에 작은 무전기(안테나·채널 액정·불빛·스피커)를 붙이고, 화면에 들어오면 '치익─' 뒤에 말이 끊겨 들어옴.
+   … 자리에서는 잡음(▒▒▒)으로 깨졌다가 이어지고, 점원 목소리가 끼어든 백운 요원의 무전은 '신호 끊김'으로 끝남.
+   채널: 특수구조과 ep.2(구조 1팀 백운) = CH 01 · 구조1팀, ep.3 3.1(3팀) = CH 03 · 구조3팀 */
+(function(){
+  var rs=document.querySelectorAll(".story p.radio"); if(!rs.length) return;
+  var ch=/ep3-rescue/.test(location.pathname)?"CH 03 · 구조3팀":"CH 01 · 구조1팀";
+  rs.forEach(function(p){
+    var out=p.classList.contains("out"), cut=!!p.querySelector(".bot");
+    var wrap=document.createElement("div"); wrap.className="rd"+(out?" out":"");
+    wrap.setAttribute("role","group"); wrap.setAttribute("aria-label","무전("+(out?"송신":"수신")+", "+ch+"): "+p.textContent.trim());
+    wrap.innerHTML='<div class="rd-dev" aria-hidden="true"><i class="rd-ant"></i><div class="rd-lcd"><span class="rd-ch">'+ch+'</span><span class="rd-sq"></span></div><i class="rd-led"></i><i class="rd-grille"></i></div>';
+    p.parentNode.insertBefore(wrap,p); wrap.appendChild(p); p.setAttribute("aria-hidden","true");
+    if(!("IntersectionObserver" in window)) return;
+    p.style.minHeight=p.offsetHeight+"px";
+    var nodes=[], w=document.createTreeWalker(p,NodeFilter.SHOW_TEXT,null,false), n; while((n=w.nextNode())) nodes.push(n);
+    var full=nodes.map(function(t){return t.nodeValue}); nodes.forEach(function(t){t.nodeValue=""});
+    var sq=wrap.querySelector(".rd-sq");
+    var io=new IntersectionObserver(function(es){ if(!es[0].isIntersecting) return; io.disconnect();
+      wrap.classList.add("on"); sq.textContent="치익─"; var ni=0, ci=0;
+      var tick=function(){
+        if(ni>=nodes.length){ sq.textContent=cut?"신호 끊김":"치익─";
+          if(cut){ var lost=document.createElement("span"); lost.className="rd-lost"; lost.textContent=" ─ 신호 끊김 ─"; lost.setAttribute("aria-hidden","true"); p.appendChild(lost); }
+          setTimeout(function(){ wrap.classList.remove("on"); wrap.classList.add(cut?"dead":"done"); sq.textContent=""; },cut?900:700); return; }
+        var t=nodes[ni], c=full[ni].charAt(ci); t.nodeValue+=c; ci++;
+        if(ci>=full[ni].length){ ni++; ci=0; }
+        if(c==="…"){ var nz=document.createElement("span"); nz.className="rd-noise"; nz.textContent="▒▒▒"; t.parentNode.insertBefore(nz,t.nextSibling);
+          wrap.classList.add("static"); setTimeout(function(){ nz.remove(); wrap.classList.remove("static"); tick(); },520); return; }
+        setTimeout(tick,c===" "?20:45);
+      };
+      setTimeout(function(){ sq.textContent=""; tick(); },650);
+    },{threshold:.6});
+    io.observe(wrap);
+  });
+})();
