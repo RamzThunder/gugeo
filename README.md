@@ -20,3 +20,5 @@ Cloudflare가 이 레포의 `dist/` 폴더를 그대로 서비스합니다 (빌�
 | 검열국을 탈출하라 (방탈출) | [RamzThunder/censor-escape](https://github.com/RamzThunder/censor-escape) | https://censor.gugeo.party/game/ · TV https://censor.gugeo.party/tv/ |
 
 방탈출 게임은 2026-11에 이 레포에서 `censor-escape`로 분리했습니다. 그 전 기록은 censor-escape 레포에 그대로 있습니다.
+
+괴담(`dist/goedam/`)의 `goedam.css`·`goedam.js`는 브라우저가 4시간 동안 캐시하므로, 고친 뒤에는 모든 쪽의 `?v=` 값을 바꿉니다: `cd dist/goedam && v=$(cat goedam.css goedam.js | md5 | cut -c1-8) && sed -i '' -E "s#goedam\.(css|js)(\?v=[a-z0-9]+)?\"#goedam.\1?v=$v\"#g" *.html`
