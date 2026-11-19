@@ -374,3 +374,14 @@ window.goedamChars=function(el){
   var on=function(){ if(!ticking){ ticking=true; requestAnimationFrame(upd); } };
   addEventListener("scroll",on,{passive:true}); addEventListener("resize",on); upd();
 })();
+
+/* 도깨비불 빛무리용 왜곡 필터(#dok-flame): 빛 가장자리를 불꽃처럼 너울너울 찢고, 무늬가 계속 바뀜 */
+(function(){
+  if(!document.querySelector(".story .dok")) return;
+  var d=document.createElement("div"); d.setAttribute("aria-hidden","true"); d.style.cssText="position:absolute;width:0;height:0;overflow:hidden";
+  d.innerHTML='<svg width="0" height="0"><filter id="dok-flame" x="-30%" y="-60%" width="160%" height="220%">'+
+    '<feTurbulence type="fractalNoise" baseFrequency="0.035 0.09" numOctaves="2" seed="4" result="n">'+
+    '<animate attributeName="baseFrequency" dur="3.2s" values="0.035 0.09;0.05 0.13;0.03 0.08;0.035 0.09" repeatCount="indefinite"/></feTurbulence>'+
+    '<feDisplacementMap in="SourceGraphic" in2="n" scale="26" xChannelSelector="R" yChannelSelector="G"/></filter></svg>';
+  document.body.appendChild(d);
+})();
