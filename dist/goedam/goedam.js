@@ -238,3 +238,12 @@
     io.observe(n);
   });
 })();
+
+/* 도장 자국(.stampmark)은 화면에 들어오면 '쾅' 찍히고, 남은 횟수(.stampcount[data-to])는 잠깐 뒤 숫자가 바뀜 */
+(function(){
+  if(!("IntersectionObserver" in window)) return;
+  var seen=function(el,fn,th){ var io=new IntersectionObserver(function(es){ if(es[0].isIntersecting){ io.disconnect(); fn(); } },{threshold:th||.6}); io.observe(el); };
+  document.querySelectorAll(".story .stampmark").forEach(function(f){ f.classList.add("wait"); seen(f,function(){ setTimeout(function(){ f.classList.remove("wait"); f.classList.add("in"); },250); }); });
+  document.querySelectorAll(".story .stampcount[data-to]").forEach(function(c){ seen(c,function(){
+    var n=c.querySelector(".sc-num"); setTimeout(function(){ n.classList.add("tick"); setTimeout(function(){ n.textContent=c.dataset.to; },500); },900); }); });
+})();

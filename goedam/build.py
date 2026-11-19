@@ -28,6 +28,27 @@ PREFIX = {"bot": "[점원] ", "pen": "[필담] ", "say": "[강조] ",
 BOX = {"라이브": "live", "채팅": "chat", "원문": "live-orig", "문자": "sms", "모니터": "monitor", "알림": "noti"}
 CHAT = re.compile(r"([^\s\[\]:]{1,12}): (.+)$")   # 라이브·채팅 상자 안의 '닉네임: 채팅' 줄
 RAW = re.compile(r"</?(div|ul|ol|aside|details|summary|figure|section|table|h[1-6])\b|<p[ >]")
+def stamp_svg(half):
+    """'참 잘했어요' 도장 자국(SVG). half면 왼쪽 반만 찍히고 번진 자국"""
+    k = "h" if half else "f"
+    clip = '<clipPath id="stc-%s"><path d="M0 0H66L58 22L70 40L56 62L68 84L57 104L64 120H0Z"/></clipPath>' % k if half else ""
+    body = ('<circle cx="60" cy="60" r="51" fill="none" stroke-width="6"/><circle cx="60" cy="60" r="42" fill="none" stroke-width="2"/>'
+            '<text x="60" y="58" text-anchor="middle" class="stc-big">참</text><text x="60" y="86" text-anchor="middle" class="stc-small">잘했어요</text>'
+            '<path d="M27 40l2.5 5 5.5.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.5-.8z M93 40l2.5 5 5.5.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.5-.8z" stroke="none"/>')
+    smear = '<path d="M64 18c10 6 12 20 6 30M70 60c8 10 6 24-4 34" fill="none" stroke-width="3" opacity=".35"/>' if half else ""
+    return ('<svg viewBox="0 0 120 120" aria-hidden="true"><defs><filter id="sti-%s"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="%d"/>'
+            '<feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.15 1.55"/><feComposite in="SourceGraphic" operator="in"/></filter>%s</defs>'
+            '<g class="stc-ink" filter="url(#sti-%s)"%s>%s%s</g></svg>') % (k, 7 if half else 3, clip, k, ' clip-path="url(#stc-%s)"' % k if half else "", body, smear)
+
+def stamp_fig(half):
+    label = "반만 찍혀 번진 ‘참 잘했어요’ 도장 자국" if half else "‘참 잘했어요’ 도장 자국"
+    return '<figure class="stampmark%s" role="img" aria-label="%s">%s</figure>' % (" half" if half else "", label, stamp_svg(half))
+
+def stamp_count(a, b):
+    lab = "도장 뚜껑의 남은 횟수: %s" % a + (", %s로 줄어듦" % b if b else "")
+    return '<div class="stampcount" data-from="%s"%s role="img" aria-label="%s"><span class="sc-label">남은 횟수</span><span class="sc-num">%s</span></div>' % (
+        a, ' data-to="%s"' % b if b else "", lab, a)
+
 ART = re.compile(r'(<article class="story">\n)(.*?)(</article>)', re.S)
 
 HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
@@ -53,6 +74,8 @@ HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
     [후원] 라이브 방송·채팅의 후원·미션 알림,  [속삭임] 작게 속삭이는 말
     [흔들림] 화면이 흔들리는 순간,  [정지] 멈춘 화면 표시
     [모니터] 병상 모니터에 뜬 한 줄 (백운 요원이 키보드로 친 말)
+· 그림 한 줄 (줄에 이것만):  [도장자국]  '참 잘했어요' 도장 자국,  [도장자국:반]  반만 찍혀 번진 자국,
+                             [남은횟수] 3  도장 뚜껑의 숫자,  [남은횟수] 3→2  화면에 들어오면 3에서 2로 바뀜
 · 상자: 아래처럼 ::: 로 열고 ::: 로 닫아요. 안쪽은 보통 원고처럼 써요.
     :::라이브 팬텀 | 시청자 10명      ← 눌러서 재생하는 생방송 화면 (방송 이름 | 시청자 수).
                                        안쪽 한 줄씩 자막으로 흘러가고, '닉네임: 채팅' 줄은 그 자리에서 채팅창에 올라와요
@@ -84,6 +107,9 @@ def article_to_md(body):
         if l == GAP: out.append(""); i += 1; continue
         if l == GAP2: out += ["", ""]; i += 1; continue
         if l == SCENE: out.append("* * *"); i += 1; continue
+        if l.startswith('<figure class="stampmark'): out.append("[도장자국:반]" if 'stampmark half' in l else "[도장자국]"); i += 1; continue
+        m = re.match(r'<div class="stampcount" data-from="(\d+)"(?: data-to="(\d+)")?', l)
+        if m: out.append("[남은횟수] %s%s" % (m.group(1), "→" + m.group(2) if m.group(2) else "")); i += 1; continue
         m = re.match(r'<div class="(live|chat|live-orig|sms|monitor|noti)" ', l)
         if m:
             kind = m.group(1); j = i + 1
@@ -154,6 +180,9 @@ def md_to_article(lines, live=False):
             if out and i < n: out.append(GAP if k == 1 else GAP2)
             continue
         if l == "* * *": out.append(SCENE); i += 1; continue
+        if l in ("[도장자국]", "[도장자국:반]"): out.append(stamp_fig(l.endswith(":반]"))); i += 1; continue
+        m = re.fullmatch(r"\[남은횟수\] (\d+)(?:→(\d+))?", l)
+        if m: out.append(stamp_count(m.group(1), m.group(2))); i += 1; continue
         if l.startswith(":::") and l[3:].split(" ")[0] in BOX:
             kind = BOX[l[3:].split(" ")[0]]; arg = l[3:].partition(" ")[2]
             j = i + 1

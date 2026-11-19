@@ -500,7 +500,7 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 .story .noti p{margin:0!important;font-size:1em;font-weight:600;line-height:1.5}
 .story .noti .x{color:#a8a8b2}
 .story .noti.wait{opacity:0;transform:translateY(-1.2em)}
-.story .noti.in{opacity:1;transform:none;transition:opacity .4s,transform .4s cubic-bezier(.2,.9,.3,1.3);animation:noti-buzz .45s .45s 2}
+.story .noti.in{opacity:1;transform:none;transition:opacity .4s,transform .4s cubic-bezier(.2,.9,.3,1.3)}
 @keyframes noti-buzz{0%,100%{translate:0}20%{translate:-4px}40%{translate:4px}60%{translate:-3px}80%{translate:3px}}
 
 /* 문자: 내가 보낸 말풍선은 오른쪽(아이메시지처럼) */
@@ -511,3 +511,26 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
   box-shadow:inset 0 0 1.2em rgba(40,255,140,.08);font-family:"GalmuriMono11",ui-monospace,Menlo,monospace;font-size:.95em;line-height:1.7;color:#8ef0b0;text-shadow:0 0 .45em rgba(80,255,150,.45)}
 .story .monline::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.25) 0 1px,transparent 1px 3px)}
 .story .monline .caret{display:inline-block;width:.55em;height:1.05em;margin-left:.1em;vertical-align:-.15em;background:#8ef0b0;animation:mon-caret 1s steps(1) infinite}
+
+/* 전략탐사팀 '참 잘했어요' 도장: 살갗 위에 찍힌 빨간 도장 자국. half는 반만 찍히고 번진 자국(비뚤게) */
+.story .stampmark{width:9.5em;margin:1.2em auto;padding:1.1em;border-radius:46% 54% 50% 50%/55% 45% 55% 45%;background:radial-gradient(circle at 40% 35%,#f3dccb,#e2bfa6 70%,#d4ac90);
+  box-shadow:inset 0 -.4em 1em rgba(120,60,30,.25),0 .8em 1.6em -.8em rgba(0,0,0,.8);transform:rotate(-6deg)}
+.story .stampmark svg{display:block;width:100%;height:auto}
+.story .stampmark .stc-ink{stroke:#c8202a;fill:#c8202a;opacity:.9}
+.story .stampmark .stc-big{font-family:var(--hand);font-size:34px}
+.story .stampmark .stc-small{font-family:var(--hand);font-size:22px}
+.story .stampmark.half{transform:rotate(14deg)}
+.story .stampmark.half svg{transform:translateX(-4%) skewX(-6deg)}
+.story .stampmark.half .stc-ink{opacity:.8}
+.story .stampmark.wait svg{opacity:0;transform:scale(1.25)}
+.story .stampmark.in svg{opacity:1;transition:opacity .15s,transform .2s cubic-bezier(.3,1.6,.5,1)}
+.story .stampmark.half.in svg{transform:translateX(-4%) skewX(-6deg)}
+
+/* 도장 뚜껑의 남은 횟수 표시: 작은 액정 숫자. data-to가 있으면 화면에 들어온 뒤 숫자가 바뀜 */
+.story .stampcount{display:flex;align-items:center;gap:.7em;width:fit-content;margin:1em auto;padding:.45em .55em .45em .9em;border-radius:12px;background:#f3c23c;
+  box-shadow:inset 0 -.2em 0 rgba(0,0,0,.18),0 .6em 1.2em -.6em rgba(0,0,0,.8);font-family:var(--sans)}
+.story .sc-label{font-size:.75em;font-weight:800;color:#5a3b00;letter-spacing:.04em}
+.story .sc-num{display:grid;place-items:center;min-width:1.6em;height:1.6em;border-radius:6px;background:#1d2a1d;color:#9cf09c;font-family:"GalmuriMono11",ui-monospace,monospace;font-size:1.5em;
+  text-shadow:0 0 .35em rgba(120,255,120,.6);box-shadow:inset 0 0 .5em rgba(0,0,0,.8)}
+.story .sc-num.tick{animation:sc-tick .5s steps(2) 2}
+@keyframes sc-tick{50%{opacity:.15}}
