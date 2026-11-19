@@ -286,3 +286,11 @@ window.goedamChars=function(el){
     io.observe(wrap);
   });
 })();
+
+/* 병원 방송(p.pa): 화면에 들어오면 복도에 울리듯 퍼졌다가 모임 */
+(function(){
+  if(!("IntersectionObserver" in window)) return;
+  document.querySelectorAll(".story p.pa").forEach(function(p){
+    var io=new IntersectionObserver(function(es){ if(es[0].isIntersecting){ io.disconnect(); p.classList.add("ring"); } },{threshold:.8}); io.observe(p);
+  });
+})();
