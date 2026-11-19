@@ -664,3 +664,14 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 @keyframes voice-drift{0%,100%{opacity:.9;filter:blur(.3px);transform:none}35%{opacity:.68;filter:blur(.75px);transform:translateX(.06em)}60%{opacity:.82;filter:blur(.5px);transform:translateX(-.04em)}}
 .story .voice.angry{color:#f3b8b8;text-shadow:0 0 .5em rgba(255,90,90,.45),.16em .05em .12em rgba(255,120,120,.3),-.16em -.05em .12em rgba(120,200,255,.2);animation:voice-angry 1.6s steps(6) infinite}
 @keyframes voice-angry{0%,100%{transform:none;filter:blur(.3px)}20%{transform:translateX(-1px)}40%{transform:translateX(1.5px);filter:blur(.8px)}60%{transform:translateX(-.5px)}80%{transform:translateX(1px)}}
+
+/* 3.2 옥상 정원: 덤불 너머로 엿듣는 강 대리의 통화([통화]·[통화:날섬]) — 수화기 표시, 왼쪽 가장자리에 덤불 잎, 살짝 먹먹한 글씨.
+   엄마와의 통화는 따뜻한 초록빛, 날이 선 통화는 붉은빛 */
+.story .call{position:relative;margin:.55em 0!important;padding:.45em .8em .45em 2.7em;border-radius:12px;background:rgba(70,110,70,.13);color:#dbe5d4;opacity:.92}
+.story .call::before{content:"";position:absolute;left:.75em;top:.62em;width:1.2em;height:1.2em;z-index:1;
+  background:center/contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2399c98f' d='M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z'/%3E%3C/svg%3E")}
+.story .call::after{content:"";position:absolute;left:-.55em;top:-.35em;bottom:-.35em;width:1.4em;border-radius:40%;pointer-events:none;opacity:.85;
+  background:radial-gradient(circle at 35% 18%,#2f5a2c 0 .38em,transparent .42em),radial-gradient(circle at 70% 50%,#264a24 0 .42em,transparent .46em),radial-gradient(circle at 30% 82%,#3a6b35 0 .36em,transparent .4em)}
+.story .call.tense{background:rgba(140,50,50,.15);color:#efd4cf}
+.story .call.tense::before{filter:hue-rotate(250deg) saturate(1.6)}
+.story .call::after{content:none}

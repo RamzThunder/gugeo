@@ -24,7 +24,7 @@ SCENE = '<div class="scene" aria-hidden="true"><i></i><i></i><i></i></div>'
 PREFIX = {"bot": "[점원] ", "pen": "[필담] ", "say": "[강조] ",
           "dok": "[도깨비] ", "dok angry": "[도깨비:화남] ", "dok loud": "[도깨비:외침] ",
           "don": "[후원] ", "whisper": "[속삭임] ", "shake": "[흔들림] ", "freeze": "[정지] ",
-          "monline": "[모니터] ", "radio": "[무전] ", "radio out": "[무전:송신] ", "pa": "[방송] ", "voice": "[목소리] ", "voice angry": "[목소리:화남] "}
+          "monline": "[모니터] ", "radio": "[무전] ", "radio out": "[무전:송신] ", "pa": "[방송] ", "voice": "[목소리] ", "voice angry": "[목소리:화남] ", "call": "[통화] ", "call tense": "[통화:날섬] "}
 BOX = {"라이브": "live", "채팅": "chat", "원문": "live-orig", "문자": "sms", "모니터": "monitor", "알림": "noti"}
 CHAT = re.compile(r"([^\s\[\]:]{1,12}): (.+)$")   # 라이브·채팅 상자 안의 '닉네임: 채팅' 줄
 RAW = re.compile(r"</?(div|ul|ol|aside|details|summary|figure|section|table|h[1-6])\b|<p[ >]")
@@ -78,6 +78,7 @@ HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
     문단 안의 짧은 무전은 <span class="radio-in">“…”</span>
     [방송] 병원 안내 방송 (가운데, 복도 전체에 울리는 글씨). 문단 안의 방송은 <span class="pa-in">‘…’</span>
     [목소리] 사람인지 확실하지 않은 존재의 목소리 (흐릿하게 번지는 글씨),  [목소리:화남] 화가 난 그 목소리
+    [통화] 엿듣는 전화 통화 (수화기 표시, 덤불 너머),  [통화:날섬] 날이 선 통화
 · 그림 한 줄 (줄에 이것만):  [도장자국]  '참 잘했어요' 도장 자국,  [도장자국:반]  반만 찍혀 번진 자국,
                              [남은횟수] 3  도장 뚜껑의 숫자,  [남은횟수] 3→2  화면에 들어오면 3에서 2로 바뀜
 · 상자: 아래처럼 ::: 로 열고 ::: 로 닫아요. 안쪽은 보통 원고처럼 써요.
