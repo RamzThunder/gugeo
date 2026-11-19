@@ -403,29 +403,42 @@ window.goedamChars=function(el){
   });
 })();
 
-/* 3.3 "너, 누구야?"(.cx.shout): 화면에 들어오면 형광등이 치직 → 주변이 어두워지고 붉은 기운 → '너,' 쿵 → 정적 → '누 구 야 ?' 한 글자씩 쾅쾅(화면 덜컹).
-   :::얼어붙음(.freezeup): 줄마다 점점 느리게·작게·흐리게 굳어 가며 나타나고, 마지막 줄은 반쯤 나타나다 뚝 끊김 */
+/* 3.3 "너, 누구야?"(.cx.shout)와 :::얼어붙음(.freezeup)을 스크롤에 맞춰 움직임.
+   두 곳 모두 높은 무대 안에 화면 높이의 sticky 칸을 두고, 무대를 지나가는 정도(0~1)로 효과를 정함 */
 (function(){
-  if(!("IntersectionObserver" in window)) return;
-  var seen=function(el,fn,th){ var io=new IntersectionObserver(function(es){ if(es[0].isIntersecting){ io.disconnect(); fn(); } },{threshold:th||.7}); io.observe(el); };
+  var sm=function(t){ return t<0?0:t>1?1:t*t*(3-2*t); };
+  var stage=function(el,cls,vh){ var st=document.createElement("div"); st.className=cls; st.style.height=vh+"vh";
+    var pin=document.createElement("div"); pin.className=cls+"-pin"; el.parentNode.insertBefore(st,el); st.appendChild(pin); pin.appendChild(el); return st; };
+  var prog=function(st){ var r=st.getBoundingClientRect(), span=r.height-innerHeight; return span>0?Math.min(1,Math.max(0,-r.top/span)):(r.top<0?1:0); };
+  var jobs=[];
+  /* "너, 누구야?": 내릴수록 어두워지고 → '너,' → '누구야?'(한 덩어리) → 글씨가 다가오며 커지고 번지며 떨림 → 지나가면 어둠이 걷힘 */
   document.querySelectorAll(".story .cx.shout").forEach(function(box){
     var ps=box.querySelectorAll("p"); if(ps.length<2) return;
-    box.setAttribute("aria-label",box.textContent.replace(/\s+/g," ").trim());
-    var cs=window.goedamChars(ps[1]).filter(function(s){ return s.textContent.trim(); });
-    box.classList.add("sh-wait");
-    seen(box,function(){
-      box.classList.add("sh-flick");
-      setTimeout(function(){ document.documentElement.classList.add("sh-dark"); },700);
-      setTimeout(function(){ ps[0].classList.add("sh-hit"); box.classList.add("sh-q1"); },1300);
-      cs.forEach(function(s,i){ setTimeout(function(){ s.classList.add("on","sh-hit"); box.classList.remove("sh-thud"); void box.offsetWidth; box.classList.add("sh-thud"); },2500+i*650); });
-      setTimeout(function(){ document.documentElement.classList.remove("sh-dark"); },2500+cs.length*650+1800);
-    },.8);
+    var st=stage(box,"sh-stage",260), flicked=false;
+    jobs.push(function(){
+      var p=prog(st), dark=sm(p/.22)*(1-sm((p-.86)/.14));
+      document.documentElement.style.setProperty("--shd",dark.toFixed(3));
+      ps[0].style.opacity=sm((p-.12)/.1).toFixed(3);
+      ps[1].style.opacity=sm((p-.3)/.1).toFixed(3);
+      var near=sm((p-.32)/.5); box.style.setProperty("--near",near.toFixed(3));
+      box.classList.toggle("sh-close",near>.75&&p<.9);
+      if(p>.04&&!flicked){ flicked=true; box.classList.add("sh-flick"); }
+      if(p<=0) flicked=false, box.classList.remove("sh-flick");
+    });
   });
+  /* 얼어붙음: 내리는 만큼 한 줄씩. 뒤 줄일수록 더 많이 내려야 나옴. 마지막 줄은 반쯤 잘린 채 */
   document.querySelectorAll(".story .freezeup").forEach(function(box){
-    var ps=box.querySelectorAll("p"); box.classList.add("fz-wait");
-    ps.forEach(function(p,i){ var k=i/(Math.max(1,ps.length-1)); p.style.setProperty("--k",k.toFixed(2)); });
-    seen(box,function(){ var t=200;
-      ps.forEach(function(p,i){ setTimeout(function(){ p.classList.add("fz-in"); if(i===ps.length-1) p.classList.add("fz-cut"); },t); t+=500+i*380; });
-    },.4);
+    var ps=[].slice.call(box.querySelectorAll("p")), n=ps.length;
+    ps.forEach(function(p,i){ p.style.setProperty("--k",(i/Math.max(1,n-1)).toFixed(2)); });
+    var w=ps.map(function(_,i){ return 1+i*.7; }), tot=w.reduce(function(a,b){return a+b},0), acc=0, th=w.map(function(x){ acc+=x; return acc/tot; });
+    var st=stage(box,"fz-stage",100+n*38);
+    box.classList.add("fz-wait");
+    jobs.push(function(){
+      var p=prog(st)*1.12;   // 무대 끝 조금 전에 다 나오게
+      ps.forEach(function(el,i){ var on=p>=th[i]-w[i]/tot*.85; el.classList.toggle("fz-in",on); if(i===n-1) el.classList.toggle("fz-cut",on); });
+    });
   });
+  if(!jobs.length) return;
+  var ticking=false, run=function(){ ticking=false; jobs.forEach(function(f){ f(); }); };
+  addEventListener("scroll",function(){ if(!ticking){ ticking=true; requestAnimationFrame(run); } },{passive:true}); addEventListener("resize",run); run();
 })();

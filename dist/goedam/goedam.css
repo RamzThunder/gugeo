@@ -929,3 +929,22 @@ html.sh-dark body::after{opacity:1;transition:opacity .25s}
 .story .freezeup p.fz-in{opacity:calc(1 - var(--k,0) * .45);transform:translateX(calc(var(--k,0) * .6em));filter:blur(calc(var(--k,0) * .9px));letter-spacing:calc(var(--k,0) * .25em)}
 .story .freezeup p.fz-cut{opacity:.55;clip-path:inset(0 45% 0 0);transition:none;animation:fz-cut 1s steps(1) 1}
 @keyframes fz-cut{0%{opacity:0}20%{opacity:.7}35%{opacity:.1}50%,100%{opacity:.55}}
+
+/* 스크롤판: "너, 누구야?" 무대 — 어둠은 스크롤 정도(--shd), 글씨는 다가올수록(--near) 커지고 번짐 */
+.sh-stage{position:relative}
+.sh-stage-pin{position:sticky;top:0;height:100vh;display:grid;place-items:center}
+html body::after{opacity:var(--shd,0);transition:none}
+html.sh-dark body::after{opacity:var(--shd,0)}
+.story .cx.shout{animation:none}
+.story .cx.shout.sh-wait p:first-child{opacity:0}
+.story .cx.shout p{transition:opacity .15s}
+.story .cx.shout p:last-child{transform:scale(calc(1 + var(--near,0) * 1.9));transform-origin:50% 40%;
+  text-shadow:calc(var(--near,0) * -.08em) 0 rgba(255,36,72,.7),calc(var(--near,0) * .08em) 0 rgba(34,216,255,.6),0 0 calc(var(--near,0) * .5em) rgba(255,40,40,.5)}
+.story .cx.shout.sh-close p:last-child{animation:sh-tremble .18s steps(2) infinite}
+@keyframes sh-tremble{0%{translate:-2px 1px}50%{translate:2px -1px}}
+.story .cx.shout.sh-flick{animation:sh-flick .7s steps(1) 1}
+/* 얼어붙음 무대: 화면에 고정된 채 줄이 하나씩 */
+.fz-stage{position:relative}
+.fz-stage-pin{position:sticky;top:0;height:100vh;display:flex;align-items:center}
+.story .freezeup{width:100%}
+.story .freezeup p{transition:opacity .5s,filter .5s,transform .5s}
