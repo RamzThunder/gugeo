@@ -212,3 +212,13 @@
     });
   });
 })();
+
+/* 휴대폰 알림(.noti): 화면에 들어오면 위에서 내려오며 두 번 진동 */
+(function(){
+  document.querySelectorAll(".story .noti").forEach(function(n){
+    if(!("IntersectionObserver" in window)) return;
+    n.classList.add("wait");
+    var io=new IntersectionObserver(function(es){ if(es[0].isIntersecting){ io.disconnect(); setTimeout(function(){ n.classList.remove("wait"); n.classList.add("in"); },350); } },{threshold:.6});
+    io.observe(n);
+  });
+})();
