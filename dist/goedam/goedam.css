@@ -903,3 +903,29 @@ body{overflow-x:clip}
 .story .dok.angry::before{background:var(--abg);inset:-.9em -.7em -.5em;animation:dok-fire calc(var(--d1,2.6s) * 1.1) ease-in-out var(--dl,0s) infinite,dok-hue 5s ease-in-out infinite}
 .story .dok.angry::after{background:radial-gradient(60% 50% at 50% 60%,rgba(170,90,200,.18),transparent 75%)}
 @keyframes dok-hue{0%,100%{filter:var(--fl,url(#dok-flame0)) blur(5px) hue-rotate(0deg)}50%{filter:var(--fl,url(#dok-flame0)) blur(5px) hue-rotate(-18deg)}}
+
+/* "너, 누구야?" 연출 */
+.story .cx.shout{position:relative;isolation:isolate;padding:1.2em 0}
+/* 어둠: 화면 전체를 덮는 막(글 앞뒤가 고르게 어두워짐), 외침 글씨만 그 위로 */
+body::after{content:"";position:fixed;inset:0;z-index:50;pointer-events:none;opacity:0;transition:opacity 2.5s;
+  background:radial-gradient(circle at 50% 50%,rgba(0,0,0,.55) 0,rgba(0,0,0,.93) 40%,rgba(70,0,6,.95) 75%,rgba(0,0,0,.98) 100%)}
+html.sh-dark body::after{opacity:1;transition:opacity .25s}
+.story .cx.shout{z-index:51}
+.story .cx.shout.sh-flick{animation:sh-flick .7s steps(1) 1}
+@keyframes sh-flick{0%{filter:brightness(1)}15%{filter:brightness(2.2)}25%{filter:brightness(.3)}40%{filter:brightness(1.8)}55%{filter:brightness(.2)}70%,100%{filter:brightness(1)}}
+.story .cx.shout.sh-wait p:first-child{opacity:0}
+.story .cx.shout p:first-child.sh-hit{opacity:1;animation:sh-drop .45s cubic-bezier(.2,1.6,.4,1) 1}
+.story .cx.shout.sh-wait p:last-child .tc{visibility:hidden}
+.story .cx.shout p:last-child .tc{display:inline-block}
+.story .cx.shout p:last-child .tc.sh-hit{visibility:visible;animation:sh-slam .35s cubic-bezier(.2,1.8,.4,1) 1;color:#fff}
+@keyframes sh-drop{0%{transform:translateY(-.6em) scale(1.6);opacity:0}100%{transform:none;opacity:1}}
+@keyframes sh-slam{0%{transform:scale(2.6);opacity:0;filter:blur(4px)}60%{transform:scale(.9);opacity:1;filter:none}100%{transform:none}}
+.story .cx.shout.sh-thud{animation:sh-thud .25s linear 1}
+@keyframes sh-thud{25%{transform:translate(-4px,2px)}50%{transform:translate(4px,-2px)}75%{transform:translate(-2px,1px)}}
+
+/* :::얼어붙음 — 점점 느려지고 작아지고 흐려지며 굳음. 마지막 줄은 반쯤 나오다 뚝 끊김 */
+.story .freezeup p{transition:opacity .9s,filter .9s,transform .9s;font-size:calc(1em - var(--k,0) * .22em);color:color-mix(in srgb,var(--ink) calc(100% - var(--k,0) * 45%),#5a6070)}
+.story .freezeup.fz-wait p{opacity:0;transform:translateY(.3em)}
+.story .freezeup p.fz-in{opacity:calc(1 - var(--k,0) * .45);transform:translateX(calc(var(--k,0) * .6em));filter:blur(calc(var(--k,0) * .9px));letter-spacing:calc(var(--k,0) * .25em)}
+.story .freezeup p.fz-cut{opacity:.55;clip-path:inset(0 45% 0 0);transition:none;animation:fz-cut 1s steps(1) 1}
+@keyframes fz-cut{0%{opacity:0}20%{opacity:.7}35%{opacity:.1}50%,100%{opacity:.55}}

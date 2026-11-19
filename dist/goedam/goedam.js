@@ -402,3 +402,30 @@ window.goedamChars=function(el){
     }
   });
 })();
+
+/* 3.3 "너, 누구야?"(.cx.shout): 화면에 들어오면 형광등이 치직 → 주변이 어두워지고 붉은 기운 → '너,' 쿵 → 정적 → '누 구 야 ?' 한 글자씩 쾅쾅(화면 덜컹).
+   :::얼어붙음(.freezeup): 줄마다 점점 느리게·작게·흐리게 굳어 가며 나타나고, 마지막 줄은 반쯤 나타나다 뚝 끊김 */
+(function(){
+  if(!("IntersectionObserver" in window)) return;
+  var seen=function(el,fn,th){ var io=new IntersectionObserver(function(es){ if(es[0].isIntersecting){ io.disconnect(); fn(); } },{threshold:th||.7}); io.observe(el); };
+  document.querySelectorAll(".story .cx.shout").forEach(function(box){
+    var ps=box.querySelectorAll("p"); if(ps.length<2) return;
+    box.setAttribute("aria-label",box.textContent.replace(/\s+/g," ").trim());
+    var cs=window.goedamChars(ps[1]).filter(function(s){ return s.textContent.trim(); });
+    box.classList.add("sh-wait");
+    seen(box,function(){
+      box.classList.add("sh-flick");
+      setTimeout(function(){ document.documentElement.classList.add("sh-dark"); },700);
+      setTimeout(function(){ ps[0].classList.add("sh-hit"); box.classList.add("sh-q1"); },1300);
+      cs.forEach(function(s,i){ setTimeout(function(){ s.classList.add("on","sh-hit"); box.classList.remove("sh-thud"); void box.offsetWidth; box.classList.add("sh-thud"); },2500+i*650); });
+      setTimeout(function(){ document.documentElement.classList.remove("sh-dark"); },2500+cs.length*650+1800);
+    },.8);
+  });
+  document.querySelectorAll(".story .freezeup").forEach(function(box){
+    var ps=box.querySelectorAll("p"); box.classList.add("fz-wait");
+    ps.forEach(function(p,i){ var k=i/(Math.max(1,ps.length-1)); p.style.setProperty("--k",k.toFixed(2)); });
+    seen(box,function(){ var t=200;
+      ps.forEach(function(p,i){ setTimeout(function(){ p.classList.add("fz-in"); if(i===ps.length-1) p.classList.add("fz-cut"); },t); t+=500+i*380; });
+    },.4);
+  });
+})();
