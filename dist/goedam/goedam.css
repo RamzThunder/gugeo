@@ -578,3 +578,7 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 @font-face{font-family:"DosStory";src:url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/DOSIyagiMedium.woff2") format("woff2");font-weight:normal;font-display:swap}
 .story .radio,.story .radio-in{font-family:"DosStory",var(--sans);font-weight:normal;letter-spacing:0}
 .story .radio .bot{font-family:"Tangba",var(--sans)}
+.rd.static .rd-sq{color:#ff6a5a;animation:rd-led .25s steps(2) infinite}
+.rd.dead .rd-sq{color:#ff6a5a}
+.rd-sq{white-space:nowrap}
+.rd-sq{font-size:.45em}
