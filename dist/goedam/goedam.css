@@ -844,3 +844,10 @@ body{overflow-x:clip}
 .story .dok.angry .tc{animation:dok-bob-angry .7s ease-in-out infinite}
 @keyframes dok-bob{0%,100%{transform:translateY(0) rotate(-3deg);opacity:1}25%{transform:translateY(-.14em) rotate(2deg)}50%{transform:translateY(.04em) rotate(4deg);opacity:.82}75%{transform:translateY(-.08em) rotate(-1deg)}}
 @keyframes dok-bob-angry{0%,100%{transform:translateY(0) rotate(-5deg) scale(1)}30%{transform:translateY(-.2em) rotate(5deg) scale(1.08)}60%{transform:translateY(.06em) rotate(-3deg) scale(.96)}}
+/* 도깨비 말 다시: 글자 일렁임은 화면에 들어올 때 두 번만, 폭도 작게. 그 뒤엔 글자는 가만히, 불꽃 빛만 은은하게 숨 쉼 */
+.story .dok .tc,.story .dok.angry .tc{animation:none}
+.story .dok.wob .tc{animation:dok-bob2 1.2s ease-in-out 2}
+.story .dok.angry.wob .tc{animation:dok-bob2 .8s ease-in-out 3}
+@keyframes dok-bob2{0%,100%{transform:none}30%{transform:translateY(-.07em) rotate(-1.5deg)}65%{transform:translateY(.03em) rotate(1.2deg)}}
+.story .dok{animation:dok-glow 4s ease-in-out infinite}
+@keyframes dok-glow{0%,100%{filter:brightness(1)}50%{filter:brightness(.82)}}
