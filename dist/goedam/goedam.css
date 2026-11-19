@@ -960,3 +960,9 @@ html.sh-dark body::after{opacity:var(--shd,0)}
 .story .cx.shout p{line-height:1.25}
 .story .cx.shout p:first-child{margin-bottom:.4em!important}
 .story .cx.shout p:last-child{transform-origin:50% 0%}
+
+/* 낱말 풀이({{낱말|뜻}}): 점선 밑줄, 누르거나 올리면 뜻 카드(지급물품 카드와 같은 자리, 그림 없이 본문 글꼴) */
+.story .gloss{border-bottom:1px dotted rgba(255,255,255,.45);cursor:help;outline:none}
+.story .gloss:hover,.story .gloss:focus-visible{border-bottom-color:var(--blue);color:#fff}
+.itm-card.is-gloss b{font-family:var(--sans);font-weight:800;font-size:15px}
+.itm-card.is-gloss p{font-family:var(--sans);font-size:14px;line-height:1.65}

@@ -40,11 +40,13 @@
     lantern:["도깨비 등불","등불 안에 깃든 도깨비에게 조언을 얻을 수 있다. 단, 도깨비는 장난기가 많아 3번 중 1번의 확률로 조언을 반대로 말한다."],
     flag:["신장군 깃발","땅에 꽂으면 약 10분간 주변 2m 반경(깃발을 중심으로 반지름 2m)은 괴담의 영향을 받지 않는다. 한 번 땅에 꽂은 깃발은 다시 뽑을 수 없다."]
   };
-  var words=document.querySelectorAll(".itm[data-item]"); if(!words.length) return;
+  var words=document.querySelectorAll(".itm[data-item], .gloss[data-def]"); if(!words.length) return;   // 지급물품 이름과 낱말 풀이를 같은 카드로
   var card=document.createElement("div"); card.className="itm-card"; card.id="itm-card"; card.setAttribute("role","tooltip"); card.hidden=true;
   document.body.appendChild(card);
-  var show=function(w){ var d=D[w.dataset.item]; if(!d) return;
-    card.innerHTML='<img src="img/items/'+w.dataset.item+'.webp" alt=""><div><b>'+d[0]+'</b><p>'+d[1]+'</p></div>';
+  var show=function(w){
+    if(w.dataset.def){ card.classList.add("is-gloss"); card.innerHTML='<div><b></b><p></p></div>'; card.querySelector("b").textContent=w.textContent; card.querySelector("p").textContent=w.dataset.def; }
+    else { var d=D[w.dataset.item]; if(!d) return; card.classList.remove("is-gloss");
+      card.innerHTML='<img src="img/items/'+w.dataset.item+'.webp" alt=""><div><b>'+d[0]+'</b><p>'+d[1]+'</p></div>'; }
     card.hidden=false; w.setAttribute("aria-describedby","itm-card");
     var r=w.getBoundingClientRect(), cw=card.offsetWidth, ch=card.offsetHeight, m=10;
     var x=Math.min(Math.max(m,r.left+r.width/2-cw/2),innerWidth-cw-m), y=r.bottom+8;

@@ -119,6 +119,7 @@ HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
     :::얼어붙음                      ← 줄마다 점점 느리게·작게·흐리게 굳어 가며 나타나고, 마지막 줄은 뚝 끊김
     :::
 · {666■}            금액 (호박색)
+· {{이채|이상한 광채, 색다른 빛}}  낱말 풀이 (누르면 뜻 카드)
 · [[칭찬 도장|도장]]  지급물품 이름 (누르면 설명 카드). | 뒤: 도장·담요·신발·노리개·등불·깃발
 · < 로 시작하는 줄과 ```html 상자 안은 HTML 그대로 들어가요 (공문·광고판·방송 같은 꾸밈). 글만 고치고 꺾쇠(< >)는 건드리지 마세요.
 -->
@@ -127,6 +128,7 @@ HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
 # ---------- HTML → 원고 ----------
 def inline_to_md(t):
     t = re.sub(r'<span class="itm" data-item="(\w+)" tabindex="0">(.*?)</span>', lambda m: "[[%s|%s]]" % (m.group(2), ITEMS_KO[m.group(1)]), t)
+    t = re.sub(r'<span class="gloss" tabindex="0" data-def="(.*?)">(.*?)</span>', lambda m: "{{%s|%s}}" % (m.group(2), m.group(1)), t)
     t = re.sub(r'<span class="won">(\d+) ?<span class="x">(■+)</span></span>', lambda m: "{%s%s}" % (m.group(1), m.group(2)), t)
     t = re.sub(r'<span class="x">(■+)</span>', r"\1", t)
     t = t.replace("<strong>", "**").replace("</strong>", "**").replace("<em>", "//").replace("</em>", "//")
@@ -208,6 +210,7 @@ def esc_quotes(t):
 
 def md_to_inline(t):
     t = esc_quotes(t)
+    t = re.sub(r"\{\{(.+?)\|(.+?)\}\}", lambda m: '<span class="gloss" tabindex="0" data-def="%s">%s</span>' % (m.group(2), m.group(1)), t)
     t = re.sub(r"\[\[(.+?)\|(.+?)\]\]", lambda m: '<span class="itm" data-item="%s" tabindex="0">%s</span>' % (ITEMS[m.group(2).strip()], m.group(1)), t)
     t = re.sub(r"\{(\d+)(■+)\}", lambda m: "\0W%s\0X%s\0Y" % (m.group(1), m.group(2)), t)
     t = re.sub(r"(?<!\0X)(■+)", r'<span class="x">\1</span>', t)
