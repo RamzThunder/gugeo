@@ -119,3 +119,63 @@
   document.querySelectorAll("a.pick").forEach(function(a){ if((a.getAttribute("href")||"").indexOf(d)>=0) a.classList.add("mine"); });
   var t=document.querySelector("[data-mydept]"); if(t) t.textContent="내 부서: "+name+" ✓";
 })();
+
+/* 3.1 팬텀의 라이브 방송: .live 상자를 '재생되는 방송 화면'으로 바꿈.
+   원고 순서대로 대사는 자막, '닉네임: 채팅'은 채팅창, [후원]은 팝업, [흔들림]은 화면 요동, [정지]는 멈춘 화면(3:00:00까지 빨리 감기).
+   '대본으로 보기'를 누르면 원래 글 전체가 보임 */
+(function(){
+  document.querySelectorAll(".story .live").forEach(function(live){
+    var top=live.querySelector(".live-top"), steps=[];
+    Array.prototype.forEach.call(live.children,function(el){
+      if(el===top) return;
+      var c=el.className||"";
+      if(c==="gap") steps.push({t:"pause",ms:500});
+      else if(c==="gap2") steps.push({t:"pause",ms:900});
+      else if(c==="scene") steps.push({t:"pause",ms:1500});
+      else if(c==="chat-msg") steps.push({t:"chat",html:el.innerHTML});
+      else if(c==="don") steps.push({t:"don",html:el.innerHTML});
+      else if(c==="freeze") steps.push({t:"freeze"});
+      else if(el.tagName==="P") steps.push({t:c==="shake"?"shake":"say",whisper:c==="whisper",html:el.innerHTML,len:el.textContent.length});
+    });
+    var name=top.querySelector("b").textContent, view=top.querySelector(".live-view").textContent;
+    var script=document.createElement("div"); script.className="live-script"; script.hidden=true;
+    while(live.children.length>1) script.appendChild(live.children[1]);
+    live.classList.add("player");
+    live.insertAdjacentHTML("beforeend",
+      '<div class="lv-stage" aria-hidden="true"><div class="lv-cam"><div class="lv-light"></div><div class="lv-noise"></div></div>'+
+      '<div class="lv-hud"><span class="live-on">LIVE</span><b>'+name+'</b><span class="lv-time">00:00</span><span class="live-view">'+view+'</span></div>'+
+      '<div class="lv-don" hidden></div><p class="lv-sub"></p><div class="lv-end" hidden>방송이 종료되었습니다</div>'+
+      '<button class="lv-play" type="button" tabindex="-1"><span>▶</span> 팬텀 라이브 재생</button></div>'+
+      '<div class="lv-chat" aria-hidden="true"><p class="lv-chat-h">실시간 채팅</p><div class="lv-chat-list"></div></div>'+
+      '<div class="lv-ctl"><button type="button" class="lv-btn lv-go">▶ 재생</button><button type="button" class="lv-btn lv-next">다음 ▸</button><button type="button" class="lv-btn lv-txt" aria-expanded="false">대본으로 보기</button></div>');
+    live.appendChild(script);
+    var $=function(s){return live.querySelector(s)}, stage=$(".lv-stage"), sub=$(".lv-sub"), list=$(".lv-chat-list"), don=$(".lv-don"), time=$(".lv-time"), go=$(".lv-go");
+    var k=0, timer=null, clock=null, sec=0, playing=false, done=false;
+    var fmt=function(s){var h=Math.floor(s/3600),m=Math.floor(s/60)%60,x=s%60;return (h?h+":"+String(m).padStart(2,"0"):String(m).padStart(2,"0"))+":"+String(x).padStart(2,"0")};
+    var tick=function(){ sec+=1; time.textContent=fmt(sec); };
+    var addChat=function(html,isDon){ var p=document.createElement("p"); p.className="lv-msg"+(isDon?" lv-msg-don":""); p.innerHTML=html; list.appendChild(p);
+      while(list.children.length>9) list.removeChild(list.firstChild); };
+    var reset=function(){ k=0; sec=0; done=false; time.textContent="00:00"; list.innerHTML=""; sub.innerHTML=""; don.hidden=true; $(".lv-end").hidden=true;
+      stage.classList.remove("fallen","frozen","shaking","ended"); };
+    var stop=function(){ playing=false; clearTimeout(timer); clearInterval(clock); go.textContent=done?"↺ 다시 보기":"▶ 재생"; stage.classList.remove("on"); };
+    var finish=function(){ done=true; stage.classList.add("ended"); $(".lv-end").hidden=false; sub.innerHTML=""; stop(); };
+    var step=function(){
+      if(!playing) return;
+      if(k>=steps.length) return finish();
+      var s=steps[k++], wait=600;
+      if(s.t==="say"||s.t==="shake"){ sub.className="lv-sub"+(s.whisper?" whisper":""); sub.innerHTML=s.html; wait=Math.min(5200,1300+s.len*65);
+        if(s.t==="shake"){ stage.classList.add("shaking"); setTimeout(function(){stage.classList.remove("shaking");stage.classList.add("fallen");},1400); wait=2600; } }
+      else if(s.t==="chat"){ addChat(s.html); wait=stage.classList.contains("frozen")?1400:900; }
+      else if(s.t==="don"){ don.innerHTML=s.html; don.hidden=false; addChat(s.html,true); setTimeout(function(){don.hidden=true;},2600); wait=1800; }
+      else if(s.t==="freeze"){ stage.classList.add("frozen"); sub.innerHTML=""; clearInterval(clock);
+        var from=sec, to=3*3600, t0=Date.now(); clock=setInterval(function(){ var r=Math.min(1,(Date.now()-t0)/7000); sec=Math.round(from+(to-from)*r); time.textContent=fmt(sec); if(r>=1) clearInterval(clock); },50); wait=1200; }
+      else wait=s.ms;
+      timer=setTimeout(step,wait);
+    };
+    var play=function(){ if(done) reset(); playing=true; stage.classList.add("on"); go.textContent="❚❚ 멈춤"; if(!stage.classList.contains("frozen")) clock=setInterval(tick,1000); step(); };
+    go.onclick=function(){ playing?stop():play(); };
+    $(".lv-play").onclick=play;
+    $(".lv-next").onclick=function(){ if(!playing){ play(); return; } clearTimeout(timer); step(); };
+    $(".lv-txt").onclick=function(){ var open=script.hidden; script.hidden=!open; this.setAttribute("aria-expanded",open); this.textContent=open?"대본 접기":"대본으로 보기"; };
+  });
+})();

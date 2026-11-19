@@ -25,6 +25,7 @@ PREFIX = {"bot": "[점원] ", "pen": "[필담] ", "say": "[강조] ",
           "dok": "[도깨비] ", "dok angry": "[도깨비:화남] ", "dok loud": "[도깨비:외침] ",
           "don": "[후원] ", "whisper": "[속삭임] ", "shake": "[흔들림] ", "freeze": "[정지] "}
 BOX = {"라이브": "live", "채팅": "chat"}
+CHAT = re.compile(r"([^\s\[\]:]{1,12}): (.+)$")   # 라이브·채팅 상자 안의 '닉네임: 채팅' 줄
 RAW = re.compile(r"</?(div|ul|ol|aside|details|summary|figure|section|table|h[1-6])\b|<p[ >]")
 ART = re.compile(r'(<article class="story">\n)(.*?)(</article>)', re.S)
 
@@ -51,7 +52,8 @@ HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
     [후원] 라이브 방송·채팅의 후원·미션 알림,  [속삭임] 작게 속삭이는 말
     [흔들림] 화면이 흔들리는 순간,  [정지] 멈춘 화면 표시
 · 상자: 아래처럼 ::: 로 열고 ::: 로 닫아요. 안쪽은 보통 원고처럼 써요.
-    :::라이브 팬텀 | 시청자 10명      ← 휴대폰 생방송 화면 (방송 이름 | 시청자 수)
+    :::라이브 팬텀 | 시청자 10명      ← 눌러서 재생하는 생방송 화면 (방송 이름 | 시청자 수).
+                                       안쪽 한 줄씩 자막으로 흘러가고, '닉네임: 채팅' 줄은 그 자리에서 채팅창에 올라와요
     :::채팅                          ← 채팅창. 안쪽 한 줄 = '닉네임: 채팅'
     :::
 · {666■}            금액 (호박색)
@@ -98,6 +100,8 @@ def article_to_md(body):
         m = re.fullmatch(r'<ul class="doc">((?:<li>.*?</li>)+)</ul>', l)
         if m:
             out += ["- " + inline_to_md(x) for x in re.findall(r"<li>(.*?)</li>", m.group(1))]; i += 1; continue
+        cm = re.fullmatch(r'<p class="chat-msg"><b>(.*?)</b> (.*)</p>', l)
+        if cm: out.append("%s: %s" % (inline_to_md(cm.group(1)), inline_to_md(cm.group(2)))); i += 1; continue
         m = re.fullmatch(r'<p(?: class="([^"]+)")?>(.*)</p>', l)
         if m and (m.group(1) is None or m.group(1) in PREFIX):
             out.append(PREFIX.get(m.group(1), "") + inline_to_md(m.group(2))); i += 1; continue
@@ -119,7 +123,7 @@ def md_to_inline(t):
     t = re.sub(r"(?<!:)//(.+?)//", r"<em>\1</em>", t)
     return t
 
-def md_to_article(lines):
+def md_to_article(lines, live=False):
     out, i, n = [], 0, len(lines)
     while i < n:
         l = lines[i]
@@ -138,11 +142,11 @@ def md_to_article(lines):
                 name, _, view = [x.strip() for x in arg.partition("|")]
                 out.append('<div class="live" role="group" aria-label="라이브 방송 화면">')
                 out.append('<div class="live-top" aria-hidden="true"><span class="live-on">LIVE</span><b>%s</b><span class="live-view">%s</span></div>' % (md_to_inline(name), md_to_inline(view)))
-                out.append(md_to_article(inner).rstrip("\n"))
+                out.append(md_to_article(inner, live=True).rstrip("\n"))
             else:
                 out.append('<div class="chat" role="group" aria-label="채팅창">')
                 for c in inner:
-                    m = re.match(r"([^\[\]:]{1,20}): (.+)$", c)
+                    m = CHAT.match(c)
                     if m: out.append('<p class="chat-msg"><b>%s</b> %s</p>' % (md_to_inline(m.group(1)), md_to_inline(m.group(2))))
                     elif c: out.append(md_to_article([c]).rstrip("\n"))
             out.append('</div><!--/%s-->' % kind); continue
@@ -154,7 +158,9 @@ def md_to_article(lines):
             items = []
             while i < n and lines[i].startswith("- "): items.append("<li>%s</li>" % md_to_inline(lines[i][2:])); i += 1
             out.append('<ul class="doc">%s</ul>' % "".join(items)); continue
-        if RAW.match(l): out.append(l); i += 1; continue   # 문단이 <br>·<span> 같은 글 속 꾸밈으로 시작하면 그냥 문단
+        if RAW.match(l): out.append(l); i += 1; continue
+        cm = CHAT.match(l) if live else None
+        if cm: out.append('<p class="chat-msg"><b>%s</b> %s</p>' % (md_to_inline(cm.group(1)), md_to_inline(cm.group(2)))); i += 1; continue   # 문단이 <br>·<span> 같은 글 속 꾸밈으로 시작하면 그냥 문단
         cls = ""
         for c, p in sorted(PREFIX.items(), key=lambda kv: -len(kv[1])):
             if l.startswith(p): cls, l = ' class="%s"' % c, l[len(p):]; break
