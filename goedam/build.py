@@ -59,6 +59,18 @@ PHONE = {
            '<div class="ph-empty"><i class="ph-ic ph-ic-user"></i>저장된 연락처가 없습니다</div></figure>'),
 }
 
+DOCS = {
+  "규정": ('<figure class="pdf" data-kind="규정" role="img" aria-label="휴대폰 PDF: 특수구조과 현장 구조활동 안전관리에 관한 규정. 13항, 민간인의 생명 보호가 위급한 상황에서는, 모든 수단을 동원하여 구조를 최우선시한다.">'
+          '<div class="pdf-bar"><span class="pdf-back">‹</span><b>특수구조과 현장 구조활동 안전관리에 관한 규정.pdf</b></div>'
+          '<div class="pdf-page"><i class="pdf-ln"></i><i class="pdf-ln short"></i><i class="pdf-ln"></i>'
+          '<p class="pdf-art"><b>13.</b> 민간인의 생명 보호가 위급한 상황에서는, <mark>모든 수단</mark>을 동원하여 구조를 최우선시한다.</p>'
+          '<i class="pdf-ln"></i><i class="pdf-ln"></i><i class="pdf-ln short"></i></div><div class="pdf-foot">13 / ■■</div></figure>'),
+  "위원회": ('<figure class="sgnote" data-kind="위원회" role="img" aria-label="SG 주식회사 사내 공지: 윤리규정위원회. 전략탐사팀 A~D팀 20대 대표, 사번 ■-■■번 ■ 주임.">'
+          '<div class="sg-head"><b>SG 주식회사</b><span>사내 공지</span></div><p class="sg-title">윤리규정위원회 위원 명단</p>'
+          '<table class="sg-tb"><tr><th>소속</th><th>구분</th><th>위원</th></tr>'
+          '<tr><td>전략탐사팀 A~D팀</td><td>20대 대표</td><td>사번 ■-■■번 ■ 주임</td></tr></table></figure>'),
+}
+
 ART = re.compile(r'(<article class="story">\n)(.*?)(</article>)', re.S)
 
 HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
@@ -92,6 +104,7 @@ HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
 · 그림 한 줄 (줄에 이것만):  [도장자국]  '참 잘했어요' 도장 자국,  [도장자국:반]  반만 찍혀 번진 자국,
                              [남은횟수] 3  도장 뚜껑의 숫자,  [남은횟수] 3→2  화면에 들어오면 3에서 2로 바뀜
                              [휴대폰:메신저]  텅 빈 메신저 화면,  [휴대폰:연락처]  이름이 하나씩 사라지는 연락처 화면
+                             [문서:규정]  휴대폰 PDF 구조 규정 13항,  [문서:위원회]  SG 주식회사 윤리규정위원회 공지
 · 상자: 아래처럼 ::: 로 열고 ::: 로 닫아요. 안쪽은 보통 원고처럼 써요.
     :::라이브 팬텀 | 시청자 10명      ← 눌러서 재생하는 생방송 화면 (방송 이름 | 시청자 수).
                                        안쪽 한 줄씩 자막으로 흘러가고, '닉네임: 채팅' 줄은 그 자리에서 채팅창에 올라와요
@@ -123,6 +136,8 @@ def article_to_md(body):
         if l == GAP: out.append(""); i += 1; continue
         if l == GAP2: out += ["", ""]; i += 1; continue
         if l == SCENE: out.append("* * *"); i += 1; continue
+        dm = re.match(r'<figure class="(?:pdf|sgnote)" data-kind="(\S+?)"', l)
+        if dm: out.append("[문서:%s]" % dm.group(1)); i += 1; continue
         pm = re.match(r'<figure class="phone" data-kind="(\S+?)"', l)
         if pm: out.append("[휴대폰:%s]" % pm.group(1)); i += 1; continue
         if l.startswith('<figure class="stampmark'): out.append("[도장자국:반]" if 'stampmark half' in l else "[도장자국]"); i += 1; continue
@@ -198,6 +213,8 @@ def md_to_article(lines, live=False):
             if out and i < n: out.append(GAP if k == 1 else GAP2)
             continue
         if l == "* * *": out.append(SCENE); i += 1; continue
+        dm = re.fullmatch(r"\[문서:(\S+)\]", l)
+        if dm and dm.group(1) in DOCS: out.append(DOCS[dm.group(1)]); i += 1; continue
         pm = re.fullmatch(r"\[휴대폰:(\S+)\]", l)
         if pm and pm.group(1) in PHONE: out.append(PHONE[pm.group(1)]); i += 1; continue
         if l in ("[도장자국]", "[도장자국:반]"): out.append(stamp_fig(l.endswith(":반]"))); i += 1; continue

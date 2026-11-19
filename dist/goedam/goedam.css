@@ -701,3 +701,29 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 .phone[data-kind="연락처"] .ph-empty{display:none}
 .phone[data-kind="연락처"].emptied .ph-list{display:none}
 .phone[data-kind="연락처"].emptied .ph-empty{display:flex;animation:pa-on .5s steps(1) 1}
+
+/* 3.3 끝: 휴대폰으로 읽는 구조 규정 PDF — 13항만 또렷하고 '모든 수단'에 형광펜 */
+.story .pdf{width:min(100%,19em);margin:1.5em auto;border-radius:1.4em;border:.45em solid #18181c;background:#2a2a30;overflow:hidden;
+  box-shadow:0 0 0 1px #34343b,0 1.2em 2.2em -1em rgba(0,0,0,.9);font-family:var(--sans);font-size:.85em}
+.pdf-bar{display:flex;align-items:center;gap:.5em;padding:.6em .8em;background:#1e1e23;color:#e4e4ea;font-size:.78em}
+.pdf-bar b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdf-back{font-size:1.4em;line-height:1;color:#9a9aa6}
+.pdf-page{display:flex;flex-direction:column;gap:.55em;margin:.8em;padding:1.1em 1em;background:#fbfaf6;color:#222;border-radius:3px;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.pdf-ln{display:block;height:.45em;border-radius:2px;background:#dcdad3}
+.pdf-ln.short{width:62%}
+.pdf-art{margin:.35em 0!important;font-family:var(--serif);font-size:1.02em;line-height:1.75}
+.pdf-art b{margin-right:.2em}
+.pdf-art mark{background:linear-gradient(transparent 55%,#ffe36b 55%) no-repeat 0 0/0% 100%;color:inherit;transition:background-size 1.1s ease-out .5s}
+.pdf.seen .pdf-art mark{background-size:100% 100%}
+.pdf-foot{padding:0 0 .6em;text-align:center;color:#9a9aa6;font-size:.72em}
+
+/* 3.3 끝: SG 주식회사 사내 공지 (윤리규정위원회) — 회사 쪽 문서. 재난복구지원국 공문과 짝 */
+.story .sgnote{margin:1.5em auto;max-width:30em;padding:1.1em 1.2em 1.2em;border-radius:6px;background:#f5f6f8;color:#1d2230;border-top:5px solid #c8102e;
+  box-shadow:0 1em 2em -1em rgba(0,0,0,.9);font-family:var(--sans);font-size:.9em}
+.sg-head{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:.5em;border-bottom:1px solid #d5d8de}
+.sg-head b{font-weight:900;letter-spacing:.04em}
+.sg-head span{color:#6a7080;font-size:.85em}
+.sg-title{margin:.8em 0 .6em!important;font-weight:800;font-size:1.1em}
+.sg-tb{width:100%;border-collapse:collapse;font-size:.92em}
+.sg-tb th,.sg-tb td{padding:.45em .6em;border:1px solid #d5d8de;text-align:left}
+.sg-tb th{background:#e8eaef;font-weight:700}

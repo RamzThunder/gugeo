@@ -320,3 +320,11 @@ window.goedamChars=function(el){
     io.observe(f);
   });
 })();
+
+/* 3.3 규정 PDF: 화면에 들어오면 '모든 수단'에 형광펜이 그어짐 */
+(function(){
+  document.querySelectorAll(".story .pdf").forEach(function(f){
+    if(!("IntersectionObserver" in window)){ f.classList.add("seen"); return; }
+    var io=new IntersectionObserver(function(es){ if(es[0].isIntersecting){ io.disconnect(); f.classList.add("seen"); } },{threshold:.7}); io.observe(f);
+  });
+})();
