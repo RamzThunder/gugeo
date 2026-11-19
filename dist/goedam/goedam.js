@@ -287,14 +287,14 @@ window.goedamChars=function(el){
   });
 })();
 
-/* 병원 방송(p.pa): 띠 왼쪽에 천장 스피커, 위에 '딩 동 댕 동' 차임. 화면에 들어오면 차임이 차례로 울린 뒤 문장이 켜짐.
+/* 병원 방송(p.pa): 띠 왼쪽에 천장 스피커, 위에 음표 네 개 차임(딩동댕동 높낮이). 화면에 들어오면 차임이 차례로 울린 뒤 문장이 켜짐.
    코드별 색: 코드 블루=파랑, 코드 옐로우=노랑, 해제·클리어=초록. 문장 속 방송(.pa-in)도 같은 색 */
 (function(){
   var code=function(t){ return /해제|클리어/.test(t)?"pa-green":/코드 블루/.test(t)?"pa-blue":/코드 옐로우/.test(t)?"pa-yellow":""; };
   document.querySelectorAll(".story .pa-in").forEach(function(s){ var c=code(s.textContent); if(c) s.classList.add(c); });
   document.querySelectorAll(".story p.pa").forEach(function(p){
     var c=code(p.textContent); if(c) p.classList.add(c);
-    p.innerHTML='<span class="pa-spk" aria-hidden="true"><i></i></span><span class="pa-body"><span class="pa-chime" aria-hidden="true"><i>딩</i><i>동</i><i>댕</i><i>동</i></span><span class="pa-text">'+p.innerHTML+'</span></span>';
+    p.innerHTML='<span class="pa-spk" aria-hidden="true"><i></i></span><span class="pa-body"><span class="pa-chime" aria-hidden="true"><i>♪</i><i>♩</i><i>♪</i><i>♫</i></span><span class="pa-text">'+p.innerHTML+'</span></span>';
     if(!("IntersectionObserver" in window)) return;
     p.classList.add("wait");
     var io=new IntersectionObserver(function(es){ if(!es[0].isIntersecting) return; io.disconnect();
