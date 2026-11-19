@@ -122,7 +122,7 @@
 
 /* 3.1 팬텀의 라이브 방송: .live 상자를 '재생되는 방송 화면'으로 바꿈.
    원고 순서대로 대사는 자막, '닉네임: 채팅'은 채팅창, [후원]은 팝업, [흔들림]은 화면 요동, [정지]는 멈춘 화면(3:00:00까지 빨리 감기).
-   '대본으로 보기'를 누르면 원래 글 전체가 보임 */
+   '소설 원문으로 보기'를 누르면 바로 아래 :::원문 상자(수정 전 소설 원문)가 펼쳐짐 */
 (function(){
   document.querySelectorAll(".story .live").forEach(function(live){
     var top=live.querySelector(".live-top"), steps=[];
@@ -142,13 +142,14 @@
     while(live.children.length>1) script.appendChild(live.children[1]);
     live.classList.add("player");
     live.insertAdjacentHTML("beforeend",
-      '<div class="lv-stage" aria-hidden="true"><div class="lv-cam"><div class="lv-light"></div><div class="lv-noise"></div></div>'+
+      '<div class="lv-stage" aria-hidden="true"><div class="lv-cam"><div class="lv-exit"></div><div class="lv-light"></div><div class="lv-dust"></div><div class="lv-noise"></div></div><div class="lv-flick"></div>'+
       '<div class="lv-hud"><span class="live-on">LIVE</span><b>'+name+'</b><span class="lv-time">00:00</span><span class="live-view">'+view+'</span></div>'+
       '<div class="lv-don" hidden></div><p class="lv-sub"></p><div class="lv-end" hidden>방송이 종료되었습니다</div>'+
       '<button class="lv-play" type="button" tabindex="-1"><span>▶</span> 팬텀 라이브 재생</button></div>'+
       '<div class="lv-chat" aria-hidden="true"><p class="lv-chat-h">실시간 채팅</p><div class="lv-chat-list"></div></div>'+
-      '<div class="lv-ctl"><button type="button" class="lv-btn lv-go">▶ 재생</button><button type="button" class="lv-btn lv-next">다음 ▸</button><button type="button" class="lv-btn lv-txt" aria-expanded="false">대본으로 보기</button></div>');
+      '<div class="lv-ctl"><button type="button" class="lv-btn lv-go">▶ 재생</button><button type="button" class="lv-btn lv-next">다음 ▸</button><button type="button" class="lv-btn lv-txt" aria-expanded="false">소설 원문으로 보기</button></div>');
     live.appendChild(script);
+    var orig=live.nextElementSibling; if(orig&&orig.classList.contains("live-orig")){ orig.hidden=true; live.appendChild(orig); } else orig=script;
     var $=function(s){return live.querySelector(s)}, stage=$(".lv-stage"), sub=$(".lv-sub"), list=$(".lv-chat-list"), don=$(".lv-don"), time=$(".lv-time"), go=$(".lv-go");
     var k=0, timer=null, clock=null, sec=0, playing=false, done=false;
     var fmt=function(s){var h=Math.floor(s/3600),m=Math.floor(s/60)%60,x=s%60;return (h?h+":"+String(m).padStart(2,"0"):String(m).padStart(2,"0"))+":"+String(x).padStart(2,"0")};
@@ -176,6 +177,6 @@
     go.onclick=function(){ playing?stop():play(); };
     $(".lv-play").onclick=play;
     $(".lv-next").onclick=function(){ if(!playing){ play(); return; } clearTimeout(timer); step(); };
-    $(".lv-txt").onclick=function(){ var open=script.hidden; script.hidden=!open; this.setAttribute("aria-expanded",open); this.textContent=open?"대본 접기":"대본으로 보기"; };
+    $(".lv-txt").onclick=function(){ var open=orig.hidden; orig.hidden=!open; this.setAttribute("aria-expanded",open); this.textContent=open?"소설 원문 접기":"소설 원문으로 보기"; };
   });
 })();

@@ -24,7 +24,7 @@ SCENE = '<div class="scene" aria-hidden="true"><i></i><i></i><i></i></div>'
 PREFIX = {"bot": "[점원] ", "pen": "[필담] ", "say": "[강조] ",
           "dok": "[도깨비] ", "dok angry": "[도깨비:화남] ", "dok loud": "[도깨비:외침] ",
           "don": "[후원] ", "whisper": "[속삭임] ", "shake": "[흔들림] ", "freeze": "[정지] "}
-BOX = {"라이브": "live", "채팅": "chat"}
+BOX = {"라이브": "live", "채팅": "chat", "원문": "live-orig"}
 CHAT = re.compile(r"([^\s\[\]:]{1,12}): (.+)$")   # 라이브·채팅 상자 안의 '닉네임: 채팅' 줄
 RAW = re.compile(r"</?(div|ul|ol|aside|details|summary|figure|section|table|h[1-6])\b|<p[ >]")
 ART = re.compile(r'(<article class="story">\n)(.*?)(</article>)', re.S)
@@ -55,6 +55,7 @@ HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
     :::라이브 팬텀 | 시청자 10명      ← 눌러서 재생하는 생방송 화면 (방송 이름 | 시청자 수).
                                        안쪽 한 줄씩 자막으로 흘러가고, '닉네임: 채팅' 줄은 그 자리에서 채팅창에 올라와요
     :::채팅                          ← 채팅창. 안쪽 한 줄 = '닉네임: 채팅'
+    :::원문                          ← 라이브 바로 아래에 두면 '소설 원문으로 보기' 버튼으로 펼쳐지는 원래 글
     :::
 · {666■}            금액 (호박색)
 · [[칭찬 도장|도장]]  지급물품 이름 (누르면 설명 카드). | 뒤: 도장·담요·신발·노리개·등불·깃발
@@ -78,7 +79,7 @@ def article_to_md(body):
         if l == GAP: out.append(""); i += 1; continue
         if l == GAP2: out += ["", ""]; i += 1; continue
         if l == SCENE: out.append("* * *"); i += 1; continue
-        m = re.match(r'<div class="(live|chat)" ', l)
+        m = re.match(r'<div class="(live|chat|live-orig)" ', l)
         if m:
             kind = m.group(1); j = i + 1
             while lines[j] != "</div><!--/%s-->" % kind: j += 1
@@ -87,6 +88,9 @@ def article_to_md(body):
                 h = re.search(r"<b>(.*?)</b><span class=\"live-view\">(.*?)</span>", body_lines[0])
                 out.append(":::라이브 %s | %s" % (inline_to_md(h.group(1)), inline_to_md(h.group(2))))
                 out += article_to_md("\n".join(body_lines[1:]))
+            elif kind == "live-orig":
+                out.append(":::원문")
+                out += article_to_md("\n".join(body_lines))
             else:
                 out.append(":::채팅")
                 for c in body_lines:
@@ -143,6 +147,9 @@ def md_to_article(lines, live=False):
                 out.append('<div class="live" role="group" aria-label="라이브 방송 화면">')
                 out.append('<div class="live-top" aria-hidden="true"><span class="live-on">LIVE</span><b>%s</b><span class="live-view">%s</span></div>' % (md_to_inline(name), md_to_inline(view)))
                 out.append(md_to_article(inner, live=True).rstrip("\n"))
+            elif kind == "live-orig":
+                out.append('<div class="live-orig" role="region" aria-label="소설 원문">')
+                out.append(md_to_article(inner).rstrip("\n"))
             else:
                 out.append('<div class="chat" role="group" aria-label="채팅창">')
                 for c in inner:

@@ -438,3 +438,23 @@ html.lights-out .quiz.dark .qz-btn{animation:qz-blink 3.2s steps(1) infinite}
 .lv-end[hidden],.lv-don[hidden]{display:none}
 .lv-sub{font-size:.9em}
 @media (max-width:600px){.lv-sub{font-size:.8em;left:3%;right:3%}}
+
+/* 라이브 화면의 빛: 재생 전에도 은은히 움직임. 깜빡이는 형광등, 흔들리는 손전등 빛, 떠다니는 먼지 반짝임, 구석의 초록 비상구 빛 */
+.lv-light{background:radial-gradient(ellipse 30% 34% at 50% 50%,rgba(215,240,226,.32),rgba(140,180,165,.1) 55%,transparent 75%);animation:lv-torch 5.5s ease-in-out infinite}
+.lv-stage.on .lv-light{animation:lv-torch 3.2s ease-in-out infinite}
+@keyframes lv-torch{0%,100%{transform:translate(0,0) scale(1)}20%{transform:translate(-14%,6%) scale(1.06)}45%{transform:translate(10%,-5%) scale(.94)}70%{transform:translate(-4%,-8%) scale(1.03)}}
+.lv-exit{position:absolute;right:10%;top:30%;width:14%;height:7%;border-radius:3px;background:rgba(40,210,120,.22);box-shadow:0 0 2.2em 1em rgba(40,210,120,.12);animation:lv-exit 7s steps(1) infinite}
+@keyframes lv-exit{0%,62%,66%,100%{opacity:1}63%,65%{opacity:.25}}
+.lv-dust{position:absolute;inset:0;opacity:.7;
+  background-image:radial-gradient(circle at 20% 30%,rgba(255,255,255,.55) 0 1px,transparent 1.6px),radial-gradient(circle at 70% 60%,rgba(255,255,255,.45) 0 1px,transparent 1.6px),
+  radial-gradient(circle at 45% 75%,rgba(255,255,255,.4) 0 1px,transparent 1.5px),radial-gradient(circle at 85% 25%,rgba(255,255,255,.5) 0 1px,transparent 1.6px),
+  radial-gradient(circle at 35% 50%,rgba(255,255,255,.35) 0 1px,transparent 1.4px);
+  animation:lv-dust 9s linear infinite,lv-twinkle 1.7s steps(2) infinite}
+@keyframes lv-dust{from{transform:translate(0,0)}to{transform:translate(-6%,-12%)}}
+@keyframes lv-twinkle{50%{opacity:.35}}
+.lv-flick{position:absolute;inset:0;z-index:1;pointer-events:none;background:rgba(200,240,225,.06);mix-blend-mode:screen;animation:lv-flick 4.3s steps(1) infinite}
+@keyframes lv-flick{0%,8%,12%,52%,55%,100%{opacity:0}9%,11%{opacity:1}53%{opacity:.7}54%{opacity:.15}}
+.lv-stage.fallen .lv-light,.lv-stage.frozen .lv-light,.lv-stage.frozen .lv-dust{animation:none}
+.lv-stage.frozen .lv-flick{animation-duration:9s}
+.live-orig{grid-column:1/-1;padding:1em 1.1em;border-top:1px solid #1f1f25;font-family:var(--body);font-size:1.05em}
+.live-orig[hidden]{display:none}
