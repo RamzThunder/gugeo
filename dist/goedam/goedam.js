@@ -518,37 +518,3 @@ window.goedamChars=function(el){
   };
   var ticking=false; addEventListener("scroll",function(){ if(!ticking){ ticking=true; requestAnimationFrame(upd); } },{passive:true}); addEventListener("resize",upd); upd();
 })();
-
-/* 3.3 "챙그랑! 쾅- 쨍그르르르……": 띄어쓰기로 나눈 세 덩어리를 차례로. 화면에 들어오면 한 번만 */
-(function(){
-  document.querySelectorAll(".story .cx.clatter").forEach(function(box){
-    var p=box.querySelector("p"); if(!p) return;
-    var txt=p.textContent.trim(); p.setAttribute("aria-label",txt); p.textContent="";
-    var chs=[];
-    txt.split(/\s+/).forEach(function(g,gi){ var gs=document.createElement("span"); gs.className="cl-g cl-g"+Math.min(gi,2); gs.setAttribute("aria-hidden","true");
-      Array.from(g).forEach(function(c,k){ var sp=document.createElement("span"); sp.className="ch"; sp.textContent=c; gs.appendChild(sp); chs.push({el:sp,g:Math.min(gi,2),k:k,n:Array.from(g).length}); });
-      p.appendChild(gs); });
-    if(!("IntersectionObserver" in window)||!box.animate) return;
-    box.classList.add("wait");
-    var R=function(a,b){ return a+Math.random()*(b-a); };
-    var shake=function(at,px){ box.animate([{transform:"none"},{transform:"translate("+(-px)+"px,"+px/2+"px)"},{transform:"translate("+px+"px,"+(-px/2)+"px)"},{transform:"translate("+(-px/2)+"px,"+px/3+"px)"},{transform:"none"}],{duration:300,delay:at}); };
-    var play=function(){ box.classList.remove("wait");
-      chs.forEach(function(c){ var o={fill:"both"};
-        if(c.g===0){ o.delay=c.k*45; o.duration=380; o.easing="ease-out";
-          c.el.animate([{opacity:0,transform:"translateY(-1.4em) scale(1.5)"},{opacity:1,transform:"translateY(0) scale(1)",offset:.5},{transform:"translateY(-.18em) rotate("+R(-6,6)+"deg)",offset:.72},{opacity:1,transform:"none"}],o); }
-        else if(c.g===1){ o.delay=480+c.k*30; o.duration=320; o.easing="cubic-bezier(.2,1.6,.4,1)";
-          c.el.animate([{opacity:0,transform:"scale(2.6)"},{opacity:1,transform:"scale(.9)",offset:.4},{opacity:1,transform:"none"}],o); }
-        else { var mid=(c.n-1)/2, dx=(c.k-mid)*R(.45,.75)+R(-.25,.25), dy=R(1.1,1.5), rot=R(-80,80), dots=c.el.textContent==="…";
-          if(dots) dx+= (c.k-mid)*.7, rot=R(-200,200);
-          var T=function(f,up,r){ return "translate("+(dx*f).toFixed(2)+"em,"+(dy-up).toFixed(2)+"em) rotate("+(rot*r).toFixed(0)+"deg)"; };
-          o.delay=900+c.k*75; o.duration=R(1300,1800); o.easing="linear";
-          c.el.animate([{opacity:0,transform:"translateY(-.5em)"},{opacity:1,transform:"none",offset:.1},
-            {transform:T(.45,0,.55),offset:.38,easing:"ease-out"},{transform:T(.7,.45,.75),offset:.52,easing:"ease-in"},
-            {transform:T(.86,0,.88),offset:.66,easing:"ease-out"},{transform:T(.94,.14,.95),offset:.76,easing:"ease-in"},
-            {transform:T(.98,0,.99),offset:.86},{opacity:.8,transform:T(1,0,1)}],o); }
-      });
-      shake(60,4); shake(560,11); shake(1050,3);
-    };
-    var io=new IntersectionObserver(function(es){ if(es[0].isIntersecting){ io.disconnect(); setTimeout(play,150); } },{threshold:.6}); io.observe(box);
-  });
-})();

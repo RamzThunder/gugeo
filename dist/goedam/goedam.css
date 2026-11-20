@@ -1071,13 +1071,3 @@ html.sh-dark body::after{opacity:var(--shd,0)}
   filter:blur(calc(var(--t,0) * 5px))}
 .story .cx.dragged .dr-w.dr-pull{animation:dr-jit .16s steps(2) infinite}
 @keyframes dr-jit{50%{translate:.06em 0}}
-/* 3.3 "챙그랑! 쾅- 쨍그르르르……"(.cx.clatter): 화면에 들어오면 '챙그랑!'이 떨어져 꽂히고, '쾅-'이 크게 찍히며 화면이 흔들리고,
-   '쨍그르르르……'는 한 글자씩 바닥으로 떨어져 튀고 굴러 흩어짐 */
-.story .cx.clatter{margin:2em 0;padding-bottom:1.4em;overflow-x:clip;font-style:italic;font-weight:700;line-height:1.25}
-.story .cx.clatter p{margin:0}
-.story .cx.clatter .cl-g{display:block}
-.story .cx.clatter .cl-g0{font-size:1.7em;color:#e8edf2}
-.story .cx.clatter .cl-g1{font-size:2.4em;color:#fff;margin:.05em 0}
-.story .cx.clatter .cl-g2{font-size:1.25em;color:#c9ced6;letter-spacing:.04em}
-.story .cx.clatter .ch{display:inline-block;will-change:transform}
-.story .cx.clatter.wait .ch{opacity:0}
