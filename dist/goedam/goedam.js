@@ -518,3 +518,101 @@ window.goedamChars=function(el){
   };
   var ticking=false; addEventListener("scroll",function(){ if(!ticking){ ticking=true; requestAnimationFrame(upd); } },{passive:true}); addEventListener("resize",upd); upd();
 })();
+
+/* ── 이야기 흐름도 · 읽은 장 · 이어 읽기 ──
+   MAP 하나로 흐름도(위 '☰ 목차' 패널과 목차 쪽)를 그림. 기록(goedam-progress)은 이 기기에만:
+   read{쪽:1} = 끝까지 내려 읽은 쪽, last{id,r} = 마지막으로 읽던 이야기 쪽과 위치(0~1) */
+(function(){
+  var MAP=[
+    {no:"ep.1",t:"괴담에 들어가기 전에",chips:[["test","성향 테스트"],["items","지급물품"],["rules","근무수칙"]]},
+    {no:"ep.2",t:"첫 번째 괴담",rows:[["one","ep2","공통 스토리"],["fork",[
+      {d:"rescue",t:"특수구조과",n:[["ep2-rescue-1","1/3"],["ep2-rescue-2","2/3"],["ep2-rescue-3","3/3"]]},
+      {d:"explore",t:"전략탐사팀",n:[["ep2-explore-1","1/3"],["ep2-explore-2","2/3"],["ep2-explore-3","3/3"]]}]]]},
+    {no:"ep.3",t:"두 번째 괴담",href:"ep3",rows:[["fork",[
+      {d:"rescue",t:"3.1 특수구조과",n:[["ep3-rescue","원문"]],alt:["ep3-rescue-summary","요약본 (약 2분)"]},
+      {d:"explore",t:"3.2 전략탐사팀",n:[["ep3-explore","원문"]],alt:["ep3-explore-summary","요약본 (약 2분)"]}]],["one","ep3-common","3.3 공통 스토리"]]}
+  ];
+  var NAME={"ep2":"ep.2 공통 스토리","ep2-rescue-1":"특수구조과 1/3","ep2-rescue-2":"특수구조과 2/3","ep2-rescue-3":"특수구조과 3/3",
+    "ep2-explore-1":"전략탐사팀 1/3","ep2-explore-2":"전략탐사팀 2/3","ep2-explore-3":"전략탐사팀 3/3",
+    "ep3-rescue":"3.1 특수구조과","ep3-rescue-summary":"3.1 특수구조과 요약본","ep3-explore":"3.2 전략탐사팀","ep3-explore-summary":"3.2 전략탐사팀 요약본","ep3-common":"3.3 공통 스토리"};
+  var CHAIN={rescue:["ep2","ep2-rescue-1","ep2-rescue-2","ep2-rescue-3","ep3-rescue","ep3-common"],explore:["ep2","ep2-explore-1","ep2-explore-2","ep2-explore-3","ep3-explore","ep3-common"]};
+  var KEY="goedam-progress", get=function(){ try{ return JSON.parse(localStorage.getItem(KEY)||"{}"); }catch(e){ return {}; } },
+      put=function(s){ try{ localStorage.setItem(KEY,JSON.stringify(s)); }catch(e){} };
+  var dept=""; try{ dept=localStorage.getItem("goedam-dept")||""; }catch(e){}
+  var id=(location.pathname.split("/").pop()||"index").replace(/\.html$/,"")||"index";
+  var isStory=!!NAME[id], P=get(); P.read=P.read||{};
+  var esc=function(s){ return String(s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); };
+
+  /* 읽은 쪽 표시: 이야기·ep.1 쪽은 끝(다음 이야기 카드나 쪽 바닥)까지 내리면 읽음. 성향 테스트는 결과가 있으면 읽음 */
+  if(dept) P.read.test=1;
+  var ratio=function(){ var h=document.documentElement.scrollHeight-innerHeight; return h>0?Math.min(1,Math.max(0,scrollY/h)):1; };
+  if(isStory||id==="items"||id==="rules"){
+    var endEl=document.querySelector(".next")||document.querySelector(".pn"), saveT=0;
+    var tick=function(){ var p=get(); p.read=p.read||{}; if(dept) p.read.test=1;
+      var done=endEl?endEl.getBoundingClientRect().top<innerHeight:ratio()>.95;
+      if(done) p.read[id]=1;
+      if(isStory){ var r=ratio(); if(r>.02||!p.last||p.last.id!==id) p.last={id:id,r:done?1:+r.toFixed(3)}; }
+      put(p); P=p; };
+    addEventListener("scroll",function(){ if(saveT) return; saveT=setTimeout(function(){ saveT=0; tick(); },700); },{passive:true});
+    addEventListener("pagehide",tick);
+    if(isStory&&!(location.hash||"").match(/^#at=/)) setTimeout(tick,1500);
+  }
+  /* 이어 읽기 링크(#at=0.42)로 들어오면 그 위치로 */
+  var m=(location.hash||"").match(/^#at=([\d.]+)/);
+  if(m){ var go=function(){ var h=document.documentElement.scrollHeight-innerHeight; scrollTo(0,Math.round(+m[1]*h)); try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){} };
+    if(document.readyState==="complete") setTimeout(go,250); else addEventListener("load",function(){ setTimeout(go,250); }); }
+
+  /* 3.3 공통의 '이전'은 내 부서의 ep.3 쪽으로 */
+  if(id==="ep3-common"&&dept){ var pv=document.querySelector(".pn a"); if(pv){ pv.href="ep3-"+dept+".html"; pv.textContent="← "+NAME["ep3-"+dept]; } }
+
+  var cls=function(k){ return (P.read[k]?" read":"")+(k===id?" here":""); };
+  var here=function(k){ return k===id?"<em>지금 여기</em>":""; };
+  var node=function(k,t,sub){ return '<a class="fl-node'+cls(k)+'" href="'+k+'.html"'+(k===id?' aria-current="page"':"")+'><span>'+esc(t)+(sub?' <small>'+esc(sub)+'</small>':"")+'</span>'+here(k)+'</a>'; };
+  var draw=function(){ P=get(); P.read=P.read||{}; if(dept) P.read.test=1;
+    return '<div class="flow">'+MAP.map(function(e){
+      var h='<div class="fl-ep"><h3 class="fl-h"><span class="no">'+e.no+'</span>'+(e.href?'<a href="'+e.href+'.html">'+esc(e.t)+'</a>':esc(e.t))+'</h3>';
+      if(e.chips) return h+'<div class="fl-chips">'+e.chips.map(function(c){ return '<a class="fl-chip'+cls(c[0])+'" href="'+c[0]+'.html">'+esc(c[1])+'</a>'; }).join("")+'</div></div>';
+      return h+'<div class="fl-rail">'+e.rows.map(function(r){
+        if(r[0]==="one") return node(r[1],r[2]);
+        return '<div class="fl-fork">'+r[1].map(function(c){
+          return '<div class="fl-col'+(c.d===dept?" mine":"")+'"><p class="fl-col-h">'+esc(c.t)+(c.d===dept?'<small>내 부서</small>':"")+'</p><div class="fl-rail">'
+            +c.n.map(function(x){ return node(x[0],x[1]); }).join("")+'</div>'
+            +(c.alt?'<a class="fl-alt'+cls(c.alt[0])+'" href="'+c.alt[0]+'.html">'+esc(c.alt[1])+(c.alt[0]===id?" · 지금 여기":"")+'</a>':"")+'</div>';
+        }).join("")+'</div>';
+      }).join("")+'</div></div>';
+    }).join("")+'</div>'; };
+
+  /* 목차 쪽: 이어 읽기 카드 + 흐름도 */
+  if(id==="index"){
+    var toc=document.querySelector("main.toc"), hero=toc&&toc.querySelector(".hero"); if(!toc) return;
+    var sec=document.createElement("section"); sec.className="fl-sec"; sec.setAttribute("aria-label","이야기 흐름");
+    var cont="", L=P.last;
+    if(L&&NAME[L.id]){
+      var tgt=L.id, r=L.r||0, lab="이어 읽기";
+      if(r>=.97){ var ch=CHAIN[dept]||CHAIN[/explore/.test(L.id)?"explore":"rescue"], base=L.id.replace("-summary",""), i=ch.indexOf(base);
+        tgt=i>=0&&i<ch.length-1?ch[i+1]:null; r=0; lab="다음 이야기"; }
+      if(tgt) cont='<a class="fl-cont" href="'+tgt+'.html'+(r>.02?"#at="+r:"")+'"><small>'+lab+'</small><b>'+esc(NAME[tgt])+'</b>'
+        +(r>.02?'<span class="fl-bar" aria-label="'+Math.round(r*100)+'% 읽음"><i style="width:'+Math.round(r*100)+'%"></i></span>':"")+'<span aria-hidden="true">→</span></a>';
+    }
+    sec.innerHTML=cont+'<h2>이야기 흐름</h2>'+draw();
+    if(hero) hero.after(sec); else toc.prepend(sec);
+    return;
+  }
+
+  /* 이야기·ep.1 쪽: 위 '☰ 목차'를 누르면 흐름도 패널 */
+  var home=document.querySelector(".bar-home"); if(!home) return;
+  var panel, shade;
+  var close=function(){ if(!panel) return; panel.remove(); shade.remove(); panel=null; home.setAttribute("aria-expanded","false"); };
+  var open=function(){
+    var aa=document.getElementById("aa"), ab=document.querySelector(".bar-aa"); if(aa&&!aa.hidden){ aa.hidden=true; if(ab) ab.setAttribute("aria-expanded","false"); }
+    shade=document.createElement("div"); shade.className="fl-shade"; shade.addEventListener("click",close);
+    panel=document.createElement("div"); panel.className="fl-panel"; panel.id="fl-panel"; panel.setAttribute("role","dialog"); panel.setAttribute("aria-label","이야기 흐름");
+    panel.innerHTML='<div class="fl-top"><h2>이야기 흐름</h2><a href="./">목차 쪽으로 →</a></div>'+draw();
+    document.body.append(shade,panel); home.setAttribute("aria-expanded","true");
+    panel.tabIndex=-1; var cur=panel.querySelector(".here"); if(cur) cur.scrollIntoView({block:"center"}); panel.focus({preventScroll:true});
+  };
+  home.setAttribute("aria-haspopup","dialog"); home.setAttribute("aria-expanded","false");
+  home.addEventListener("click",function(e){ if(e.metaKey||e.ctrlKey||e.shiftKey) return; e.preventDefault(); panel?close():open(); });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&panel){ close(); home.focus(); } });
+  var ab=document.querySelector(".bar-aa"); if(ab) ab.addEventListener("click",close);
+})();

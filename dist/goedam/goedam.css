@@ -1071,3 +1071,56 @@ html.sh-dark body::after{opacity:var(--shd,0)}
   filter:blur(calc(var(--t,0) * 5px))}
 .story .cx.dragged .dr-w.dr-pull{animation:dr-jit .16s steps(2) infinite}
 @keyframes dr-jit{50%{translate:.06em 0}}
+/* ── 이야기 흐름도 · 읽은 장 · 이어 읽기 ──
+   위 '☰ 목차'를 누르면 그 자리에서 흐름도 패널이 펼쳐짐(목차 쪽에도 같은 흐름도). 읽은 장 ✓, 지금 여기, 내 부서 표시. 기록은 이 기기에만 */
+.fl-panel{position:fixed;top:52px;left:0;right:0;z-index:12;max-width:720px;max-height:calc(100dvh - 64px);margin:0 auto;overflow:auto;overscroll-behavior:contain;
+  padding:14px 16px 18px;background:#0c0c0f;border:1px solid var(--line);border-top:0;border-radius:0 0 16px 16px;box-shadow:0 24px 60px rgba(0,0,0,.7)}
+.fl-shade{position:fixed;inset:52px 0 0;z-index:11;background:rgba(0,0,0,.55)}
+.fl-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.fl-top h2{margin:0;font-size:15px;font-weight:700;color:var(--soft)}
+.fl-top a{color:var(--mute);font-size:13.5px;text-decoration:none;padding:6px 2px}
+.fl-top a:hover{color:var(--ink)}
+.flow{font-size:15px}
+.fl-ep{margin:14px 0 4px}
+.fl-h{margin:0 0 8px;font-size:14px;font-weight:600;color:var(--mute)}
+.fl-h a{color:inherit;text-decoration:none}
+.fl-h .no{display:inline-block;margin-right:6px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--soft);font-size:12px}
+.fl-rail{position:relative;margin-left:9px;padding-left:18px;border-left:2px solid #2a2a31}
+.fl-node{position:relative;display:flex;align-items:center;gap:8px;min-height:40px;padding:6px 10px;margin:2px 0;border-radius:10px;color:var(--soft);text-decoration:none;line-height:1.35}
+.fl-node:hover{background:var(--card2);color:var(--ink)}
+.fl-node::before{content:"";position:absolute;left:-26px;top:50%;width:12px;height:12px;margin-top:-7px;border-radius:50%;background:var(--bg);border:2px solid #4a4a55}
+.fl-node.read::before{background:#8d8d97;border-color:#8d8d97}
+.fl-node.read::after{content:"✓";position:absolute;left:-23.5px;top:50%;margin-top:-9px;font-size:10px;font-weight:800;color:var(--bg)}
+.fl-node.here{background:rgba(255,69,69,.09);color:var(--ink);font-weight:700}
+.fl-node.here::before{border-color:var(--red);background:var(--red);box-shadow:0 0 10px var(--red)}
+.fl-node.here::after{content:none}
+.fl-node em{margin-left:auto;font-style:normal;font-size:11.5px;font-weight:700;color:var(--red);white-space:nowrap}
+.fl-node small{color:var(--mute);font-weight:400;font-size:12.5px}
+.fl-fork{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 4px -20px}
+.fl-col{padding:8px 6px 6px 8px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.015)}
+.fl-col.mine{border-color:rgba(255,69,69,.55);box-shadow:inset 0 0 0 1px rgba(255,69,69,.15)}
+.fl-col-h{margin:0 0 4px 2px;font-size:13.5px;font-weight:700;color:var(--soft)}
+.fl-col-h small{margin-left:6px;padding:1px 6px;border-radius:999px;background:var(--red-deep);color:#fff;font-size:10.5px;vertical-align:1px}
+.fl-col .fl-rail{margin-left:7px;padding-left:14px}
+.fl-col .fl-node{min-height:36px;padding:5px 8px}
+.fl-col .fl-node::before{left:-22px}
+.fl-col .fl-node.read::after{left:-19.5px}
+.fl-alt{display:block;margin:0 0 2px 20px;padding:3px 8px;border-radius:8px;font-size:12.5px;color:var(--mute);text-decoration:none}
+.fl-alt.read::after{content:" ✓"}
+.fl-alt.here{color:var(--red);font-weight:700}
+.fl-alt:hover{color:var(--ink)}
+.fl-chips{display:flex;flex-wrap:wrap;gap:6px;margin-left:9px}
+.fl-chip{padding:6px 11px;border:1px solid var(--line);border-radius:999px;color:var(--soft);font-size:13.5px;text-decoration:none}
+.fl-chip.read{color:var(--mute)} .fl-chip.read::after{content:" ✓"}
+.fl-chip.here{border-color:var(--red);color:var(--ink)}
+/* 이어 읽기 카드(목차 맨 위) */
+.fl-cont{position:relative;display:flex;flex-direction:column;margin:0 0 18px;padding:16px 56px 16px 20px;border:1px solid rgba(255,69,69,.5);border-radius:16px;
+  background:linear-gradient(135deg,rgba(179,18,27,.18),rgba(15,15,18,.9));color:var(--ink);text-decoration:none}
+.fl-cont small{color:var(--red);font-size:13px;font-weight:700}
+.fl-cont b{font-size:19px;margin-top:2px}
+.fl-cont .fl-bar{display:block;height:3px;margin-top:10px;border-radius:2px;background:#2a2a31;overflow:hidden}
+.fl-cont .fl-bar i{display:block;height:100%;background:var(--red)}
+.fl-cont>span:last-child{position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:22px;color:var(--red)}
+.toc .fl-sec{margin:8px 0 28px;padding:16px 16px 10px;border:1px solid var(--line);border-radius:18px;background:var(--card)}
+.toc .fl-sec>h2{margin:0;font-size:16px;font-weight:700;color:var(--soft)}
+.fl-panel:focus{outline:none}
