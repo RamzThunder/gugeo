@@ -524,17 +524,17 @@ window.goedamChars=function(el){
    read{쪽:1} = 끝까지 내려 읽은 쪽, last{id,r} = 마지막으로 읽던 이야기 쪽과 위치(0~1) */
 (function(){
   var MAP=[
-    {no:"ep.1",t:"괴담에 들어가기 전에",chips:[["test","성향 테스트"],["items","지급물품"],["rules","근무수칙"]]},
-    {no:"ep.2",t:"첫 번째 괴담",rows:[["one","ep2","공통 스토리"],["fork",[
+    {no:"",t:"괴담에 들어가기 전에",chips:[["test","성향 테스트"],["items","지급물품"],["rules","근무수칙"]]},
+    {no:"ep.1",t:"첫 번째 괴담",rows:[["one","ep2","공통 스토리"],["fork",[
       {d:"rescue",t:"특수구조과",n:[["ep2-rescue-1","1/3"],["ep2-rescue-2","2/3"],["ep2-rescue-3","3/3"]]},
       {d:"explore",t:"전략탐사팀",n:[["ep2-explore-1","1/3"],["ep2-explore-2","2/3"],["ep2-explore-3","3/3"]]}]]]},
-    {no:"ep.3",t:"두 번째 괴담",href:"ep3",rows:[["fork",[
-      {d:"rescue",t:"3.1 특수구조과",n:[["ep3-rescue","원문"]],alt:["ep3-rescue-summary","요약본 (약 2분)"]},
-      {d:"explore",t:"3.2 전략탐사팀",n:[["ep3-explore","원문"]],alt:["ep3-explore-summary","요약본 (약 2분)"]}]],["one","ep3-common","3.3 공통 스토리"]]}
+    {no:"ep.2",t:"두 번째 괴담",href:"ep3",rows:[["fork",[
+      {d:"rescue",t:"특수구조과",n:[["ep3-rescue","원문"]],alt:["ep3-rescue-summary","요약본 (약 2분)"]},
+      {d:"explore",t:"전략탐사팀",n:[["ep3-explore","원문"]],alt:["ep3-explore-summary","요약본 (약 2분)"]}]],["one","ep3-common","공통 스토리"]]}
   ];
-  var NAME={"ep2":"ep.2 공통 스토리","ep2-rescue-1":"특수구조과 1/3","ep2-rescue-2":"특수구조과 2/3","ep2-rescue-3":"특수구조과 3/3",
-    "ep2-explore-1":"전략탐사팀 1/3","ep2-explore-2":"전략탐사팀 2/3","ep2-explore-3":"전략탐사팀 3/3",
-    "ep3-rescue":"3.1 특수구조과","ep3-rescue-summary":"3.1 특수구조과 요약본","ep3-explore":"3.2 전략탐사팀","ep3-explore-summary":"3.2 전략탐사팀 요약본","ep3-common":"3.3 공통 스토리"};
+  var NAME={"ep2":"ep.1 공통 스토리","ep2-rescue-1":"ep.1 특수구조과 1/3","ep2-rescue-2":"ep.1 특수구조과 2/3","ep2-rescue-3":"ep.1 특수구조과 3/3",
+    "ep2-explore-1":"ep.1 전략탐사팀 1/3","ep2-explore-2":"ep.1 전략탐사팀 2/3","ep2-explore-3":"ep.1 전략탐사팀 3/3",
+    "ep3-rescue":"ep.2 특수구조과","ep3-rescue-summary":"ep.2 특수구조과 요약본","ep3-explore":"ep.2 전략탐사팀","ep3-explore-summary":"ep.2 전략탐사팀 요약본","ep3-common":"ep.2 공통 스토리"};
   var CHAIN={rescue:["ep2","ep2-rescue-1","ep2-rescue-2","ep2-rescue-3","ep3-rescue","ep3-common"],explore:["ep2","ep2-explore-1","ep2-explore-2","ep2-explore-3","ep3-explore","ep3-common"]};
   var KEY="goedam-progress", get=function(){ try{ return JSON.parse(localStorage.getItem(KEY)||"{}"); }catch(e){ return {}; } },
       put=function(s){ try{ localStorage.setItem(KEY,JSON.stringify(s)); }catch(e){} };
@@ -570,7 +570,7 @@ window.goedamChars=function(el){
   var node=function(k,t,sub){ return '<a class="fl-node'+cls(k)+'" href="'+k+'.html"'+(k===id?' aria-current="page"':"")+'><span>'+esc(t)+(sub?' <small>'+esc(sub)+'</small>':"")+'</span>'+here(k)+'</a>'; };
   var draw=function(){ P=get(); P.read=P.read||{}; if(dept) P.read.test=1;
     return '<div class="flow">'+MAP.map(function(e){
-      var h='<div class="fl-ep"><h3 class="fl-h"><span class="no">'+e.no+'</span>'+(e.href?'<a href="'+e.href+'.html">'+esc(e.t)+'</a>':esc(e.t))+'</h3>';
+      var h='<div class="fl-ep"><h3 class="fl-h">'+(e.no?'<span class="no">'+e.no+'</span>':"")+(e.href?'<a href="'+e.href+'.html">'+esc(e.t)+'</a>':esc(e.t))+'</h3>';
       if(e.chips) return h+'<div class="fl-chips">'+e.chips.map(function(c){ return '<a class="fl-chip'+cls(c[0])+'" href="'+c[0]+'.html">'+esc(c[1])+'</a>'; }).join("")+'</div></div>';
       return h+'<div class="fl-rail">'+e.rows.map(function(r){
         if(r[0]==="one") return node(r[1],r[2]);

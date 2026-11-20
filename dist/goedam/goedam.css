@@ -1109,7 +1109,7 @@ html.sh-dark body::after{opacity:var(--shd,0)}
 .fl-alt.read::after{content:" ✓"}
 .fl-alt.here{color:var(--red);font-weight:700}
 .fl-alt:hover{color:var(--ink)}
-.fl-chips{display:flex;flex-wrap:wrap;gap:6px;margin-left:9px}
+.fl-chips{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:6px;margin:0;padding:0}
 .fl-chip{padding:6px 11px;border:1px solid var(--line);border-radius:999px;color:var(--soft);font-size:13.5px;text-decoration:none}
 .fl-chip.read{color:var(--mute)} .fl-chip.read::after{content:" ✓"}
 .fl-chip.here{border-color:var(--red);color:var(--ink)}
