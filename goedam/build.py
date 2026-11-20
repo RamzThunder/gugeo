@@ -44,10 +44,32 @@ def stamp_fig(half):
     label = "반만 찍혀 번진 ‘참 잘했어요’ 도장 자국" if half else "‘참 잘했어요’ 도장 자국"
     return '<figure class="stampmark%s" role="img" aria-label="%s">%s</figure>' % (" half" if half else "", label, stamp_svg(half))
 
-def timer_fig(a, b):
+def timer_fig(a, b, auto=False):
     mmss = lambda x: "%d:%02d" % (x // 60, x % 60)
-    return ('<div class="timer3" data-from="%d" data-to="%d" role="timer" aria-label="징수까지 %s">'
-            '<span class="tm-label">다음 징수까지</span><span class="tm-num">%s</span></div>') % (a, b, mmss(a).replace(":", "분 ") + "초", mmss(a))
+    return ('<div class="timer3" data-from="%d" data-to="%d"%s role="timer" aria-label="징수까지 %s">'
+            '<span class="tm-label">다음 징수까지</span><span class="tm-num">%s</span></div>') % (a, b, ' data-auto="1"' if auto else "", mmss(a).replace(":", "분 ") + "초", mmss(a))
+
+def timer_end_fig(a, b):
+    return '<div class="tm-end" data-from="%d" data-to="%d" aria-hidden="true"></div>' % (a, b)
+
+PAGE = [""]   # 지금 만드는 쪽 이름
+TIMER = {}   # 쪽 이름 → 이어지는 타이머 값 (plan_timer가 채움)
+TM_START, TM_END = re.compile(r"\[타이머\] (\d+):(\d\d)$"), re.compile(r"\[타이머:끝\] (\d+):(\d\d)$")
+
+def plan_timer(pages):
+    """[타이머] 3:00 (쪽 A) … [타이머:끝] 0:50 (쪽 B): A 끝에서 몇 초일지 글 길이로 나눔"""
+    st = en = None
+    for name in ORDER:
+        for k, l in enumerate(pages.get(name, [])):
+            if TM_START.match(l): st = (name, k, int(TM_START.match(l).group(1)) * 60 + int(TM_START.match(l).group(2)))
+            if TM_END.match(l): en = (name, k, int(TM_END.match(l).group(1)) * 60 + int(TM_END.match(l).group(2)))
+    if not st or not en: return
+    ln = lambda ls: sum(len(x) for x in ls if not x.startswith("<"))
+    if st[0] == en[0]:
+        TIMER[st[0]] = ("start", st[2], en[2]); return
+    a, b = ln(pages[st[0]][st[1]:]), ln(pages[en[0]][:en[1]])
+    mid = round(st[2] - (st[2] - en[2]) * a / max(1, a + b))
+    TIMER[st[0]] = ("start", st[2], mid); TIMER[en[0]] = ("end", mid, en[2])
 
 def stamp_count(a, b):
     lab = "도장 뚜껑의 남은 횟수: %s" % a + (", %s로 줄어듦" % b if b else "")
@@ -122,7 +144,8 @@ HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
     [통화] 덤불 너머로 엿듣는 통화 목소리 (멀고 먹먹한 글씨),  [통화:날섬] 날이 선 통화 (지금은 [통화]와 같은 모양)
 · 그림 한 줄 (줄에 이것만):  [도장자국]  '참 잘했어요' 도장 자국,  [도장자국:반]  반만 찍혀 번진 자국,
                              [남은횟수] 3  도장 뚜껑의 숫자,  [남은횟수] 3→2  화면에 들어오면 3에서 2로 바뀜
-                             [타이머] 3:00→0:40  징수 타이머. 내릴수록 줄어들고(쪽 끝에서 0:40), 지나가면 화면 위에 작게 따라옴
+                             [타이머] 3:00  징수 타이머. 내릴수록 줄어들고, 지나가면 화면 위에 작게 따라옴
+                             [타이머:끝] 0:50  (다음 쪽의 한 줄 뒤에) 타이머가 딱 여기서 0:50이 되게. 쪽 사이 넘어가는 시간은 글 길이로 자동 계산
                              [휴대폰:메신저]  텅 빈 메신저 화면,  [휴대폰:연락처]  이름이 하나씩 사라지는 연락처 화면
                              [문서:규정]  휴대폰 PDF 구조 규정 13항,  [문서:위원회]  SG 주식회사 윤리규정위원회 공지
                              [팔찌:흰색]  환자 팔찌(태그 색),  [팔찌:흰색→초록색]  태그 색이 번짐,  [분류색]  흰·초록·노랑·빨강·파랑 분류 색
@@ -171,8 +194,10 @@ def article_to_md(body):
         if dm: out.append("[문서:%s]" % dm.group(1)); i += 1; continue
         pm = re.match(r'<figure class="phone" data-kind="(\S+?)"', l)
         if pm: out.append("[휴대폰:%s]" % pm.group(1)); i += 1; continue
-        m = re.match(r'<div class="timer3" data-from="(\d+)" data-to="(\d+)"', l)
-        if m: f, t = int(m.group(1)), int(m.group(2)); out.append("[타이머] %d:%02d→%d:%02d" % (f // 60, f % 60, t // 60, t % 60)); i += 1; continue
+        m = re.match(r'<div class="timer3" data-from="(\d+)" data-to="(\d+)"( data-auto)?', l)
+        if m: f, t = int(m.group(1)), int(m.group(2)); out.append("[타이머] %d:%02d" % (f // 60, f % 60) + ("" if m.group(3) else "→%d:%02d" % (t // 60, t % 60))); i += 1; continue
+        m = re.match(r'<div class="tm-end" data-from="\d+" data-to="(\d+)"', l)
+        if m: t = int(m.group(1)); out.append("[타이머:끝] %d:%02d" % (t // 60, t % 60)); i += 1; continue
         if l.startswith('<figure class="stampmark'): out.append("[도장자국:반]" if 'stampmark half' in l else "[도장자국]"); i += 1; continue
         m = re.match(r'<div class="stampcount" data-from="(\d+)"(?: data-to="(\d+)")?', l)
         if m: out.append("[남은횟수] %s%s" % (m.group(1), "→" + m.group(2) if m.group(2) else "")); i += 1; continue
@@ -268,7 +293,15 @@ def md_to_article(lines, live=False):
         if pm and pm.group(1) in PHONE: out.append(PHONE[pm.group(1)]); i += 1; continue
         if l in ("[도장자국]", "[도장자국:반]"): out.append(stamp_fig(l.endswith(":반]"))); i += 1; continue
         m = re.fullmatch(r"\[타이머\] (\d+):(\d\d)(?:→(\d+):(\d\d))?", l)
-        if m: out.append(timer_fig(int(m.group(1))*60+int(m.group(2)), int(m.group(3))*60+int(m.group(4)) if m.group(3) else 0)); i += 1; continue
+        if m:
+            f = int(m.group(1)) * 60 + int(m.group(2))
+            if m.group(3): out.append(timer_fig(f, int(m.group(3)) * 60 + int(m.group(4))))
+            else: out.append(timer_fig(f, TIMER.get(PAGE[0], ("", 0, 0))[2], auto=True))
+            i += 1; continue
+        if TM_END.match(l):
+            t = TIMER.get(PAGE[0])
+            if t and t[0] == "end": out.append(timer_end_fig(t[1], t[2]))
+            i += 1; continue
         m = re.fullmatch(r"\[남은횟수\] (\d+)(?:→(\d+))?", l)
         if m: out.append(stamp_count(m.group(1), m.group(2))); i += 1; continue
         if l.startswith(":::") and l[3:].split(" ")[0] in BOX:
@@ -369,7 +402,9 @@ def main():
         open(SRC, "w", encoding="utf-8").write("\n".join(md).rstrip() + "\n")
         print("원고를 뽑았습니다:", os.path.relpath(SRC, ROOT)); return
     pages, bad, changed = read_src(), 0, 0
+    plan_timer(pages)
     for name in ORDER:
+        PAGE[0] = name
         path = os.path.join(PAGES, name + ".html")
         s = open(path, encoding="utf-8").read()
         new = md_to_article(pages[name])

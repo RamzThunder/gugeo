@@ -485,20 +485,24 @@ window.goedamChars=function(el){
   });
 })();
 
-/* 징수 타이머(.timer3): 타이머가 화면 가운데를 지난 뒤부터 쪽 끝(이전/다음 링크)까지 내리는 만큼 data-from → data-to 초로 줄어듦.
-   큰 타이머가 위로 지나가면 오른쪽 위 작은 타이머(.tm-chip)가 같은 시간을 보여 줌. 끝 10초 남짓은 깜빡임 */
+/* 징수 타이머: 2/3의 큰 타이머(.timer3)는 화면 가운데를 지난 뒤부터 쪽 끝까지 내리는 만큼 data-from → data-to 초로 줄고,
+   다음 쪽(3/3)은 맨 위부터 표시(.tm-end, 원고의 [타이머:끝])가 화면 가운데에 올 때까지 이어서 줄어 딱 data-to(0:50)가 됨.
+   오른쪽 위 작은 타이머(.tm-chip)가 같은 시간을 보여 주고, 1분 이하로 남으면 깜빡임 */
 (function(){
-  var t=document.querySelector(".story .timer3"); if(!t) return;
-  var from=+t.dataset.from, to=+t.dataset.to, num=t.querySelector(".tm-num"), end=document.querySelector(".pn")||t.closest(".story");
+  var t=document.querySelector(".story .timer3"), m=document.querySelector(".story .tm-end"), src=t||m; if(!src) return;
+  var from=+src.dataset.from, to=+src.dataset.to, num=t&&t.querySelector(".tm-num"), end=t&&(document.querySelector(".pn")||t.closest(".story"));
   var chip=document.createElement("div"); chip.className="tm-chip"; chip.setAttribute("aria-hidden","true");
   chip.innerHTML='<span class="tm-label">징수까지</span><span class="tm-num"></span>'; document.body.appendChild(chip);
-  var cnum=chip.querySelector(".tm-num"), last=-1;
+  var cnum=chip.querySelector(".tm-num"), last=-1, cl=function(x){ return Math.min(1,Math.max(0,x)); };
   var fmt=function(x){ return Math.floor(x/60)+":"+("0"+x%60).slice(-2); };
-  var upd=function(){ ticking=false;
-    var r=t.getBoundingClientRect(), e=end.getBoundingClientRect(), a=r.top+r.height/2-innerHeight/2, span=e.top-innerHeight-(r.top+r.height/2-innerHeight/2);
-    var p=span>0?Math.min(1,Math.max(0,-a/span)):(a<0?1:0), v=Math.round(from-(from-to)*p);
-    if(v!==last){ last=v; num.textContent=cnum.textContent=fmt(v); var low=v<=to+10; t.classList.toggle("tm-low",low); chip.classList.toggle("tm-low",low); }
-    chip.classList.toggle("on",r.bottom<52&&e.top>innerHeight*.6);
+  var upd=function(){ ticking=false; var p, on;
+    if(t){ var r=t.getBoundingClientRect(), e=end.getBoundingClientRect(), a=r.top+r.height/2-innerHeight/2, span=e.top-innerHeight-a;
+      p=span>0?cl(-a/span):(a<0?1:0); on=r.bottom<52&&e.top>innerHeight*.6; }
+    else { var y=m.getBoundingClientRect().top-innerHeight/2, tot=scrollY+y;   // 쪽 맨 위(0) → 표시가 화면 가운데
+      p=tot>0?cl(scrollY/tot):1; on=y>-innerHeight*.6; }
+    var v=Math.round(from-(from-to)*p);
+    if(v!==last){ last=v; cnum.textContent=fmt(v); if(num) num.textContent=fmt(v); var low=v<=60; chip.classList.toggle("tm-low",low); if(t) t.classList.toggle("tm-low",low); }
+    chip.classList.toggle("on",on);
   };
   var ticking=false; addEventListener("scroll",function(){ if(!ticking){ ticking=true; requestAnimationFrame(upd); } },{passive:true}); addEventListener("resize",upd); upd();
 })();
