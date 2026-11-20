@@ -1061,3 +1061,21 @@ html.sh-dark body::after{opacity:var(--shd,0)}
 .tm-chip .tm-num{font-size:1.25em}
 .timer3.tm-low .tm-num,.tm-chip.tm-low .tm-num{animation:tm-blink 1s steps(1) infinite}
 @keyframes tm-blink{50%{opacity:.35}}
+/* 3.1 심전도([심전도]): 화면에 고정된 채 내릴수록 맥이 느려지다 일자로 펴지고, 이어지는 ‘삐―’가 길게 늘어남 */
+.ecg-stage{position:relative}
+.ecg-stage-pin{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:center;gap:1.4em}
+.story .ecg{margin:0 auto;width:100%;max-width:30em;padding:.7em .9em .8em;border-radius:10px;background:#020a06;border:10px solid #1b1d1f;outline:1px solid #2c2f31;
+  box-shadow:0 0 2em rgba(40,240,120,.08),inset 0 0 2em rgba(0,0,0,.8);transition:box-shadow .4s}
+.story .ecg-top{display:flex;align-items:baseline;gap:.8em;font-family:ui-monospace,"SF Mono",Menlo,monospace;color:#41e58a;font-size:.8em}
+.story .ecg-top .ecg-hr{margin-left:auto;display:flex;align-items:baseline;gap:.35em}
+.story .ecg-top .ecg-hr b{font-size:2.4em;line-height:1;font-variant-numeric:tabular-nums;text-shadow:0 0 .4em rgba(65,229,138,.6)}
+.story .ecg-alarm{visibility:hidden;padding:.05em .5em;border-radius:3px;background:#e0262f;color:#fff;font-weight:700;letter-spacing:.08em}
+.story .ecg svg{display:block;width:100%;height:7.5em;margin-top:.3em;background-image:linear-gradient(rgba(65,229,138,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(65,229,138,.07) 1px,transparent 1px);background-size:10% 20%}
+.story .ecg .ecg-line{fill:none;stroke:#41e58a;stroke-width:2;stroke-linejoin:round;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 3px rgba(65,229,138,.8))}
+.story .ecg .ecg-dot{fill:#d9ffe9;filter:drop-shadow(0 0 4px #41e58a)}
+.story .ecg.flat{box-shadow:0 0 2.4em rgba(230,30,40,.35),inset 0 0 2em rgba(0,0,0,.8)}
+.story .ecg.flat .ecg-alarm{visibility:visible;animation:tm-blink .8s steps(1) infinite}
+.story .ecg.flat .ecg-top{color:#ff5a5a}
+.story .ecg.flat .ecg-hr b{text-shadow:0 0 .4em rgba(255,60,60,.7)}
+.story .ecg-beep{margin:0!important;text-align:center;font-size:1.6em;letter-spacing:.06em;color:#e9ecef;opacity:var(--bo,0);white-space:nowrap;overflow:hidden}
+.story .ecg-beep .ecg-dash{display:inline-block;width:calc(1em + var(--bl,0) * 8em);height:.08em;vertical-align:.3em;background:currentColor;margin:0 .05em}

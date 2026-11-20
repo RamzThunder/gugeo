@@ -506,3 +506,38 @@ window.goedamChars=function(el){
   };
   var ticking=false; addEventListener("scroll",function(){ if(!ticking){ ticking=true; requestAnimationFrame(upd); } },{passive:true}); addEventListener("resize",upd); upd();
 })();
+
+/* 3.1 심전도(.ecg): 높은 무대에 고정. 스크롤 0~.55 맥박 112→34로 느려지고 불규칙해짐, .6부터 일자(ASYSTOLE),
+   바로 다음 문단 ‘삐―’를 무대로 옮겨 일자 뒤로 나타나며 길게 늘어남. 파형은 화면에 보일 때만 그림 */
+(function(){
+  document.querySelectorAll(".story .ecg").forEach(function(fig){
+    var line=fig.querySelector(".ecg-line"), dot=fig.querySelector(".ecg-dot"), hrb=fig.querySelector(".ecg-hr b");
+    var beep=fig.nextElementSibling; if(beep&&!/^\s*[‘']?삐/.test(beep.textContent)) beep=null;
+    var st=document.createElement("div"); st.className="ecg-stage"; st.style.height="260vh";
+    var pin=document.createElement("div"); pin.className="ecg-stage-pin"; fig.parentNode.insertBefore(st,fig); st.appendChild(pin); pin.appendChild(fig);
+    if(beep){ beep.classList.add("ecg-beep"); beep.setAttribute("aria-label",beep.textContent); beep.innerHTML='<span aria-hidden="true">‘삐<span class="ecg-dash"></span>’</span>'; pin.appendChild(beep); }
+    var N=150, W=300, buf=[], i; for(i=0;i<N;i++) buf.push(60);
+    var cur=0, ph=0, last=0, p=0, vis=false, raf=0;
+    /* 한 박의 모양(0~1): P파, QRS, T파. 위가 작은 값 */
+    var beat=function(u){ var g=function(c,w,a){ var d=(u-c)/w; return a*Math.exp(-d*d); };
+      return g(.12,.035,-6)+g(.26,.012,8)+g(.29,.014,-46)+g(.32,.012,14)+g(.52,.06,-11); };
+    for(i=0;i<N;i++){ ph+=2.4/N/(60/112); if(ph>=1) ph-=1; buf[i]=60+beat(ph); }   // 처음부터 뛰는 파형으로 채움
+    var prog=function(){ var r=st.getBoundingClientRect(), span=r.height-innerHeight; return span>0?Math.min(1,Math.max(0,-r.top/span)):(r.top<0?1:0); };
+    var sm=function(t){ return t<0?0:t>1?1:t*t*(3-2*t); };
+    var frame=function(now){ raf=0; if(!vis) return;
+      var dt=Math.min(.05,(now-(last||now))/1000); last=now;
+      var flat=p>=.6, hr=flat?0:Math.round(112-78*sm(p/.55)), amp=flat?0:1-.35*sm((p-.35)/.25);
+      var per=hr?60/hr:1, steps=Math.max(1,Math.round(dt*N/2.4));   // 2.4초에 화면 한 번 쓸기
+      for(var k=0;k<steps;k++){ ph+=dt/steps/per*(1+(p>.4&&!flat?(Math.random()-.5)*.6:0)); if(ph>=1) ph-=1;
+        buf[cur]=60+(flat?0:beat(ph)*amp); cur=(cur+1)%N; }
+      var d="", gap=6;
+      for(i=0;i<N;i++){ var j=(cur+gap+i)%N, x=(j/(N-1)*W).toFixed(1); d+=(i===0||j===0?"M":"L")+x+" "+buf[j].toFixed(1); }
+      line.setAttribute("d",d); dot.setAttribute("cx",((cur-1+N)%N/(N-1)*W).toFixed(1)); dot.setAttribute("cy",buf[(cur-1+N)%N].toFixed(1));
+      hrb.textContent=flat?"0":hr; fig.classList.toggle("flat",flat);
+      if(beep){ beep.style.setProperty("--bo",sm((p-.6)/.06).toFixed(3)); beep.style.setProperty("--bl",sm((p-.62)/.33).toFixed(3)); }
+      raf=requestAnimationFrame(frame); };
+    var go=function(){ if(vis&&!raf){ last=0; raf=requestAnimationFrame(frame); } };
+    addEventListener("scroll",function(){ p=prog(); },{passive:true}); p=prog();
+    if("IntersectionObserver" in window) new IntersectionObserver(function(es){ vis=es[0].isIntersecting; go(); }).observe(st); else { vis=true; go(); }
+  });
+})();

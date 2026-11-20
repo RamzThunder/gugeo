@@ -71,6 +71,8 @@ def plan_timer(pages):
     mid = round(st[2] - (st[2] - en[2]) * a / max(1, a + b))
     TIMER[st[0]] = ("start", st[2], mid); TIMER[en[0]] = ("end", mid, en[2])
 
+ECG = '<figure class="ecg" role="img" aria-label="심전도 모니터: 뛰던 파형이 점점 느려지다 일자로 펴짐"><div class="ecg-top" aria-hidden="true"><span>II</span><span class="ecg-alarm">ASYSTOLE</span><span class="ecg-hr"><small>HR</small><b>112</b></span></div><svg viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true"><path class="ecg-grid" d=""/><path class="ecg-line" d="M0 60H300"/><circle class="ecg-dot" r="2.6" cx="0" cy="60"/></svg></figure>'
+
 def stamp_count(a, b):
     lab = "도장 뚜껑의 남은 횟수: %s" % a + (", %s로 줄어듦" % b if b else "")
     return '<div class="stampcount" data-from="%s"%s role="img" aria-label="%s"><span class="sc-label">남은 횟수</span><span class="sc-num">%s</span></div>' % (
@@ -145,6 +147,7 @@ HEAD = """# 괴담에 떨어져도 수행평가를 해야 하는구나 · 원고
 · 그림 한 줄 (줄에 이것만):  [도장자국]  '참 잘했어요' 도장 자국,  [도장자국:반]  반만 찍혀 번진 자국,
                              [남은횟수] 3  도장 뚜껑의 숫자,  [남은횟수] 3→2  화면에 들어오면 3에서 2로 바뀜
                              [타이머] 3:00  징수 타이머. 내릴수록 줄어들고, 지나가면 화면 위에 작게 따라옴
+                             [심전도]  심전도 모니터. 내릴수록 맥이 느려지다 일자로 펴짐(바로 다음 줄 ‘삐―’이 길게 늘어남)
                              [타이머:끝] 0:50  (다음 쪽의 한 줄 뒤에) 타이머가 딱 여기서 0:50이 되게. 쪽 사이 넘어가는 시간은 글 길이로 자동 계산
                              [휴대폰:메신저]  텅 빈 메신저 화면,  [휴대폰:연락처]  이름이 하나씩 사라지는 연락처 화면
                              [문서:규정]  휴대폰 PDF 구조 규정 13항,  [문서:위원회]  SG 주식회사 윤리규정위원회 공지
@@ -198,6 +201,7 @@ def article_to_md(body):
         if m: f, t = int(m.group(1)), int(m.group(2)); out.append("[타이머] %d:%02d" % (f // 60, f % 60) + ("" if m.group(3) else "→%d:%02d" % (t // 60, t % 60))); i += 1; continue
         m = re.match(r'<div class="tm-end" data-from="\d+" data-to="(\d+)"', l)
         if m: t = int(m.group(1)); out.append("[타이머:끝] %d:%02d" % (t // 60, t % 60)); i += 1; continue
+        if l.startswith('<figure class="ecg"'): out.append("[심전도]"); i += 1; continue
         if l.startswith('<figure class="stampmark'): out.append("[도장자국:반]" if 'stampmark half' in l else "[도장자국]"); i += 1; continue
         m = re.match(r'<div class="stampcount" data-from="(\d+)"(?: data-to="(\d+)")?', l)
         if m: out.append("[남은횟수] %s%s" % (m.group(1), "→" + m.group(2) if m.group(2) else "")); i += 1; continue
@@ -292,6 +296,7 @@ def md_to_article(lines, live=False):
         pm = re.fullmatch(r"\[휴대폰:(\S+)\]", l)
         if pm and pm.group(1) in PHONE: out.append(PHONE[pm.group(1)]); i += 1; continue
         if l in ("[도장자국]", "[도장자국:반]"): out.append(stamp_fig(l.endswith(":반]"))); i += 1; continue
+        if l == "[심전도]": out.append(ECG); i += 1; continue
         m = re.fullmatch(r"\[타이머\] (\d+):(\d\d)(?:→(\d+):(\d\d))?", l)
         if m:
             f = int(m.group(1)) * 60 + int(m.group(2))
