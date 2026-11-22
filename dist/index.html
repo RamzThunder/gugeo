@@ -147,6 +147,13 @@ section{padding:72px 0 8px}
 .dlg-h span{color:var(--mute);font-size:13px}
 .dlg-x{margin-left:auto;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:none;color:var(--ink);font-size:16px;cursor:pointer}
 .dlg-x:hover{border-color:var(--accent);color:var(--accent)}
+.dlg-tabs{display:flex;gap:6px;padding:0 12px 12px 20px;flex-wrap:wrap}
+.dlg-tabs button{font:inherit;font-size:14px;font-weight:600;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--mute);cursor:pointer}
+.dlg-tabs button:hover{color:var(--ink)}
+.dlg-tabs button[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--card)}
+.dlg-tabs button.t-blue[aria-selected="true"]{background:#2f6fd8;border-color:#2f6fd8;color:#fff}
+.dlg-tabs button.t-red[aria-selected="true"]{background:#c8102e;border-color:#c8102e;color:#fff}
+.dlg-tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #war-full{display:block;width:100%;aspect-ratio:16/9;max-height:calc(100vh - 110px);background:#000}
 
 
@@ -259,7 +266,7 @@ footer .fm svg{color:var(--accent)}
           aria-label="점령전 티저 영상(소리 없음, 자막 있음): 밝은 HUMAN 홍보 광고가 꺼진 뒤, 기록을 복구하는 보존관과 원래 기록을 지키는 러다이트가 나오고 게임 제목이 뜹니다"></video>
         <span class="tz-badge">티저</span>
         <button class="tz-pause" type="button" aria-label="티저 일시정지" aria-pressed="false"><span aria-hidden="true">❚❚</span></button>
-        <button class="tz-full" type="button" data-open-teaser><span aria-hidden="true">▶</span> 전체 영상 보기 <small>2:08</small></button>
+        <button class="tz-full" type="button" data-open-teaser><span aria-hidden="true">▶</span> 전체 영상 보기 <small>2:07 · 소리</small></button>
       </div>
       <div class="info">
         <div class="tags"><span class="tag hot">점령전</span><span class="tag">현대문학사</span><span class="tag">진영 대항</span></div>
@@ -272,7 +279,9 @@ footer .fm svg{color:var(--accent)}
         </div>
         <button class="howbtn" type="button" aria-expanded="false" aria-controls="how-war">진행 방법 보기 <i>▾</i></button>
         <div class="cta">
-          <button class="btn solid" type="button" data-open-teaser>▶ 오프닝 영상 보기</button>
+          <button class="btn solid" type="button" data-open-teaser>▶ 공통 오프닝</button>
+          <button class="btn" type="button" data-open-teaser="1">보존관 편</button>
+          <button class="btn" type="button" data-open-teaser="2">러다이트 편</button>
           <span class="btn off" aria-disabled="true">곧 열려요</span>
         </div>
       </div>
@@ -321,8 +330,14 @@ footer .fm svg{color:var(--accent)}
   </section>
 
   <dialog id="teaser-dlg" aria-label="2030 현대문학사 데이터 점령전 오프닝 영상">
-    <div class="dlg-h"><b>2030 현대문학사 데이터 점령전 · 오프닝</b><span>소리 없음 · 자막 · 2분 8초</span>
+    <div class="dlg-h"><b>2030 현대문학사 데이터 점령전 · 오프닝</b><span id="dlg-len">소리 있음 · 자막 · 2분 7초</span>
       <button class="dlg-x" type="button" aria-label="닫기">✕</button></div>
+    <!-- 오프닝 3편: 공통편(모두), 진영편(게임 시작 전 학생마다 자기 진영 것). lit-war 레포 scripts/openings/make-teaser.sh 결과를 video/ 에 복사 -->
+    <div class="dlg-tabs" role="tablist" aria-label="오프닝 영상 고르기">
+      <button type="button" role="tab" aria-selected="true" data-src="video/war-full.mp4" data-poster="video/war-teaser.webp" data-len="소리 있음 · 자막 · 2분 7초">공통 오프닝</button>
+      <button type="button" role="tab" aria-selected="false" class="t-blue" data-src="video/war-guardian.mp4" data-poster="video/war-guardian.webp" data-len="소리 있음 · 1분 23초">보존관 오프닝</button>
+      <button type="button" role="tab" aria-selected="false" class="t-red" data-src="video/war-luddite.mp4" data-poster="video/war-luddite.webp" data-len="소리 있음 · 1분 19초">러다이트 오프닝</button>
+    </div>
     <video id="war-full" poster="video/war-teaser.webp" controls playsinline preload="none" data-src="video/war-full.mp4"></video>
   </dialog>
 
@@ -356,9 +371,16 @@ document.querySelectorAll("details.past").forEach(d=>d.addEventListener("toggle"
   if("IntersectionObserver" in window){
     new IntersectionObserver(es=>es.forEach(en=>{ seen=en.isIntersecting; if(seen&&!paused&&!dlg.open) play(); else v.pause(); }),{threshold:.35}).observe(v);
   }
+  /* 탭: 공통 / 보존관 / 러다이트 오프닝 중 하나를 골라 처음부터 재생 */
+  const tabs=[...dlg.querySelectorAll(".dlg-tabs button")], len=document.getElementById("dlg-len");
+  const pick=i=>{ tabs.forEach((t,k)=>t.setAttribute("aria-selected",k===i));
+    const t=tabs[i]; full.poster=t.dataset.poster; len.textContent=t.dataset.len;
+    if(full.getAttribute("src")!==t.dataset.src) full.src=t.dataset.src;
+    full.currentTime=0; const p=full.play(); if(p&&p.catch) p.catch(()=>{}); };
+  tabs.forEach((t,i)=>t.addEventListener("click",()=>pick(i)));
   const open=e=>{ e.stopPropagation(); v.pause();
-    if(!full.src) full.src=full.dataset.src;
-    dlg.showModal(); full.currentTime=0; const p=full.play(); if(p&&p.catch) p.catch(()=>{}); };
+    const i=Number(e.currentTarget.dataset&&e.currentTarget.dataset.openTeaser)||0;
+    dlg.showModal(); pick(i); };
   document.querySelectorAll("[data-open-teaser]").forEach(b=>b.addEventListener("click",open));
   v.addEventListener("click",open);
   dlg.querySelector(".dlg-x").addEventListener("click",()=>dlg.close());
